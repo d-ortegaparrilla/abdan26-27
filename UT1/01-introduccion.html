@@ -1,0 +1,1039 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Apuntes del módulo de Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN) - CE Recursos y Servicios en la Nube">
+      
+      
+        <meta name="author" content="David Ortega Parrilla">
+      
+      
+        <link rel="canonical" href="https://d-ortegaparrilla.github.io/abdan26-27/UT1/01-introduccion.html">
+      
+      
+        <link rel="prev" href="../planificacion.html">
+      
+      
+        <link rel="next" href="02-arquitectura-s3.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>1. Introducción al Almacenamiento en la Nube - Administración de Bases de Datos y Almacenamiento en la Nube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-introduccion-al-almacenamiento-en-la-nube-y-almacenamiento-de-objetos" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-header__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Administración de Bases de Datos y Almacenamiento en la Nube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1. Introducción al Almacenamiento en la Nube
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../planificacion.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Planificación del Módulo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-nav__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    Administración de Bases de Datos y Almacenamiento en la Nube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../planificacion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planificación del Módulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="01-introduccion.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#el-ecosistema-de-servicios-de-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El Ecosistema de Servicios de AWS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tipos-de-almacenamiento-en-la-nube" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipos de Almacenamiento en la Nube
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparativa-tecnica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparativa Técnica
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-uso-del-almacenamiento-en-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de Uso del Almacenamiento en AWS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#el-principio-de-inmutabilidad-en-objetos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El Principio de Inmutabilidad en Objetos
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-arquitectura-s3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Arquitectura y Componentes de Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03-clases-almacenamiento.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Clases de Almacenamiento y S3 Glacier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-1-operaciones-basicas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#el-ecosistema-de-servicios-de-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El Ecosistema de Servicios de AWS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tipos-de-almacenamiento-en-la-nube" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipos de Almacenamiento en la Nube
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparativa-tecnica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparativa Técnica
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-uso-del-almacenamiento-en-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de Uso del Almacenamiento en AWS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#el-principio-de-inmutabilidad-en-objetos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El Principio de Inmutabilidad en Objetos
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="1-introduccion-al-almacenamiento-en-la-nube-y-almacenamiento-de-objetos">1. Introducción al Almacenamiento en la Nube y Almacenamiento de Objetos<a class="headerlink" href="#1-introduccion-al-almacenamiento-en-la-nube-y-almacenamiento-de-objetos" title="Permanent link">&para;</a></h1>
+<p>El almacenamiento es uno de los pilares esenciales de la nube, junto con el cómputo y las redes. Seleccionar el tipo de almacenamiento adecuado según requisitos de durabilidad, coste, latencia y patrones de acceso es el objetivo principal del <strong>Resultado de Aprendizaje 1 (RA1)</strong>.</p>
+<hr />
+<h2 id="el-ecosistema-de-servicios-de-aws">El Ecosistema de Servicios de AWS<a class="headerlink" href="#el-ecosistema-de-servicios-de-aws" title="Permanent link">&para;</a></h2>
+<p>Dentro del mapa global de servicios de Amazon Web Services, el almacenamiento interactúa de forma constante con los servicios de cómputo, redes, bases de datos y seguridad:</p>
+<p><img alt="Servicios principales de AWS" src="images/servicios_principales_aws.png" /></p>
+<ul>
+<li><strong>Cómputo:</strong> Instancias virtuales (<strong>Amazon EC2</strong>) y funciones sin servidor (<strong>AWS Lambda</strong>).</li>
+<li><strong>Redes:</strong> Aislamiento y control de tráfico con <strong>Amazon Virtual Private Cloud (VPC)</strong>.</li>
+<li><strong>Seguridad:</strong> Control granular de identidades, usuarios y roles mediante <strong>AWS Identity and Access Management (IAM)</strong>.</li>
+<li><strong>Bases de datos:</strong> Servicios relacionales (<strong>Amazon RDS</strong>) y clave-valor (<strong>Amazon DynamoDB</strong>).</li>
+<li><strong>Almacenamiento:</strong> Soluciones en bloque (<strong>EBS</strong>), archivos en red (<strong>EFS</strong>) y objetos (<strong>S3</strong> y <strong>Glacier</strong>).</li>
+</ul>
+<hr />
+<h2 id="tipos-de-almacenamiento-en-la-nube">Tipos de Almacenamiento en la Nube<a class="headerlink" href="#tipos-de-almacenamiento-en-la-nube" title="Permanent link">&para;</a></h2>
+<p>AWS clasifica el almacenamiento en tres modelos arquitectónicos bien diferenciados:</p>
+<p><img alt="Tipos de almacenamiento en AWS" src="images/tipos_almacenamiento.png" /></p>
+<ol>
+<li>
+<p><strong>Almacenamiento en Bloque (Amazon EBS):</strong></p>
+<ul>
+<li>Expone volúmenes de disco crudos divididos en bloques de tamaño fijo (ej. 4 KB).</li>
+<li>El sistema operativo anfitrión le da formato (<code>ext4</code>, <code>xfs</code>, <code>NTFS</code>).</li>
+<li>Muy baja latencia (sub-milisegundo), conectado directamente a una instancia EC2.</li>
+<li><strong>Caso típico:</strong> Discos de sistema operativo y bases de datos transaccionales (OLTP).</li>
+</ul>
+</li>
+<li>
+<p><strong>Almacenamiento de Ficheros (Amazon EFS / Amazon FSx):</strong></p>
+<ul>
+<li>Sistema jerárquico tradicional de carpetas y ficheros.</li>
+<li>Se monta en red mediante protocolos estándar (<strong>NFSv4</strong> para Linux o <strong>SMB</strong> para Windows).</li>
+<li>Acceso concurrente de cientos de máquinas a los mismos archivos.</li>
+<li><strong>Caso típico:</strong> Servidores de ficheros corporativos y sistemas CMS compartidos.</li>
+</ul>
+</li>
+<li>
+<p><strong>Almacenamiento de Objetos (Amazon S3):</strong></p>
+<ul>
+<li>Repositorio plano (<em>flat namespace</em>) donde los datos se almacenan como <strong>objetos</strong>.</li>
+<li>Cada objeto tiene sus datos binarios (<em>payload</em>), una clave única (<em>Key</em>) y metadatos descriptivos.</li>
+<li>Acceso universal mediante <strong>API REST sobre HTTP/HTTPS</strong>.</li>
+<li><strong>Caso típico:</strong> Copias de seguridad, lagos de datos (<em>Data Lakes</em>), sitios web estáticos y ficheros multimedia.</li>
+</ul>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">¿Cómo entender la diferencia entre ficheros y objetos?</p>
+<ul>
+<li><strong>Un sistema de archivos tradicional</strong> es como un <strong>archivador de oficina con carpetas y subcarpetas</strong>: para encontrar un papel necesitas la ruta jerárquica exacta (<code>/año/mes/factura.pdf</code>). Si alguien renombra una carpeta intermedia, se rompen los enlaces.</li>
+<li><strong>Un almacén de objetos como S3</strong> funciona como el <strong>guardarropa de un teatro</strong>: entregas tu abrigo (los datos), le colocan una etiqueta con metadatos (color, propietario) y te entregan una ficha única (la clave o ID). No necesitas saber en qué percha física cuelgan tu abrigo; al presentar tu ficha, te devuelven el objeto exacto de forma instantánea.</li>
+</ul>
+</div>
+<hr />
+<h2 id="comparativa-tecnica">Comparativa Técnica<a class="headerlink" href="#comparativa-tecnica" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Característica</th>
+<th style="text-align: left;">Bloque (EBS)</th>
+<th style="text-align: left;">Ficheros (EFS / FSx)</th>
+<th style="text-align: left;">Objetos (S3)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Unidad mínima</strong></td>
+<td style="text-align: left;">Bloque de tamaño fijo</td>
+<td style="text-align: left;">Fichero en árbol jerárquico</td>
+<td style="text-align: left;">Objeto discreto (Datos + Metadatos)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Identificador</strong></td>
+<td style="text-align: left;">Dirección lógica (LBA)</td>
+<td style="text-align: left;">Ruta jerárquica (<code>/var/log/...</code>)</td>
+<td style="text-align: left;">Clave única dentro del bucket (<code>URI</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Protocolo</strong></td>
+<td style="text-align: left;">NVMe / iSCSI / canal local</td>
+<td style="text-align: left;">NFS / SMB en red</td>
+<td style="text-align: left;">API REST (HTTP / HTTPS)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Latencia</strong></td>
+<td style="text-align: left;">Sub-milisegundo</td>
+<td style="text-align: left;">Pocos milisegundos</td>
+<td style="text-align: left;">Decenas de milisegundos</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Escalabilidad</strong></td>
+<td style="text-align: left;">Hasta el tamaño del volumen</td>
+<td style="text-align: left;">Elástica (Petabytes)</td>
+<td style="text-align: left;">Prácticamente ilimitada</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Coste por GB</strong></td>
+<td style="text-align: left;">Alto</td>
+<td style="text-align: left;">Medio-Alto</td>
+<td style="text-align: left;"><strong>Muy bajo</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Modificación parcial</strong></td>
+<td style="text-align: left;"><strong>Sí</strong> (sobrescribe sectores)</td>
+<td style="text-align: left;"><strong>Sí</strong> (modifica bytes)</td>
+<td style="text-align: left;"><strong>No</strong> (reescritura completa)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="casos-de-uso-del-almacenamiento-en-aws">Casos de Uso del Almacenamiento en AWS<a class="headerlink" href="#casos-de-uso-del-almacenamiento-en-aws" title="Permanent link">&para;</a></h2>
+<p>Una regla práctica para elegir el servicio idóneo según la necesidad del proyecto:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Si tu proyecto necesita...</th>
+<th style="text-align: left;">Piensa en utilizar...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Almacenamiento de disco rápido y persistente para instancias EC2 o bases de datos relacionales</td>
+<td style="text-align: left;"><strong>Amazon Elastic Block Store (Amazon EBS)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Una plataforma elástica, duradera y de bajo coste accesible vía web para backups, web estática o multimedia</td>
+<td style="text-align: left;"><strong>Amazon Simple Storage Service (Amazon S3)</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Archivado a muy largo plazo y custodia legal con el coste más bajo posible</td>
+<td style="text-align: left;"><strong>Amazon S3 Glacier</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">Un sistema de ficheros compartido accesible por múltiples servidores Linux mediante red NFS</td>
+<td style="text-align: left;"><strong>Amazon Elastic File System (Amazon EFS)</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="el-principio-de-inmutabilidad-en-objetos">El Principio de Inmutabilidad en Objetos<a class="headerlink" href="#el-principio-de-inmutabilidad-en-objetos" title="Permanent link">&para;</a></h2>
+<p>Los objetos en Amazon S3 son tratados como <strong>entidades atómicas e inmutables</strong>:</p>
+<p><img alt="Almacenamiento en bloque vs Almacenamiento de objetos" src="images/bloque_vs_objeto.png" /></p>
+<div class="admonition warning">
+<p class="admonition-title">¿Qué ocurre al modificar un único carácter en un archivo de 1 GB?</p>
+<ul>
+<li><strong>En Bloque (EBS):</strong> El sistema operativo solo sobrescribe el bloque de 4 KB donde está ese carácter. El resto de bloques no se tocan.</li>
+<li><strong>En Objetos (S3):</strong> No se puede modificar un byte <em>in-place</em>. Es necesario <strong>volver a subir el archivo completo de 1 GB</strong>, reemplazando la versión anterior.</li>
+</ul>
+</div>
+<p>Por este motivo, S3 está optimizado para el patrón <strong>WORM</strong> (<em>Write Once, Read Many</em>): escribir una vez y leer millones de veces.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["header.autohide", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

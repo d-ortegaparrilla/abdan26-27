@@ -1,0 +1,17 @@
+/* Mejorar el tamaño y centrado de los diagramas Mermaid en MkDocs Material */
+.mermaid {
+    display: flex;
+    justify-content: center;
+    margin: 1.5em 0;
+}
+
+.mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+    min-width: min(100%, 680px);
+}
+
+/* Tipografía de las cajas de nodos en diagramas */
+.mermaid text {
+    font-family: var(--md-text-font, "Roboto", sans-serif) !important;
+}

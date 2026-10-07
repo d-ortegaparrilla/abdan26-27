@@ -1,0 +1,1745 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Apuntes del módulo de Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN) - CE Recursos y Servicios en la Nube">
+      
+      
+        <meta name="author" content="David Ortega Parrilla">
+      
+      
+        <link rel="canonical" href="https://d-ortegaparrilla.github.io/abdan26-27/UT1/practicas/practica-1-operaciones-basicas.html">
+      
+      
+        <link rel="prev" href="../02-arquitectura-s3.html">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Práctica 1.1: Operaciones básicas con Amazon S3 - Administración de Bases de Datos y Almacenamiento en la Nube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#practica-11-operaciones-basicas-y-avanzadas-con-amazon-s3-consola-grafica-y-aws-cli" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-header__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Administración de Bases de Datos y Almacenamiento en la Nube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Práctica 1.1: Operaciones básicas con Amazon S3
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../planificacion.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Planificación del Módulo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-nav__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    Administración de Bases de Datos y Almacenamiento en la Nube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../planificacion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planificación del Módulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-arquitectura-s3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Arquitectura y Componentes de Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-clases-almacenamiento.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Clases de Almacenamiento y S3 Glacier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="practica-1-operaciones-basicas.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-objetivos-del-laboratorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Objetivos del Laboratorio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-requisitos-previos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Requisitos Previos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-parte-i-operaciones-desde-la-consola-grafica-de-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Parte I: Operaciones desde la Consola Gráfica de AWS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Parte I: Operaciones desde la Consola Gráfica de AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-11-creacion-del-bucket-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 1.1: Creación del bucket principal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-12-carga-de-archivos-carpetas-y-exploracion-de-identificadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 1.2: Carga de archivos, carpetas y exploración de identificadores
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-parte-ii-comandos-de-alto-nivel-vs-bajo-nivel-y-metadatos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Parte II: Comandos de Alto Nivel vs. Bajo Nivel y Metadatos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Parte II: Comandos de Alto Nivel vs. Bajo Nivel y Metadatos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-21-verificacion-de-identidad-y-credenciales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 2.1: Verificación de identidad y credenciales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-22-creacion-de-un-segundo-bucket-por-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 2.2: Creación de un segundo bucket por CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-23-inyeccion-de-metadatos-de-usuario-x-amz-meta-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 2.3: Inyección de Metadatos de Usuario (x-amz-meta-*)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-parte-iii-consultas-avanzadas-y-filtrado-con-jmespath-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Parte III: Consultas Avanzadas y Filtrado con JMESPath (--query)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Parte III: Consultas Avanzadas y Filtrado con JMESPath (--query)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-31-generacion-de-archivos-de-muestra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 3.1: Generación de archivos de muestra
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-32-consultas-estructuradas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 3.2: Consultas estructuradas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-parte-iv-clases-de-almacenamiento-y-el-experimento-de-glacier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Parte IV: Clases de Almacenamiento y el Experimento de Glacier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Parte IV: Clases de Almacenamiento y el Experimento de Glacier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-41-asignacion-de-clases-en-subida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 4.1: Asignación de clases en subida
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-42-la-trampa-de-glacier-error-en-caliente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 4.2: La trampa de Glacier (Error en caliente)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-parte-v-seguridad-practica-object-url-vs-url-prefirmada-presigned-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Parte V: Seguridad Práctica: Object URL vs. URL Prefirmada (Presigned URL)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Parte V: Seguridad Práctica: Object URL vs. URL Prefirmada (Presigned URL)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-51-probar-el-acceso-publico-bloqueado-object-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 5.1: Probar el acceso público bloqueado (Object URL)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-52-comparticion-segura-y-temporal-con-una-presigned-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 5.2: Compartición segura y temporal con una Presigned URL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-parte-vi-sincronizacion-avanzada-con-filtros-y-flag-destructivo-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Parte VI: Sincronización Avanzada con Filtros y Flag Destructivo (--delete)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Parte VI: Sincronización Avanzada con Filtros y Flag Destructivo (--delete)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-61-sincronizacion-selectiva-con-exclude-e-include" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 6.1: Sincronización selectiva con --exclude e --include
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-62-el-peligro-del-flag-delete-espejo-estricto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 6.2: El peligro del flag --delete (Espejo estricto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-parte-vii-reto-de-automatizacion-en-bash-backup_s3sh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Parte VII: Reto de Automatización en Bash (backup_s3.sh)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-limpieza-de-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Limpieza de Recursos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-entregables-y-memoria-tecnica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Entregables y Memoria Técnica
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-objetivos-del-laboratorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Objetivos del Laboratorio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-requisitos-previos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Requisitos Previos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-parte-i-operaciones-desde-la-consola-grafica-de-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Parte I: Operaciones desde la Consola Gráfica de AWS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Parte I: Operaciones desde la Consola Gráfica de AWS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-11-creacion-del-bucket-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 1.1: Creación del bucket principal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-12-carga-de-archivos-carpetas-y-exploracion-de-identificadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 1.2: Carga de archivos, carpetas y exploración de identificadores
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-parte-ii-comandos-de-alto-nivel-vs-bajo-nivel-y-metadatos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Parte II: Comandos de Alto Nivel vs. Bajo Nivel y Metadatos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Parte II: Comandos de Alto Nivel vs. Bajo Nivel y Metadatos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-21-verificacion-de-identidad-y-credenciales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 2.1: Verificación de identidad y credenciales
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-22-creacion-de-un-segundo-bucket-por-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 2.2: Creación de un segundo bucket por CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-23-inyeccion-de-metadatos-de-usuario-x-amz-meta-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 2.3: Inyección de Metadatos de Usuario (x-amz-meta-*)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-parte-iii-consultas-avanzadas-y-filtrado-con-jmespath-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Parte III: Consultas Avanzadas y Filtrado con JMESPath (--query)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Parte III: Consultas Avanzadas y Filtrado con JMESPath (--query)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-31-generacion-de-archivos-de-muestra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 3.1: Generación de archivos de muestra
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-32-consultas-estructuradas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 3.2: Consultas estructuradas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-parte-iv-clases-de-almacenamiento-y-el-experimento-de-glacier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Parte IV: Clases de Almacenamiento y el Experimento de Glacier
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Parte IV: Clases de Almacenamiento y el Experimento de Glacier">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-41-asignacion-de-clases-en-subida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 4.1: Asignación de clases en subida
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-42-la-trampa-de-glacier-error-en-caliente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 4.2: La trampa de Glacier (Error en caliente)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-parte-v-seguridad-practica-object-url-vs-url-prefirmada-presigned-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Parte V: Seguridad Práctica: Object URL vs. URL Prefirmada (Presigned URL)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Parte V: Seguridad Práctica: Object URL vs. URL Prefirmada (Presigned URL)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-51-probar-el-acceso-publico-bloqueado-object-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 5.1: Probar el acceso público bloqueado (Object URL)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-52-comparticion-segura-y-temporal-con-una-presigned-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 5.2: Compartición segura y temporal con una Presigned URL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-parte-vi-sincronizacion-avanzada-con-filtros-y-flag-destructivo-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Parte VI: Sincronización Avanzada con Filtros y Flag Destructivo (--delete)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Parte VI: Sincronización Avanzada con Filtros y Flag Destructivo (--delete)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tarea-61-sincronizacion-selectiva-con-exclude-e-include" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 6.1: Sincronización selectiva con --exclude e --include
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tarea-62-el-peligro-del-flag-delete-espejo-estricto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tarea 6.2: El peligro del flag --delete (Espejo estricto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-parte-vii-reto-de-automatizacion-en-bash-backup_s3sh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Parte VII: Reto de Automatización en Bash (backup_s3.sh)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-limpieza-de-recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Limpieza de Recursos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-entregables-y-memoria-tecnica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Entregables y Memoria Técnica
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="practica-11-operaciones-basicas-y-avanzadas-con-amazon-s3-consola-grafica-y-aws-cli">Práctica 1.1: Operaciones Básicas y Avanzadas con Amazon S3 (Consola Gráfica y AWS CLI)<a class="headerlink" href="#practica-11-operaciones-basicas-y-avanzadas-con-amazon-s3-consola-grafica-y-aws-cli" title="Permanent link">&para;</a></h1>
+<ul>
+<li><strong>Módulo:</strong> Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN)</li>
+<li><strong>Unidad de Trabajo:</strong> UT1. Servicios de almacenamiento de objetos en la nube (Amazon S3)</li>
+<li><strong>Resultados de Aprendizaje asociados:</strong><ul>
+<li><strong>RA1.a:</strong> Comprobación de operaciones de almacenamiento de objetos frente a requisitos técnicos.</li>
+<li><strong>RA2.a:</strong> Definición de nombres de buckets y etiquetas de metadatos según limitaciones técnicas.</li>
+<li><strong>RA2.b:</strong> Definición de clases de almacenamiento y objetos según requisitos de latencia y coste.</li>
+<li><strong>RA2.c:</strong> Selección de región geográfica por latencia, coste y residencia.</li>
+<li><strong>RA2.e:</strong> Configuración de parámetros de visibilidad, acceso y generación de credenciales temporales.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="1-objetivos-del-laboratorio">1. Objetivos del Laboratorio<a class="headerlink" href="#1-objetivos-del-laboratorio" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Gestionar depósitos (<em>buckets</em>) y objetos desde la <strong>Consola Gráfica de AWS</strong> y mediante comandos de terminal (<strong>AWS CLI</strong>).</li>
+<li>Contrastar el uso de comandos de alto nivel (<code>aws s3</code>) frente a comandos directos de la API REST (<code>aws s3api</code>).</li>
+<li>Inyectar e inspeccionar <strong>metadatos de usuario</strong> personalizados y cabeceras del sistema en formato JSON.</li>
+<li>Realizar consultas y filtrado estructurado sobre inventarios de objetos mediante <strong>JMESPath (<code>--query</code>)</strong>.</li>
+<li>Experimentar con las distintas <strong>clases de almacenamiento</strong> (<code>Standard</code>, <code>Intelligent-Tiering</code>, <code>One Zone-IA</code>) y constatar en la práctica el bloqueo de lectura en objetos archivados en <strong>Amazon S3 Glacier</strong>.</li>
+<li>Verificar el mecanismo de seguridad de <strong>URLs Prefirmadas (<em>Presigned URLs</em>)</strong> para compartir datos confidenciales sin desproteger el bucket.</li>
+<li>Aplicar sincronizaciones selectivas con exclusión de patrones y el flag de réplica destructiva (<code>--delete</code>).</li>
+<li>Desarrollar un script en Bash para automatizar copias de seguridad locales hacia la nube.</li>
+</ol>
+<hr />
+<h2 id="2-requisitos-previos">2. Requisitos Previos<a class="headerlink" href="#2-requisitos-previos" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Cuenta activa en <strong>AWS Academy Learner Lab</strong>.</li>
+<li>Terminal de desarrollo (Linux Mint, Ubuntu o WSL2 en Windows) con <strong>AWS CLI v2</strong> instalado.</li>
+<li>Herramientas auxiliares de terminal: <code>tar</code>, <code>curl</code>, <code>nano</code> / <code>vim</code>.</li>
+</ul>
+<hr />
+<h2 id="3-parte-i-operaciones-desde-la-consola-grafica-de-aws">3. Parte I: Operaciones desde la Consola Gráfica de AWS<a class="headerlink" href="#3-parte-i-operaciones-desde-la-consola-grafica-de-aws" title="Permanent link">&para;</a></h2>
+<h3 id="tarea-11-creacion-del-bucket-principal">Tarea 1.1: Creación del bucket principal<a class="headerlink" href="#tarea-11-creacion-del-bucket-principal" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Accede a la consola de <strong>Amazon S3</strong> en AWS Academy.</li>
+<li>Pulsa en <strong>Crear bucket (Create bucket)</strong> y aplica los siguientes parámetros:<ul>
+<li><strong>Tipo de depósito:</strong> <em>General Purpose Bucket</em> (Shared Global Namespace).</li>
+<li><strong>Nombre del bucket:</strong> Debe ser un identificador global único. Utiliza la nomenclatura:<br />
+<code>abdan-NOMBRE-APELLIDO-lab1</code> <em>(en minúsculas, números y guiones)</em>.</li>
+<li><strong>Región de AWS:</strong> <code>us-east-1</code> (Norte de Virginia) o <code>us-west-2</code> (Oregón) —las permitidas por Learner Lab—.</li>
+<li><strong>Propiedad de objetos:</strong> Mantener <strong>ACL deshabilitadas (recomendado)</strong>.</li>
+<li><strong>Bloqueo de acceso público:</strong> Dejar marcada la casilla <strong>Bloquear todo el acceso público</strong> (<em>Block all public access</em>).</li>
+<li><strong>Cifrado predeterminado:</strong> Cifrado del lado del servidor con claves administradas por S3 (<strong>SSE-S3</strong>).</li>
+</ul>
+</li>
+<li>Pulsa <strong>Crear bucket</strong> al final de la página.</li>
+</ol>
+<h3 id="tarea-12-carga-de-archivos-carpetas-y-exploracion-de-identificadores">Tarea 1.2: Carga de archivos, carpetas y exploración de identificadores<a class="headerlink" href="#tarea-12-carga-de-archivos-carpetas-y-exploracion-de-identificadores" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Entra al bucket recién creado.</li>
+<li>Sube tres archivos de prueba de distinta extensión (un documento de texto <code>.txt</code>, un PDF <code>.pdf</code> y una imagen <code>.png</code> o <code>.jpg</code>).</li>
+<li>Pulsa en <strong>Crear carpeta (Create folder)</strong> y crea una subcarpeta lógica denominada <code>documentos/</code>.</li>
+<li>Accede a la carpeta creada y sube un nuevo archivo en su interior.</li>
+<li>Selecciona el archivo que has subido dentro de <code>documentos/</code> y observa la cabecera de detalles:<ul>
+<li>Localiza y copia en un bloc de notas sus tres direcciones: <strong>S3 URI</strong>, <strong>Amazon Resource Name (ARN)</strong> y <strong>Object URL</strong>.</li>
+<li>Revisa la pestaña <strong>Propiedades (Properties)</strong> para verificar la clase de almacenamiento asignada (<code>Standard</code>) y el hash <strong>ETag</strong>.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="4-parte-ii-comandos-de-alto-nivel-vs-bajo-nivel-y-metadatos">4. Parte II: Comandos de Alto Nivel vs. Bajo Nivel y Metadatos<a class="headerlink" href="#4-parte-ii-comandos-de-alto-nivel-vs-bajo-nivel-y-metadatos" title="Permanent link">&para;</a></h2>
+<p>Abre tu terminal local.</p>
+<h3 id="tarea-21-verificacion-de-identidad-y-credenciales">Tarea 2.1: Verificación de identidad y credenciales<a class="headerlink" href="#tarea-21-verificacion-de-identidad-y-credenciales" title="Permanent link">&para;</a></h3>
+<p>Asegúrate de que tus credenciales de AWS Academy están activas en <code>~/.aws/credentials</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>aws<span class="w"> </span>sts<span class="w"> </span>get-caller-identity
+</span></code></pre></div>
+<p>Verifica que el comando devuelve tu <code>UserId</code>, <code>Account</code> y el ARN de tu rol de laboratorio.</p>
+<h3 id="tarea-22-creacion-de-un-segundo-bucket-por-cli">Tarea 2.2: Creación de un segundo bucket por CLI<a class="headerlink" href="#tarea-22-creacion-de-un-segundo-bucket-por-cli" title="Permanent link">&para;</a></h3>
+<p>Crea un segundo bucket destinado a pruebas avanzadas desde la terminal:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Define una variable con tu prefijo para no equivocarte</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">MI_BUCKET</span><span class="o">=</span><span class="s2">"abdan-</span><span class="k">$(</span>whoami<span class="k">)</span><span class="s2">-cli"</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Crear el bucket con el comando de alto nivel 'mb' (Make Bucket)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>aws<span class="w"> </span>s3<span class="w"> </span>mb<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span><span class="w"> </span>--region<span class="w"> </span>us-east-1
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Comprobar que aparece en tu cuenta</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls
+</span></code></pre></div>
+<h3 id="tarea-23-inyeccion-de-metadatos-de-usuario-x-amz-meta-">Tarea 2.3: Inyección de Metadatos de Usuario (<code>x-amz-meta-*</code>)<a class="headerlink" href="#tarea-23-inyeccion-de-metadatos-de-usuario-x-amz-meta-" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Crea un fichero de informe local:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Informe confidencial de auditoría de sistemas 2026"</span><span class="w"> </span>&gt;<span class="w"> </span>informe_seguridad.txt
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Sube el archivo inyectando <strong>metadatos de usuario personalizados</strong> mediante el parámetro <code>--metadata</code>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>informe_seguridad.txt<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/auditorias/informe_seguridad.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--metadata<span class="w"> </span><span class="s2">"autor=tu-nombre,departamento=ciberseguridad,clasificacion=confidencial"</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p><strong>Inspección con comando de bajo nivel (<code>aws s3api</code>):</strong><br />
+   Utiliza <code>head-object</code> para obtener las cabeceras HTTP y los metadatos almacenados:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>aws<span class="w"> </span>s3api<span class="w"> </span>head-object<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--bucket<span class="w"> </span><span class="nv">$MI_BUCKET</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--key<span class="w"> </span>auditorias/informe_seguridad.txt
+</span></code></pre></div></p>
+</li>
+</ol>
+<div class="admonition question">
+<p class="admonition-title">Pregunta de reflexión 1</p>
+<p>Examina el JSON devuelto por <code>head-object</code>. ¿Bajo qué clave aparecen los metadatos personalizados que has introducido? ¿Qué información técnica del archivo acompaña a la respuesta?</p>
+</div>
+<hr />
+<h2 id="5-parte-iii-consultas-avanzadas-y-filtrado-con-jmespath-query">5. Parte III: Consultas Avanzadas y Filtrado con JMESPath (<code>--query</code>)<a class="headerlink" href="#5-parte-iii-consultas-avanzadas-y-filtrado-con-jmespath-query" title="Permanent link">&para;</a></h2>
+<p>En entornos de producción con miles de objetos, la administración requiere consultar atributos concretos sin saturar la salida.</p>
+<h3 id="tarea-31-generacion-de-archivos-de-muestra">Tarea 3.1: Generación de archivos de muestra<a class="headerlink" href="#tarea-31-generacion-de-archivos-de-muestra" title="Permanent link">&para;</a></h3>
+<p>Genera en local varios archivos con tamaños deliberadamente distintos:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>./muestras
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Texto breve"</span><span class="w"> </span>&gt;<span class="w"> </span>./muestras/pequeno.txt
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>head<span class="w"> </span>-c<span class="w"> </span><span class="m">2048</span><span class="w"> </span>/dev/urandom<span class="w"> </span>&gt;<span class="w"> </span>./muestras/medio_2kb.dat
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>head<span class="w"> </span>-c<span class="w"> </span><span class="m">10240</span><span class="w"> </span>/dev/urandom<span class="w"> </span>&gt;<span class="w"> </span>./muestras/grande_10kb.dat
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># Subir los archivos a S3</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>./muestras/<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/muestras/<span class="w"> </span>--recursive
+</span></code></pre></div>
+<h3 id="tarea-32-consultas-estructuradas">Tarea 3.2: Consultas estructuradas<a class="headerlink" href="#tarea-32-consultas-estructuradas" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Listar únicamente las claves (nombres) y el tamaño formateado en tabla:</strong>
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>aws<span class="w"> </span>s3api<span class="w"> </span>list-objects-v2<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span>--bucket<span class="w"> </span><span class="nv">$MI_BUCKET</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>--query<span class="w"> </span><span class="s2">"Contents[].[Key, Size, StorageClass]"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span>--output<span class="w"> </span>table
+</span></code></pre></div></p>
+</li>
+<li>
+<p><strong>Filtrar con condición JMESPath (solo objetos que pesen más de 1.000 bytes):</strong>
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>aws<span class="w"> </span>s3api<span class="w"> </span>list-objects-v2<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span>--bucket<span class="w"> </span><span class="nv">$MI_BUCKET</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span>--query<span class="w"> </span><span class="s2">"Contents[?Size &gt; \`1000\`].[Key, Size]"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span>--output<span class="w"> </span>table
+</span></code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="6-parte-iv-clases-de-almacenamiento-y-el-experimento-de-glacier">6. Parte IV: Clases de Almacenamiento y el Experimento de Glacier<a class="headerlink" href="#6-parte-iv-clases-de-almacenamiento-y-el-experimento-de-glacier" title="Permanent link">&para;</a></h2>
+<p>Vamos a comprobar en la práctica cómo responde S3 ante distintas clases de almacenamiento y qué ocurre al intentar leer datos en frío.</p>
+<h3 id="tarea-41-asignacion-de-clases-en-subida">Tarea 4.1: Asignación de clases en subida<a class="headerlink" href="#tarea-41-asignacion-de-clases-en-subida" title="Permanent link">&para;</a></h3>
+<p>Sube tres archivos asignándoles diferentes clases de almacenamiento:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 1. Clase S3 Intelligent-Tiering</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>./muestras/pequeno.txt<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/clases/archivo_it.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span>--storage-class<span class="w"> </span>INTELLIGENT_TIERING
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># 2. Clase S3 One Zone-IA (Acceso infrecuente en una sola AZ)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>./muestras/pequeno.txt<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/clases/archivo_onezone.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span>--storage-class<span class="w"> </span>ONEZONE_IA
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># 3. Clase S3 Glacier Flexible Retrieval (Archivado a largo plazo)</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>./muestras/pequeno.txt<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/clases/archivo_glacier.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span>--storage-class<span class="w"> </span>GLACIER
+</span></code></pre></div>
+<p>Comprueba las clases asignadas con una consulta estructurada:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>aws<span class="w"> </span>s3api<span class="w"> </span>list-objects-v2<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span>--bucket<span class="w"> </span><span class="nv">$MI_BUCKET</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span>--prefix<span class="w"> </span>clases/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span>--query<span class="w"> </span><span class="s2">"Contents[].[Key, StorageClass]"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span>--output<span class="w"> </span>table
+</span></code></pre></div></p>
+<h3 id="tarea-42-la-trampa-de-glacier-error-en-caliente">Tarea 4.2: La trampa de Glacier (Error en caliente)<a class="headerlink" href="#tarea-42-la-trampa-de-glacier-error-en-caliente" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Intenta descargar en local el archivo almacenado en <code>ONEZONE_IA</code>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/clases/archivo_onezone.txt<span class="w"> </span>./descarga_onezone.txt
+</span></code></pre></div>
+   <em>(La descarga se completa de forma instantánea en milisegundos).</em></p>
+</li>
+<li>
+<p>Ahora intenta descargar el archivo almacenado en <strong>Glacier</strong>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/clases/archivo_glacier.txt<span class="w"> </span>./descarga_glacier.txt
+</span></code></pre></div></p>
+</li>
+</ol>
+<div class="admonition failure">
+<p class="admonition-title">¡Error esperado en Glacier!</p>
+<p>El comando fallará mostrando un error similar a:<br />
+<code>fatal error: An error occurred (InvalidObjectState) when calling the GetObject operation: The operation is not valid for the object's storage class</code></p>
+</div>
+<div class="admonition question">
+<p class="admonition-title">Pregunta de reflexión 2</p>
+<ul>
+<li>¿Por qué el comando <code>aws s3 cp</code> falla con el error <code>InvalidObjectState</code> al intentar descargar el archivo de Glacier?</li>
+<li>¿Qué procedimiento y qué comando (<code>aws s3api restore-object</code>) habría que ejecutar antes de poder leer dicho archivo? ¿Cuánto tardaría en estar disponible en el nivel Estándar?</li>
+</ul>
+</div>
+<hr />
+<h2 id="7-parte-v-seguridad-practica-object-url-vs-url-prefirmada-presigned-url">7. Parte V: Seguridad Práctica: Object URL vs. URL Prefirmada (<em>Presigned URL</em>)<a class="headerlink" href="#7-parte-v-seguridad-practica-object-url-vs-url-prefirmada-presigned-url" title="Permanent link">&para;</a></h2>
+<h3 id="tarea-51-probar-el-acceso-publico-bloqueado-object-url">Tarea 5.1: Probar el acceso público bloqueado (Object URL)<a class="headerlink" href="#tarea-51-probar-el-acceso-publico-bloqueado-object-url" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Genera un fichero de datos sensibles:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"CLAVE_SECRETA_API=123456789_XYZ"</span><span class="w"> </span>&gt;<span class="w"> </span>secreto.env
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>secreto.env<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/privado/secreto.env
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Construye la <strong>Object URL</strong> de ese archivo según el formato estándar:<br />
+<code>https://NOMBRE_DE_TU_BUCKET.s3.us-east-1.amazonaws.com/privado/secreto.env</code></p>
+</li>
+<li>
+<p>Abre una ventana de <strong>incógnito</strong> en tu navegador web y pega esa dirección URL.</p>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Resultado esperado</p>
+<p>El navegador debe responder con un error XML <strong><code>403 Forbidden</code> (<code>AccessDenied</code>)</strong>, demostrando que el <em>Block Public Access</em> y las listas de control de acceso privadas están protegiendo el bucket.</p>
+</div>
+<h3 id="tarea-52-comparticion-segura-y-temporal-con-una-presigned-url">Tarea 5.2: Compartición segura y temporal con una Presigned URL<a class="headerlink" href="#tarea-52-comparticion-segura-y-temporal-con-una-presigned-url" title="Permanent link">&para;</a></h3>
+<p>Imagina que debes entregar ese archivo a un cliente o compañero de equipo que <strong>no tiene cuenta ni credenciales de AWS</strong>, durante solo 5 minutos:</p>
+<ol>
+<li>
+<p>Genera una <strong>URL prefirmada válida durante 300 segundos (5 minutos)</strong> desde tu terminal:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>presign<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/privado/secreto.env<span class="w"> </span>--expires-in<span class="w"> </span><span class="m">300</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Copia la URL larguísima que aparece en la terminal (observa que incluye en los parámetros <code>X-Amz-Signature</code>, <code>X-Amz-Credential</code> y <code>X-Amz-Expires</code>).</p>
+</li>
+<li>Abre de nuevo tu navegador web en <strong>modo incógnito</strong> y pega la URL prefirmada.</li>
+<li><strong>Verificación:</strong> El archivo se descargará o abrirá inmediatamente en pantalla con código HTTP <code>200 OK</code>.</li>
+<li>Si esperas más de 5 minutos e intentas recargar la página, ¿qué ocurre? Comprueba cómo el enlace expira automáticamente (<code>Request has expired</code>).</li>
+</ol>
+<hr />
+<h2 id="8-parte-vi-sincronizacion-avanzada-con-filtros-y-flag-destructivo-delete">8. Parte VI: Sincronización Avanzada con Filtros y Flag Destructivo (<code>--delete</code>)<a class="headerlink" href="#8-parte-vi-sincronizacion-avanzada-con-filtros-y-flag-destructivo-delete" title="Permanent link">&para;</a></h2>
+<h3 id="tarea-61-sincronizacion-selectiva-con-exclude-e-include">Tarea 6.1: Sincronización selectiva con <code>--exclude</code> e <code>--include</code><a class="headerlink" href="#tarea-61-sincronizacion-selectiva-con-exclude-e-include" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Crea un directorio local con varios ficheros:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>./proyecto_local
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>touch<span class="w"> </span>./proyecto_local/app.py
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>touch<span class="w"> </span>./proyecto_local/config.json
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>touch<span class="w"> </span>./proyecto_local/temp_cache.tmp
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>touch<span class="w"> </span>./proyecto_local/error.log
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Sincroniza hacia S3 <strong>excluyendo todos los ficheros temporales (<code>*.tmp</code>)</strong>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>sync<span class="w"> </span>./proyecto_local/<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/proyecto/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span>--exclude<span class="w"> </span><span class="s2">"*.tmp"</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Comprueba los archivos que han subido a S3:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/proyecto/
+</span></code></pre></div>
+   <em>(Verifica que <code>temp_cache.tmp</code> no se ha subido).</em></p>
+</li>
+</ol>
+<h3 id="tarea-62-el-peligro-del-flag-delete-espejo-estricto">Tarea 6.2: El peligro del flag <code>--delete</code> (Espejo estricto)<a class="headerlink" href="#tarea-62-el-peligro-del-flag-delete-espejo-estricto" title="Permanent link">&para;</a></h3>
+<p>Por defecto, <code>aws s3 sync</code> nunca borra archivos en el destino si se eliminan en el origen. Para forzar un reflejo idéntico se utiliza <code>--delete</code>:</p>
+<ol>
+<li>
+<p>Elimina un archivo localmente:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>rm<span class="w"> </span>./proyecto_local/error.log
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Ejecuta una sincronización normal sin <code>--delete</code>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>sync<span class="w"> </span>./proyecto_local/<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/proyecto/<span class="w"> </span>--exclude<span class="w"> </span><span class="s2">"*.tmp"</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/proyecto/
+</span></code></pre></div>
+   <em>(Observa que <code>error.log</code> sigue existiendo en el bucket).</em></p>
+</li>
+<li>
+<p>Ahora ejecuta la sincronización con <code>--delete</code>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>sync<span class="w"> </span>./proyecto_local/<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/proyecto/<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span>--exclude<span class="w"> </span><span class="s2">"*.tmp"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">    </span>--delete
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>/proyecto/
+</span></code></pre></div>
+   <em>(Comprueba que ahora <code>error.log</code> ha sido eliminado automáticamente del bucket).</em></p>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Peligro en producción</p>
+<p>El flag <code>--delete</code> debe utilizarse con extrema precaución. Si un script local borra accidentalmente el directorio de origen y lanza un sync con <code>--delete</code>, borrará automáticamente todas las copias remotas de S3.</p>
+</div>
+<hr />
+<h2 id="9-parte-vii-reto-de-automatizacion-en-bash-backup_s3sh">9. Parte VII: Reto de Automatización en Bash (<code>backup_s3.sh</code>)<a class="headerlink" href="#9-parte-vii-reto-de-automatizacion-en-bash-backup_s3sh" title="Permanent link">&para;</a></h2>
+<p>Crea un script ejecutable en Bash que automatice el empaquetado y subida de copias de seguridad hacia Amazon S3.</p>
+<ol>
+<li>
+<p>Crea el script <code>backup_s3.sh</code>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>nano<span class="w"> </span>backup_s3.sh
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Pega el siguiente código adaptando la variable <code>BUCKET_DESTINO</code> con el nombre de tu bucket de CLI:</p>
+</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="ch">#!/usr/bin/env bash</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="nb">set</span><span class="w"> </span>-euo<span class="w"> </span>pipefail
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># -------------------------------------------------------------</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="c1"># Script de Backup Automatizado a Amazon S3</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="c1"># Módulo ABDAN - CE Recursos y Servicios en la Nube</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="c1"># -------------------------------------------------------------</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="c1"># Configuración</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="nv">BUCKET_DESTINO</span><span class="o">=</span><span class="s2">"abdan-</span><span class="k">$(</span>whoami<span class="k">)</span><span class="s2">-cli"</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="nv">DIRECTORIO_A_RESPALDAR</span><span class="o">=</span><span class="s2">"./proyecto_local"</span>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="nv">FECHA</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+<span class="s2">"%Y%m%d_%H%M%S"</span><span class="k">)</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="nv">NOMBRE_TAR</span><span class="o">=</span><span class="s2">"backup_</span><span class="si">${</span><span class="nv">FECHA</span><span class="si">}</span><span class="s2">.tar.gz"</span>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="nv">RUTA_TAR</span><span class="o">=</span><span class="s2">"/tmp/</span><span class="si">${</span><span class="nv">NOMBRE_TAR</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"==&gt; Iniciando proceso de backup: </span><span class="si">${</span><span class="nv">FECHA</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a>
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="c1"># 1. Comprimir el directorio</span>
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"1. Empaquetando </span><span class="si">${</span><span class="nv">DIRECTORIO_A_RESPALDAR</span><span class="si">}</span><span class="s2"> en </span><span class="si">${</span><span class="nv">RUTA_TAR</span><span class="si">}</span><span class="s2">..."</span>
+</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a>tar<span class="w"> </span>-czf<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">RUTA_TAR</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">DIRECTORIO_A_RESPALDAR</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="__span-21-21"><a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a>
+</span><span id="__span-21-22"><a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a><span class="c1"># 2. Subir a S3 con clase STANDARD_IA y metadatos</span>
+</span><span id="__span-21-23"><a id="__codelineno-21-23" name="__codelineno-21-23" href="#__codelineno-21-23"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"2. Subiendo a S3 (Clase: STANDARD_IA)..."</span>
+</span><span id="__span-21-24"><a id="__codelineno-21-24" name="__codelineno-21-24" href="#__codelineno-21-24"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">RUTA_TAR</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="s2">"s3://</span><span class="si">${</span><span class="nv">BUCKET_DESTINO</span><span class="si">}</span><span class="s2">/backups/</span><span class="si">${</span><span class="nv">NOMBRE_TAR</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-25"><a id="__codelineno-21-25" name="__codelineno-21-25" href="#__codelineno-21-25"></a><span class="w">    </span>--storage-class<span class="w"> </span>STANDARD_IA<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-21-26"><a id="__codelineno-21-26" name="__codelineno-21-26" href="#__codelineno-21-26"></a><span class="w">    </span>--metadata<span class="w"> </span><span class="s2">"origen=servidor_local,autor=</span><span class="k">$(</span>whoami<span class="k">)</span><span class="s2">,timestamp=</span><span class="si">${</span><span class="nv">FECHA</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="__span-21-27"><a id="__codelineno-21-27" name="__codelineno-21-27" href="#__codelineno-21-27"></a>
+</span><span id="__span-21-28"><a id="__codelineno-21-28" name="__codelineno-21-28" href="#__codelineno-21-28"></a><span class="c1"># 3. Generar una Presigned URL de 1 hora (3600 s)</span>
+</span><span id="__span-21-29"><a id="__codelineno-21-29" name="__codelineno-21-29" href="#__codelineno-21-29"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"3. Generando enlace de descarga temporal (1 hora)..."</span>
+</span><span id="__span-21-30"><a id="__codelineno-21-30" name="__codelineno-21-30" href="#__codelineno-21-30"></a><span class="nv">URL_DESCARGA</span><span class="o">=</span><span class="k">$(</span>aws<span class="w"> </span>s3<span class="w"> </span>presign<span class="w"> </span><span class="s2">"s3://</span><span class="si">${</span><span class="nv">BUCKET_DESTINO</span><span class="si">}</span><span class="s2">/backups/</span><span class="si">${</span><span class="nv">NOMBRE_TAR</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span>--expires-in<span class="w"> </span><span class="m">3600</span><span class="k">)</span>
+</span><span id="__span-21-31"><a id="__codelineno-21-31" name="__codelineno-21-31" href="#__codelineno-21-31"></a>
+</span><span id="__span-21-32"><a id="__codelineno-21-32" name="__codelineno-21-32" href="#__codelineno-21-32"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"==&gt; ¡Backup completado con éxito!"</span>
+</span><span id="__span-21-33"><a id="__codelineno-21-33" name="__codelineno-21-33" href="#__codelineno-21-33"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"==&gt; Enlace temporal para descarga:"</span>
+</span><span id="__span-21-34"><a id="__codelineno-21-34" name="__codelineno-21-34" href="#__codelineno-21-34"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">URL_DESCARGA</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="__span-21-35"><a id="__codelineno-21-35" name="__codelineno-21-35" href="#__codelineno-21-35"></a>
+</span><span id="__span-21-36"><a id="__codelineno-21-36" name="__codelineno-21-36" href="#__codelineno-21-36"></a><span class="c1"># 4. Limpieza local</span>
+</span><span id="__span-21-37"><a id="__codelineno-21-37" name="__codelineno-21-37" href="#__codelineno-21-37"></a>rm<span class="w"> </span>-f<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">RUTA_TAR</span><span class="si">}</span><span class="s2">"</span>
+</span></code></pre></div>
+<ol>
+<li>
+<p>Asigna permisos de ejecución y pruébalo:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>backup_s3.sh
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>./backup_s3.sh
+</span></code></pre></div></p>
+</li>
+<li>
+<p>Abre el enlace devuelto en tu navegador para verificar que el archivo comprimido se descarga correctamente.</p>
+</li>
+</ol>
+<hr />
+<h2 id="10-limpieza-de-recursos">10. Limpieza de Recursos<a class="headerlink" href="#10-limpieza-de-recursos" title="Permanent link">&para;</a></h2>
+<p>Para no agotar el crédito asignado en tu Learner Lab, elimina todos los buckets de pruebas creados durante la práctica:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Vaciar y borrar el bucket de la CLI</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>aws<span class="w"> </span>s3<span class="w"> </span>rm<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span><span class="w"> </span>--recursive
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>aws<span class="w"> </span>s3<span class="w"> </span>rb<span class="w"> </span>s3://<span class="nv">$MI_BUCKET</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="c1"># Vaciar y borrar el bucket creado en la consola gráfica (adapta el nombre)</span>
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>aws<span class="w"> </span>s3<span class="w"> </span>rm<span class="w"> </span>s3://abdan-NOMBRE-APELLIDO-lab1<span class="w"> </span>--recursive
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>aws<span class="w"> </span>s3<span class="w"> </span>rb<span class="w"> </span>s3://abdan-NOMBRE-APELLIDO-lab1
+</span></code></pre></div>
+<hr />
+<h2 id="11-entregables-y-memoria-tecnica">11. Entregables y Memoria Técnica<a class="headerlink" href="#11-entregables-y-memoria-tecnica" title="Permanent link">&para;</a></h2>
+<p>Elabora un documento en formato <strong>PDF o Markdown</strong> que incluya:</p>
+<ol>
+<li><strong>Captura de pantalla de la Consola Gráfica:</strong> Donde se aprecie el bucket principal, la carpeta <code>documentos/</code> y los detalles del objeto seleccionado (ARN, S3 URI y Object URL).</li>
+<li><strong>Salida del comando <code>aws s3api head-object</code>:</strong> Mostrando los metadatos de usuario inyectados (<code>departamento</code>, <code>autor</code>, <code>clasificacion</code>).</li>
+<li><strong>Captura de la tabla generada con JMESPath (<code>--query</code>):</strong> Donde se muestren los objetos filtrados por tamaño superior a 1.000 bytes.</li>
+<li><strong>Captura del error <code>InvalidObjectState</code>:</strong> Al intentar descargar el objeto en clase Glacier y tu respuesta a las dos preguntas de reflexión de la Tarea 4.2.</li>
+<li><strong>Captura del contraste de seguridad:</strong> <ul>
+<li>El navegador mostrando <code>403 Forbidden</code> al acceder con la Object URL directa.</li>
+<li>El navegador descargando el archivo al acceder con la Presigned URL generada por la CLI.</li>
+</ul>
+</li>
+<li><strong>Código y ejecución del script <code>backup_s3.sh</code>:</strong> Captura de la terminal donde se ejecute el script y se muestre la URL prefirmada generada.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["header.autohide", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
