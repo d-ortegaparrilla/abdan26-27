@@ -32,36 +32,39 @@ Tarea 3. Además de seguir los pasos guiados del laboratorio para observar la li
 
 ---
 
-## 2. Entregables (Capturas Obligatorias)
+## 2. Capturas
 
 
-1. **Capturas 1a y 1b (Tarea 1):**
+### Tarea 1
 
-   - **1a:** Configuración de versionado activo (*Bucket Versioning: Enabled*) tanto en el bucket de origen (`PrimaryRegion`) como en el bucket de destino (`SecondaryRegion`).
-   - **1b:** Pantalla de resumen de la regla de replicación creada en el bucket de origen, mostrando el nombre de la regla, el estado (*Enabled*), el bucket de destino y el rol IAM utilizado.
+- **1a:** Configuración de versionado activo (*Bucket Versioning: Enabled*) tanto en el bucket de origen (`PrimaryRegion`) como en el bucket de destino (`SecondaryRegion`).
+- **1b:** Pantalla de resumen de la regla de replicación creada en el bucket de origen, mostrando el nombre de la regla, el estado (*Enabled*), el bucket de destino y el rol IAM utilizado.
 
-2. **Capturas 2a y 2b (Tarea 2):**
+### Tarea 2
 
-   - **2a:** Vista del bucket de **origen** mostrando los dos archivos existentes: `pre-crr.txt` (subido antes de activar la replicación) y `crr-bucket.txt` (subido después).
-   - **2b:** Vista del bucket de **destino** mostrando únicamente `crr-bucket.txt`. La ausencia de `pre-crr.txt` evidencia que los objetos preexistentes antes de configurar la regla no se replican automáticamente.
+- **2a:** Vista del bucket de **origen** mostrando los dos archivos existentes: `pre-crr.txt` (subido antes de activar la replicación) y `crr-bucket.txt` (subido después).
+- **2b:** Vista del bucket de **destino** mostrando únicamente `crr-bucket.txt`. La ausencia de `pre-crr.txt` evidencia que los objetos preexistentes antes de configurar la regla no se replican automáticamente.
 
-3. **Capturas 3a y 3b (Tarea 3 — KMS y modificación SSE-S3):**
+### Tarea 3
 
-   - **3a:** Vista del bucket de **destino vacío** tras subir `crr-encrypted.txt` con cifrado **SSE-KMS** al origen. Este es el momento clave: la replicación **no se ha producido** porque las claves KMS son regionales y no se comparten entre regiones automáticamente.
-   - **3b:** Vista del bucket de **destino** tras volver a subir el mismo archivo esta vez con cifrado **SSE-S3** (claves administradas por Amazon S3). El archivo aparece replicado correctamente, demostrando que con SSE-S3 la replicación multirregión funciona de forma transparente.
+- **3a:** Vista del bucket de **destino vacío** tras subir `crr-encrypted.txt` con cifrado **SSE-KMS** al origen. Este es el momento clave: la replicación **no se ha producido** porque las claves KMS son regionales y no se comparten entre regiones automáticamente.
+- **3b:** Vista del bucket de **destino** tras volver a subir el mismo archivo esta vez con cifrado **SSE-S3** (claves administradas por Amazon S3). El archivo aparece replicado correctamente, demostrando que con SSE-S3 la replicación multirregión funciona de forma transparente.
 
-4. **Capturas 4a y 4b (Tarea 4):**
+### Tarea 4
 
-   - **4a:** Pantalla de configuración de la regla de replicación por prefijo, donde se aprecia el filtro establecido (`crr-test/`).
-   - **4b:** Vista del bucket de destino mostrando que la carpeta `crr-test/` contiene `crr-folder.txt`, mientras que en la raíz del bucket no existe `crr-folder-root.txt`.
+- **4a:** Pantalla de configuración de la regla de replicación por prefijo, donde se aprecia el filtro establecido (`crr-test/`).
+- **4b:** Vista del bucket de destino mostrando que la carpeta `crr-test/` contiene `crr-folder.txt`, mientras que en la raíz del bucket no existe `crr-folder-root.txt`.
 
-5. **Capturas 5a y 5b (Tarea 5):**
+### Tarea 5
 
-   - **5a:** Pantalla de configuración de la regla de replicación por etiquetas, donde se aprecia el filtro definido (`replicate: yes`).
-   - **5b:** Vista del bucket de destino demostrando que únicamente se ha replicado `crr-tag.txt` (etiqueta `replicate: yes`) y que `crr-no-tag.txt` (sin etiqueta) no aparece en el destino.
+- **5a:** Pantalla de configuración de la regla de replicación por etiquetas, donde se aprecia el filtro definido (`replicate: yes`).
+- **5b:** Vista del bucket de destino demostrando que únicamente se ha replicado `crr-tag.txt` (etiqueta `replicate: yes`) y que `crr-no-tag.txt` (sin etiqueta) no aparece en el destino.
 
+### Tarea 6
 
-   - **6a:** Vista del bucket de **origen** con la opción *Mostrar versiones (Show versions)* activa, donde se aprecia el **delete marker** colocado sobre `crr-tag.txt` como versión más reciente, sin que el objeto haya sido destruido físicamente.
-   - **6b:** Vista del bucket de **destino** confirmando que `crr-tag.txt` sigue íntegro y accesible, sin ningún marcador de eliminación replicado.
+- **6a:** Vista del bucket de **origen** con la opción *Mostrar versiones (Show versions)* activa, donde se aprecia el **delete marker** colocado sobre `crr-tag.txt` como versión más reciente, sin que el objeto haya sido destruido físicamente.
+- **6b:** Vista del bucket de **destino** confirmando que `crr-tag.txt` sigue íntegro y accesible, sin ningún marcador de eliminación replicado.
 
-7. **Captura 7 (Knowledge Check superado):** Pantalla final del laboratorio en AWS Skill Builder mostrando el mensaje **`Passed`** en el *Knowledge Check*.
+### Tarea 7
+
+**Captura 7 (Knowledge Check superado):** Pantalla final del laboratorio en AWS Skill Builder mostrando el mensaje **`Passed`** en el *Knowledge Check*.
