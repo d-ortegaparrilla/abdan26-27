@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 # Práctica 1.5: Acceso Programático a Amazon S3 con Python (Boto3)
 
 - **Módulo:** Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN)
