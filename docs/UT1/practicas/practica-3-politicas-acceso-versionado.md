@@ -79,13 +79,13 @@ Make it a great day!
     
     Cada vez que se sube un nuevo archivo, nace privado por defecto. Para hacerlo público mediante ACL tendrías que repetir manualmente el procedimiento archivo por archivo. En una organización con miles o millones de objetos, esto es ingobernable, imposible de auditar y una fuente crítica de errores de seguridad.
 
-3. En las siguientes partes resolveremos esta limitación de raíz: conectaremos un servidor EC2 y utilizaremos una **Política de Bucket (Bucket Policy)** centralizada en JSON que gobernará de un solo plumazo el acceso para nuestros servidores y para el público.
+3. En las siguientes partes conectaremos un servidor EC2 y utilizaremos una **Política de Bucket (Bucket Policy)** centralizada en JSON. Veremos cómo gobernar el acceso público de lectura y cómo aplicar restricciones de seguridad granulares (como denegar la subida de objetos a la máquina virtual y forzar conexiones cifradas HTTPS) sin depender de ACLs individuales.
 
 ---
 
 ### Parte 2: Lanzamiento de Instancia EC2 y Conectividad con S3
 
-En esta parte desplegaremos un servidor virtual Linux en la nube y verificaremos cómo interactúa con nuestro bucket cuando no dispone de credenciales locales ni permisos explícitos de escritura.
+En esta parte desplegaremos un servidor virtual Linux en la nube y verificaremos cómo interactúa con nuestro bucket a través del perfil de instancia y rol IAM asignado (`LabRole`), comprobando los permisos que tiene por defecto en el entorno del laboratorio.
 
 #### Paso 2.1: Lanzar una instancia EC2 con el rol de laboratorio (`LabRole`)
 
@@ -95,21 +95,29 @@ En esta parte desplegaremos un servidor virtual Linux en la nube y verificaremos
     - **Nombre:** `Servidor-Reportes`.
     - **Imagen del sistema operativo (AMI):** *Amazon Linux 2023 AMI* (Apta para la capa gratuita).
     - **Tipo de instancia:** `t3.micro`.
-    - **Par de claves (Key pair):** Selecciona *Continuar sin un par de claves (no recomendado)* o utiliza uno que ya tengas creado (nos conectaremos directamente mediante la consola web).
+    - **Par de claves (Key pair):** Crea un par de claves o utiliza uno que ya tengas creado (nos conectaremos directamente mediante ssh).
+    - **Grupo de seguridad (security group):** Crea un grupo de seguridad llamado SSH que abra el puerto 22 a todas las IPs. Para ello deberás pulsar el botón Edit de la sección.
     - **Configuración de red:** Deja la VPC y subred por defecto.
 4. Despliega la sección **Detalles avanzados (Advanced details)** al final de la página:
-    - En el campo **Perfil de instancia de IAM (IAM instance profile)**, selecciona **`LabRole`**.
+    - En el campo **Perfil de instancia de IAM (IAM instance profile)**, selecciona **`LabInstance`**.
 
-!!! important "Asignación obligatoria de `LabRole`"
-    Asignar el perfil de instancia `LabRole` proporciona a la máquina virtual credenciales temporales dentro del Learner Lab.
+!!! important "Asignación obligatoria de `LabInstance`"
+    Asignar el perfil de instancia `LabInstance` proporciona a la máquina virtual el rol `LabRole` el cual provee de credenciales temporales dentro del Learner Lab con acceso a los recursos creados por el propio usuario.
 
 5. Pulsa **Lanzar instancia** y espera a que su estado pase a `En ejecución` (*Running*).
 
-#### Paso 2.2: Conexión mediante EC2 Instance Connect
+#### Paso 2.2: Conexión mediante SSH
 
-1. Selecciona la instancia `Servidor-Reportes` en la lista y pulsa el botón **Conectar (Connect)** en la parte superior.
-2. En la pestaña **EC2 Instance Connect**, verifica que el nombre de usuario sea `ec2-user` y pulsa **Conectar**.
-3. Se abrirá una sesión de terminal interactiva en tu propio navegador.
+1. Apunta la IP pública de la instancia EC2 creada.
+2. Sitúate con el terminal en la misma carpeta donde tengas el archivo `.pem` descargado cuando creamos el key pair. Reduce los permisos del archivo con:
+   ```bash
+   chmod 400 archivo.pem
+   ```
+3. Ejecuta la conexión SSH hacia la instancia:
+   ```bash
+   ssh -i archivo.pem ec2-user@IPPúblicaInstanciaEC2
+   ```
+4. Se abrirá la sesión de terminal interactiva en tu máquina EC2.
 
 #### Paso 2.3: Generación de datos de prueba en la máquina
 
@@ -122,7 +130,7 @@ echo "Informe generado por el sistema el $(date)" > report-test1.txt
 ls -la
 ```
 
-#### Paso 2.4: Comprobación de lectura y fallo en escritura (Mínimo Privilegio)
+#### Paso 2.4: Comprobación de conectividad y permisos predeterminados (`LabRole`)
 
 1. Comprueba si la máquina puede listar los objetos de tu bucket ejecutando:
 
@@ -130,27 +138,39 @@ ls -la
 aws s3 ls s3://reportbucket-NOMBRE-APELLIDO/
 ```
 
-*(Debe mostrarse el archivo `new-report.png` que subiste en la Parte 1).*
+*(Debe mostrarse el archivo `new-report.png` y `sample-file.txt` que subiste en la Parte 1).*
 
-2. Intenta ahora copiar el archivo de texto generado hacia el bucket:
+2. Sube el archivo de informe generado en el paso anterior hacia el bucket:
 
 ```bash
 aws s3 cp report-test1.txt s3://reportbucket-NOMBRE-APELLIDO/
 ```
 
-!!! failure "Fallo de autorización en subida: upload failed"
-    El comando devolverá un error:
+!!! success "Subida exitosa por permisos IAM del rol"
+    La salida confirmará la subida correctamente:
     ```text
-    upload failed: ./report-test1.txt to s3://reportbucket-NOMBRE-APELLIDO/report-test1.txt
-    An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+    upload: ./report-test1.txt to s3://reportbucket-NOMBRE-APELLIDO/report-test1.txt
     ```
-    **Diagnóstico:** Aunque `LabRole` tiene permisos de lectura generales en el Learner Lab, la directiva no otorga permisos de escritura (`PutObject`) en este bucket en particular. Es necesario redactar una **Política de Bucket (Bucket Policy)**.
+
+3. Comprueba también que la máquina puede descargar objetos desde el bucket:
+
+```bash
+aws s3 cp s3://reportbucket-NOMBRE-APELLIDO/new-report.png copia-report.png
+ls -lh copia-report.png
+```
+
+!!! info "Permisos predeterminados de `LabRole` en AWS Academy Learner Lab"
+    Observa que el servidor EC2 puede listar el bucket, subir archivos y descargarlos **sin haber configurado credenciales ni claves locales** en `~/.aws/credentials`.
+    
+    Esto ocurre porque el perfil de instancia `LabInstance` asocia a la máquina virtual el rol IAM `LabRole`, el cual dispone por defecto de una política de identidad con permisos amplios para operar sobre todos los buckets de S3 de la cuenta del laboratorio.
+    
+    Sin embargo, bajo el principio de **Mínimo Privilegio**, en muchos escenarios necesitamos que un servidor solo actúe como lector o deseamos proteger un bucket contra modificaciones directas. En la Parte 3 comprobaremos cómo una **Política de Bucket (Bucket Policy)** con una directiva de denegación explícita (`Deny`) prevalece sobre los permisos del rol, permitiendo que la máquina pueda hacer todo en el bucket **excepto subir archivos**.
 
 ---
 
-### Parte 3: Configuración de Políticas de Bucket (Bucket Policies)
+### Parte 3: Configuración de Políticas de Bucket (Bucket Policies) y Precedencia de Evaluación IAM
 
-Añadiremos una directiva JSON en el propio bucket para conceder acceso explícito a la máquina EC2 y, posteriormente, lectura pública.
+En esta parte utilizaremos directivas JSON aplicadas en el propio bucket (**Bucket Policies**) para gobernar el acceso. Primero aplicaremos una política con efecto **`Deny`** para la acción `PutObject` dirigida al rol `LabRole`, demostrando cómo una directiva de denegación en una política de recurso invalida los permisos de la identidad. Posteriormente, configuraremos lectura pública anónima y exigiremos conexiones cifradas por HTTPS (TLS).
 
 #### Paso 3.1: Obtención del ARN del rol `LabRole`
 
@@ -159,7 +179,7 @@ Añadiremos una directiva JSON en el propio bucket para conceder acceso explíci
 3. Copia el **ARN del rol**, que tendrá un formato similar a:
    `arn:aws:iam::123456789012:role/LabRole`
 
-#### Paso 3.2: Aplicar la política de acceso para la instancia EC2
+#### Paso 3.2: Aplicar la política de bucket con `Deny` para la acción `PutObject` de `LabRole`
 
 1. Vuelve a la consola de **Amazon S3**, entra en tu bucket `reportbucket-NOMBRE-APELLIDO` y selecciona la pestaña **Permisos (Permissions)**.
 2. Desplázate hasta la sección **Política de bucket (Bucket policy)** y haz clic en **Editar**.
@@ -170,48 +190,65 @@ Añadiremos una directiva JSON en el propio bucket para conceder acceso explíci
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "PermitirAccesoEC2LabRole",
-      "Effect": "Allow",
+      "Sid": "DenegarSubidaEC2LabRole",
+      "Effect": "Deny",
       "Principal": {
         "AWS": "arn:aws:iam::123456789012:role/LabRole"
       },
-      "Action": [
-        "s3:GetObject",
-        "s3:PutObject"
-      ],
+      "Action": "s3:PutObject",
       "Resource": "arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"
     }
   ]
 }
 ```
 
-!!! note "Detalle del comodín `/*` en Resource"
-    Observa que el ARN del recurso termina en `/*`. Las acciones sobre objetos como `s3:GetObject` y `s3:PutObject` aplican sobre los objetos contenidos en el bucket, no sobre el contenedor raíz del bucket.
+!!! note "Lógica de evaluación IAM: Precedencia absoluta del `Deny` explícito"
+    - **`Effect: Deny`**: En la lógica de evaluación de AWS IAM, **un `Deny` explícito siempre prevalece sobre cualquier `Allow`**. Aunque la política de identidad del rol `LabRole` autorice la escritura en el bucket, el `Deny` de la Bucket Policy la invalida de inmediato.
+    - **`Action: s3:PutObject`**: Únicamente se restringe la acción de subir o sobrescribir objetos. Las acciones de lectura y listado no se ven afectadas por esta regla.
+    - **`Resource: .../*`**: Aplica sobre cualquier objeto contenido dentro del depósito.
 
 4. Haz clic en **Guardar cambios**.
 
-#### Paso 3.3: Verificar la subida y descarga desde la instancia EC2
+#### Paso 3.3: Comprobar la restricción en EC2: Denegación de subida y persistencia de lectura
 
-Regresa a la terminal de la máquina EC2 e intenta nuevamente la copia:
+Regresa a la terminal interactiva de la máquina EC2 y realiza las siguientes comprobaciones:
 
-```bash
-aws s3 cp report-test1.txt s3://reportbucket-NOMBRE-APELLIDO/
-```
-
-!!! success "Subida exitosa"
-    Ahora la salida confirmará la subida:
-    `upload: ./report-test1.txt to s3://reportbucket-NOMBRE-APELLIDO/report-test1.txt`
-
-Prueba también la descarga del objeto previo para confirmar el permiso `GetObject`:
+1. Crea un segundo archivo de informe e intenta subirlo al bucket:
 
 ```bash
-aws s3 cp s3://reportbucket-NOMBRE-APELLIDO/new-report.png copia-report.png
-ls -lh copia-report.png
+echo "Informe 2 generado el $(date)" > report-test2.txt
+aws s3 cp report-test2.txt s3://reportbucket-NOMBRE-APELLIDO/
 ```
+
+!!! failure "Fallo de autorización por Deny explícito en la Bucket Policy"
+    El comando devolverá inmediatamente un error:
+    ```text
+    upload failed: ./report-test2.txt to s3://reportbucket-NOMBRE-APELLIDO/report-test2.txt
+    An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+    ```
+    **Diagnóstico:** Aunque la máquina dispone del rol `LabRole`, la política de bucket ha denegado explícitamente `s3:PutObject`. La subida queda completamente vetada.
+
+2. Comprueba ahora si la máquina virtual sigue pudiendo listar el contenido del bucket:
+
+```bash
+aws s3 ls s3://reportbucket-NOMBRE-APELLIDO/
+```
+
+*(El listado se mostrará sin errores, evidenciando que `s3:ListBucket` sigue permitido por el rol).*
+
+3. Comprueba que la máquina también puede seguir descargando objetos del bucket:
+
+```bash
+aws s3 cp s3://reportbucket-NOMBRE-APELLIDO/report-test1.txt copia-descargada.txt
+cat copia-descargada.txt
+```
+
+!!! success "Comportamiento selectivo comprobado: todo permitido salvo subir archivos"
+    Hemos verificado cómo la instancia EC2 puede realizar todas las tareas de consulta y lectura gracias a los permisos de `LabRole`, pero **no puede subir cosas al bucket**, exactamente lo establecido por nuestra política de denegación selectiva.
 
 #### Paso 3.4: Verificación de acceso externo desde el equipo local con `--no-sign-request`
 
-Ahora que la máquina EC2 puede escribir y leer en el bucket, abre una **segunda terminal en tu propio ordenador** para comprobar cómo responde el bucket ante peticiones externas.
+Ahora que hemos comprobado cómo responde la máquina EC2 ante la política, abre una **segunda terminal en tu propio ordenador local** para comprobar cómo responde el bucket ante peticiones externas sin credenciales.
 
 !!! info "¿Por qué utilizaremos el parámetro `--no-sign-request`?"
     En tu ordenador local tienes configuradas en `~/.aws/credentials` las credenciales de estudiante de AWS Academy Learner Lab. En AWS, dentro de la misma cuenta, **si una política de identidad (IAM) otorga un permiso, este se concede a menos que haya un `Deny` explícito**. Por tanto, tus credenciales locales de alumno ya disponen de permisos para operar sobre tus buckets.
@@ -240,7 +277,7 @@ aws s3 cp s3://reportbucket-NOMBRE-APELLIDO/new-report.png copia.png --no-sign-r
 
 *(El comando también fallará con `AccessDenied`)*.
 
-**Conclusión didáctica:** La primera directiva de la Bucket Policy es de mínimo privilegio estricto: autoriza de forma exclusiva al ARN del rol `LabRole` que porta la máquina EC2. Cualquier cliente externo sin autenticar queda completamente bloqueado.
+**Conclusión didáctica:** Hasta ahora, el bucket solo permite lectura y listado a identidades autenticadas de la cuenta (como la máquina EC2 mediante `LabRole`), denegando la escritura a `LabRole` por la Bucket Policy. Cualquier cliente externo sin autenticar queda bloqueado por denegación implícita predeterminada de S3.
 
 ---
 
@@ -248,7 +285,7 @@ aws s3 cp s3://reportbucket-NOMBRE-APELLIDO/new-report.png copia.png --no-sign-r
 
 En el **Paso 1.4** comprobamos que `sample-file.txt` devolvía `AccessDenied` al abrirlo en el navegador porque no habíamos configurado su ACL individual. 
 
-En lugar de repetir el engorroso proceso de editar la ACL archivo por archivo, utilizaremos la potencia de la **Bucket Policy** para autorizar la lectura a cualquier cliente de internet (navegadores web y peticiones anónimas de terminal):
+En lugar de repetir el engorroso proceso de editar la ACL archivo por archivo, utilizaremos la potencia de la **Bucket Policy** para autorizar la lectura a cualquier cliente de internet (navegadores web y peticiones anónimas de terminal), manteniendo intacta la prohibición de subida para la instancia EC2:
 
 1. En la pestaña **Permisos (Permissions)** de tu bucket, desplázate hasta **Política de bucket (Bucket policy)** y haz clic en **Editar**.
 2. Añade una segunda declaración (`Statement`) a la directiva existente que conceda `s3:GetObject` a cualquier identidad o público anónimo (`Principal: "*"`):
@@ -258,15 +295,12 @@ En lugar de repetir el engorroso proceso de editar la ACL archivo por archivo, u
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "PermitirAccesoEC2LabRole",
-      "Effect": "Allow",
+      "Sid": "DenegarSubidaEC2LabRole",
+      "Effect": "Deny",
       "Principal": {
         "AWS": "arn:aws:iam::123456789012:role/LabRole"
       },
-      "Action": [
-        "s3:GetObject",
-        "s3:PutObject"
-      ],
+      "Action": "s3:PutObject",
       "Resource": "arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"
     },
     {
@@ -293,16 +327,16 @@ En lugar de repetir el engorroso proceso de editar la ACL archivo por archivo, u
    ```
    *(La descarga se completa con éxito sin necesidad de credenciales gracias a la directiva pública `s3:GetObject`)*.
 
-6. **Comprobación 3 (CLI local - Escritura protegida por Mínimo Privilegio):**  
+6. **Comprobación 3 (CLI local - Escritura protegida):**  
    Intenta de nuevo subir un archivo de forma anónima desde tu terminal local:
    ```bash
    aws s3 cp reporte-local.txt s3://reportbucket-NOMBRE-APELLIDO/ --no-sign-request
    ```
    **¡Vuelve a fallar con `AccessDenied`!**  
-   Aunque el bucket permite que cualquier persona del mundo lea los objetos, **la escritura sigue blindada**. Solo la máquina EC2 (`LabRole`) tiene asignado `s3:PutObject`.
+   Aunque el bucket permite que cualquier persona del mundo lea los objetos, **la escritura sigue protegida**. Ningún usuario anónimo puede subir objetos, y nuestra instancia EC2 (`LabRole`) sigue teniendo denegado el `PutObject` por la primera regla.
 
 !!! success "El poder de la Bucket Policy frente a las ACLs"
-    Con tan solo añadir esas directivas en JSON y apuntar al comodín `reportbucket-NOMBRE-APELLIDO/*`, **todos los objetos actuales y cualquier archivo que se suba en el futuro quedan gobernados automáticamente**, aplicando políticas asimétricas (lectura pública, pero escritura exclusiva para el servidor). 
+    Con tan solo añadir esas directivas en JSON y apuntar al comodín `reportbucket-NOMBRE-APELLIDO/*`, **todos los objetos actuales y cualquier archivo que se suba en el futuro quedan gobernados automáticamente**, aplicando políticas granulares (lectura pública para todos, pero subida bloqueada para la máquina EC2 y clientes anónimos). 
     
     No ha hecho falta tocar la ACL individual de ningún archivo. Por este motivo, la arquitectura moderna de AWS promueve **deshabilitar completamente las ACLs (*Bucket owner enforced*)** y delegar todo el control de acceso en las Políticas de Bucket y las Políticas IAM.
 
@@ -322,15 +356,12 @@ Para aplicar esta restricción sin revocar el acceso legítimo, utilizaremos el 
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "PermitirAccesoEC2LabRole",
-      "Effect": "Allow",
+      "Sid": "DenegarSubidaEC2LabRole",
+      "Effect": "Deny",
       "Principal": {
         "AWS": "arn:aws:iam::123456789012:role/LabRole"
       },
-      "Action": [
-        "s3:GetObject",
-        "s3:PutObject"
-      ],
+      "Action": "s3:PutObject",
       "Resource": "arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"
     },
     {
@@ -569,10 +600,10 @@ Para evitar consumos de cómputo innecesarios en tu cuenta de AWS Academy:
 
 Presenta un documento o memoria de prácticas que contenga:
 
-1. **Captura de terminal en EC2:** Salida del comando `aws s3 cp` mostrando el error `AccessDenied` inicial, y captura posterior demostrando la subida exitosa tras aplicar la primera declaración de la política de bucket.
+1. **Captura de terminal en EC2:** Salida del comando `aws s3 cp` demostrando la subida inicial exitosa gracias a los permisos predeterminados de `LabRole` (Paso 2.4), y captura posterior demostrando el error `AccessDenied` al intentar subir un archivo tras aplicar la directiva `Deny` en la política de bucket, contrastado con la capacidad de seguir listando y descargando objetos (Paso 3.3).
 2. **Captura de terminal local (AWS CLI con `--no-sign-request`):** Salida que demuestre el error `AccessDenied` al intentar subir archivos tras la 1ª política, y la posterior descarga satisfactoria de `sample-file.txt` tras añadir la 2ª política pública.
 3. **Captura de forzado de cifrado TLS (curl):** Salida en la terminal local ejecutando `curl -I http://...` (bloqueado con `403 Forbidden`) frente a `curl -I https://...` (autorizado con `200 OK`).
-4. **Documento de la Política de Bucket:** El JSON final configurado en el bucket con las tres declaraciones (`LabRole`, lectura pública y denegación de tráfico no TLS), justificando brevemente la función de cada bloque.
+4. **Documento de la Política de Bucket:** El JSON final configurado en el bucket con las tres declaraciones (`Deny` a `PutObject` para `LabRole`, lectura pública anónima y denegación de tráfico no TLS), justificando brevemente la función de cada bloque.
 5. **Captura de recuperación ante desastres por CLI (`aws s3api`):** Salida de la terminal local ejecutando `aws s3api list-object-versions` y la eliminación del *Delete Marker* con `aws s3api delete-object` restaurando el archivo.
 6. **Captura de la Regla de Ciclo de Vida:** Captura del resumen de la regla creada en la pestaña *Administración* mostrando las transiciones a Glacier y la eliminación programada.
 
