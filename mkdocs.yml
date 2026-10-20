@@ -97,7 +97,8 @@ nav:
       - "Práctica 1.1: Operaciones básicas con Amazon S3": "UT1/practicas/practica-1-operaciones-basicas.md"
       - "Práctica 1.2: Alojamiento de un Sitio Web Estático en S3": "UT1/practicas/practica-2-sitio-web-estatico.md"
       - "Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida": "UT1/practicas/practica-3-politicas-acceso-versionado.md"
-      - "Práctica 1.4: Acceso programático a S3 con Python (Boto3)": "UT1/practicas/practica-4-acceso-sdk-boto3.md"
+      - "Práctica 1.4: Replicación Multirregión en Amazon S3 (CRR)": "UT1/practicas/practica-4-replicacion-multiregion-crr.md"
+      - "Práctica 1.5: Acceso programático a S3 con Python (Boto3)": "UT1/practicas/practica-5-acceso-sdk-boto3.md"
 #   Descomentar progresivamente en próximas sesiones:
 
 #   
