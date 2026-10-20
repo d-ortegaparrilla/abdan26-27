@@ -97,12 +97,24 @@ Al terminar la práctica en la plataforma, completa el cuestionario interactivo 
 
 ## 3. Entregables (Capturas Obligatorias)
 
-Deberás presentar una memoria o documento de prácticas en PDF con las siguientes **7 evidencias numeradas**:
+Deberás presentar una memoria o documento de prácticas en PDF con las siguientes **9 evidencias numeradas**:
 
 1. **Captura 1 (Tarea 1):** Configuración de versionado activo (*Bucket Versioning: Enabled*) tanto en el bucket de origen (`PrimaryRegion`) como en el bucket de destino (`SecondaryRegion`).
-2. **Captura 2 (Tarea 2):** Vista de objetos en el bucket de destino tras la replicación completa, mostrando la presencia de `crr-bucket.txt` y evidenciando que el archivo previo `pre-crr.txt` no se ha transferido.
-3. **Captura 3 (Tarea 3 - Modificación SSE-S3 vs. KMS):** Vista del objeto cifrado mediante claves administradas por S3 (**SSE-S3**) replicado satisfactoriamente en el bucket de destino, acompañada de una breve explicación de por qué las claves KMS regionales requieren configuración adicional.
-4. **Captura 4 (Tarea 4):** Vista del bucket de destino tras la prueba por prefijo, mostrando que la carpeta `crr-test/` contiene `crr-folder.txt`, pero en la raíz no existe `crr-folder-root.txt`.
-5. **Captura 5 (Tarea 5):** Vista del bucket de destino tras la prueba por etiquetas, demostrando que únicamente se ha replicado `crr-tag.txt` (con etiqueta `replicate: yes`) y no `crr-no-tag.txt`.
-6. **Captura 6 (Tarea 6):** Vista del bucket de destino demostrando que el archivo eliminado en el origen sigue preservándose tras el borrado lógico.
-7. **Captura 7 (Knowledge Check superado):** Captura de pantalla de la sección final del laboratorio en AWS Skill Builder mostrando el mensaje **`Passed`** en el *Knowledge Check* (tal como se ilustra en el cierre de la guía).
+
+2. **Capturas 2a y 2b (Tarea 2):**
+   - **2a:** Vista del bucket de **origen** mostrando los dos archivos existentes: `pre-crr.txt` (subido antes de activar la replicación) y `crr-bucket.txt` (subido después).
+   - **2b:** Vista del bucket de **destino** mostrando únicamente `crr-bucket.txt`. La ausencia de `pre-crr.txt` evidencia que los objetos preexistentes antes de configurar la regla no se replican automáticamente.
+
+3. **Capturas 3a y 3b (Tarea 3 — KMS y modificación SSE-S3):**
+   - **3a:** Vista del bucket de **destino vacío** tras subir `crr-encrypted.txt` con cifrado **SSE-KMS** al origen. Este es el momento clave: la replicación **no se ha producido** porque las claves KMS son regionales y no se comparten entre regiones automáticamente.
+   - **3b:** Vista del bucket de **destino** tras volver a subir el mismo archivo esta vez con cifrado **SSE-S3** (claves administradas por Amazon S3). El archivo aparece replicado correctamente, demostrando que con SSE-S3 la replicación multirregión funciona de forma transparente.
+
+4. **Captura 4 (Tarea 4):** Vista del bucket de destino tras la prueba por prefijo, mostrando que la carpeta `crr-test/` contiene `crr-folder.txt`, mientras que en la raíz del bucket no existe `crr-folder-root.txt`.
+
+5. **Captura 5 (Tarea 5):** Vista del bucket de destino tras la prueba por etiquetas, demostrando que únicamente se ha replicado `crr-tag.txt` (etiqueta `replicate: yes`) y que `crr-no-tag.txt` (sin etiqueta) no aparece en el destino.
+
+6. **Capturas 6a y 6b (Tarea 6):**
+   - **6a:** Vista del bucket de **origen** con la opción *Mostrar versiones (Show versions)* activa, donde se aprecia el **delete marker** colocado sobre `crr-tag.txt` como versión más reciente, sin que el objeto haya sido destruido físicamente.
+   - **6b:** Vista del bucket de **destino** confirmando que `crr-tag.txt` sigue íntegro y accesible, sin ningún marcador de eliminación replicado.
+
+7. **Captura 7 (Knowledge Check superado):** Pantalla final del laboratorio en AWS Skill Builder mostrando el mensaje **`Passed`** en el *Knowledge Check*.
