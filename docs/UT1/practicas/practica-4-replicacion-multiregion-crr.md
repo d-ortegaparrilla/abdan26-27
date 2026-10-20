@@ -97,7 +97,7 @@ Al terminar la práctica en la plataforma, completa el cuestionario interactivo 
 
 ## 3. Entregables (Capturas Obligatorias)
 
-Deberás presentar una memoria o documento de prácticas en PDF con las siguientes **10 evidencias numeradas**:
+Deberás presentar una memoria o documento de prácticas en PDF con las siguientes **12 evidencias numeradas**:
 
 1. **Capturas 1a y 1b (Tarea 1):**
    - **1a:** Configuración de versionado activo (*Bucket Versioning: Enabled*) tanto en el bucket de origen (`PrimaryRegion`) como en el bucket de destino (`SecondaryRegion`).
@@ -111,9 +111,13 @@ Deberás presentar una memoria o documento de prácticas en PDF con las siguient
    - **3a:** Vista del bucket de **destino vacío** tras subir `crr-encrypted.txt` con cifrado **SSE-KMS** al origen. Este es el momento clave: la replicación **no se ha producido** porque las claves KMS son regionales y no se comparten entre regiones automáticamente.
    - **3b:** Vista del bucket de **destino** tras volver a subir el mismo archivo esta vez con cifrado **SSE-S3** (claves administradas por Amazon S3). El archivo aparece replicado correctamente, demostrando que con SSE-S3 la replicación multirregión funciona de forma transparente.
 
-4. **Captura 4 (Tarea 4):** Vista del bucket de destino tras la prueba por prefijo, mostrando que la carpeta `crr-test/` contiene `crr-folder.txt`, mientras que en la raíz del bucket no existe `crr-folder-root.txt`.
+4. **Capturas 4a y 4b (Tarea 4):**
+   - **4a:** Pantalla de configuración de la regla de replicación por prefijo, donde se aprecia el filtro establecido (`crr-test/`).
+   - **4b:** Vista del bucket de destino mostrando que la carpeta `crr-test/` contiene `crr-folder.txt`, mientras que en la raíz del bucket no existe `crr-folder-root.txt`.
 
-5. **Captura 5 (Tarea 5):** Vista del bucket de destino tras la prueba por etiquetas, demostrando que únicamente se ha replicado `crr-tag.txt` (etiqueta `replicate: yes`) y que `crr-no-tag.txt` (sin etiqueta) no aparece en el destino.
+5. **Capturas 5a y 5b (Tarea 5):**
+   - **5a:** Pantalla de configuración de la regla de replicación por etiquetas, donde se aprecia el filtro definido (`replicate: yes`).
+   - **5b:** Vista del bucket de destino demostrando que únicamente se ha replicado `crr-tag.txt` (etiqueta `replicate: yes`) y que `crr-no-tag.txt` (sin etiqueta) no aparece en el destino.
 
 6. **Capturas 6a y 6b (Tarea 6):**
    - **6a:** Vista del bucket de **origen** con la opción *Mostrar versiones (Show versions)* activa, donde se aprecia el **delete marker** colocado sobre `crr-tag.txt` como versión más reciente, sin que el objeto haya sido destruido físicamente.
