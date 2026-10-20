@@ -92,6 +92,7 @@ nav:
     - "4. Ciclo de Vida, Versionado e Inmutabilidad": "UT1/04-ciclo-de-vida-versionado.md"
     - "5. Seguridad, Control de Acceso y Cifrado": "UT1/05-seguridad-control-acceso.md"
     - "6. Alojamiento de Sitios Web Estáticos": "UT1/06-sitios-web-estaticos.md"
+    - "7. Interacción con SDK de Python (Boto3)": "UT1/07-interaccion-sdk.md"
     - Prácticas de Laboratorio:
       - "Práctica 1.1: Operaciones básicas con Amazon S3": "UT1/practicas/practica-1-operaciones-basicas.md"
       - "Práctica 1.2: Alojamiento de un Sitio Web Estático en S3": "UT1/practicas/practica-2-sitio-web-estatico.md"
