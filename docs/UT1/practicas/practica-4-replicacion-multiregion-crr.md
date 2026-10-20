@@ -97,9 +97,11 @@ Al terminar la práctica en la plataforma, completa el cuestionario interactivo 
 
 ## 3. Entregables (Capturas Obligatorias)
 
-Deberás presentar una memoria o documento de prácticas en PDF con las siguientes **9 evidencias numeradas**:
+Deberás presentar una memoria o documento de prácticas en PDF con las siguientes **10 evidencias numeradas**:
 
-1. **Captura 1 (Tarea 1):** Configuración de versionado activo (*Bucket Versioning: Enabled*) tanto en el bucket de origen (`PrimaryRegion`) como en el bucket de destino (`SecondaryRegion`).
+1. **Capturas 1a y 1b (Tarea 1):**
+   - **1a:** Configuración de versionado activo (*Bucket Versioning: Enabled*) tanto en el bucket de origen (`PrimaryRegion`) como en el bucket de destino (`SecondaryRegion`).
+   - **1b:** Pantalla de resumen de la regla de replicación creada en el bucket de origen, mostrando el nombre de la regla, el estado (*Enabled*), el bucket de destino y el rol IAM utilizado.
 
 2. **Capturas 2a y 2b (Tarea 2):**
    - **2a:** Vista del bucket de **origen** mostrando los dos archivos existentes: `pre-crr.txt` (subido antes de activar la replicación) y `crr-bucket.txt` (subido después).
