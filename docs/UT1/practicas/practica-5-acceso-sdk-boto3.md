@@ -90,7 +90,7 @@ En administración de sistemas no solo subimos archivos; a menudo debemos asigna
 
 1. Genera un archivo local de prueba:
 2. Crea el archivo `02_subir_archivo.py`.
-3. Utiliza el código de ejemplo en el apartado de la teoría.
+3. Utiliza el código de ejemplo en el apartado de la teoría. Crea una función para subir archivos, del mismo estilo que la de creación de buckets.
 4. Ejecuta el script:
 5. **Inspección de metadatos:** Comprueba desde la terminal con `aws s3api head-object` que la clase de almacenamiento y los metadatos personalizados se han registrado en S3:
 
@@ -105,7 +105,7 @@ aws s3api head-object \
 ### Tarea 3: Descarga del Objeto (`03_descargar_archivo.py`)
 
 1. Crea el archivo `03_descargar_archivo.py`.
-2. Utiliza el código de ejemplo en el apartado de la teoría.
+2. Utiliza el código de ejemplo en el apartado de la teoría. Crea una función para descargar archivos, del mismo estilo que la de creación de buckets.
 3. Ejecuta el script:
 
 ```bash
@@ -119,7 +119,7 @@ python 03_descargar_archivo.py
 Una URL prefirmada (*Presigned URL*) permite conceder acceso temporal de descarga a un tercero **sin credenciales de AWS y sin hacer público el bucket**.
 
 1. Crea el archivo `04_url_prefirmada.py`.
-2. Utiliza el código de ejemplo en el apartado de la teoría.
+2. Utiliza el código de ejemplo en el apartado de la teoría. Crea una función para firmar URL, del mismo estilo que la de creación de buckets.
 3. Ejecuta el script:
 4. **Comprobación:**
    - Copia la URL devuelta en la terminal y ábrela en una **ventana de incógnito** de tu navegador (o mediante `curl -I "URL"`).
