@@ -1,0 +1,2586 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Apuntes del módulo de Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN) - CE Recursos y Servicios en la Nube">
+      
+      
+        <meta name="author" content="David Ortega Parrilla">
+      
+      
+        <link rel="canonical" href="https://d-ortegaparrilla.github.io/abdan26-27/UT1/practicas/practica-3-politicas-acceso-versionado.html">
+      
+      
+        <link rel="prev" href="practica-2-sitio-web-estatico.html">
+      
+      
+        <link rel="next" href="practica-4-replicacion-multiregion-crr.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida - Administración de Bases de Datos y Almacenamiento en la Nube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#practica-13-politicas-de-acceso-permisos-iam-versionado-y-ciclo-de-vida-en-amazon-s3" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-header__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Administración de Bases de Datos y Almacenamiento en la Nube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../planificacion.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Planificación del Módulo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../UT2/01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-nav__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    Administración de Bases de Datos y Almacenamiento en la Nube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../planificacion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planificación del Módulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-arquitectura-s3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Arquitectura y Componentes de Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-clases-almacenamiento.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Clases de Almacenamiento y S3 Glacier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-ciclo-de-vida-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ciclo de Vida, Versionado e Inmutabilidad
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-seguridad-control-acceso.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Seguridad, Control de Acceso y Cifrado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-sitios-web-estaticos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Alojamiento de Sitios Web Estáticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-interaccion-sdk.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Interacción con SDK de Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-1-operaciones-basicas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-2-sitio-web-estatico.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.2: Alojamiento de un Sitio Web Estático en S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="practica-3-politicas-acceso-versionado.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-preparacion-de-los-archivos-de-prueba" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Preparación de los Archivos de Prueba
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-instrucciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Instrucciones
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Instrucciones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parte-1-creacion-del-bucket-y-el-contraste-acls-vs-bucket-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 1: Creación del Bucket y el Contraste: ACLs vs. Bucket Policies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 1: Creación del Bucket y el Contraste: ACLs vs. Bucket Policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-11-creacion-del-bucket-con-acls-habilitadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.1: Creación del bucket con ACLs habilitadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-12-carga-del-primer-objeto-y-bloqueo-de-acl-por-bpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.2: Carga del primer objeto y bloqueo de ACL por BPA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-13-desactivar-bpa-y-hacer-publico-el-objeto-individual-mediante-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.3: Desactivar BPA y hacer público el objeto individual mediante ACL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-14-la-limitacion-de-las-acls-el-problema-de-la-gestion-objeto-a-objeto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.4: La limitación de las ACLs (El problema de la gestión objeto a objeto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-2-lanzamiento-de-instancia-ec2-y-conectividad-con-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 2: Lanzamiento de Instancia EC2 y Conectividad con S3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 2: Lanzamiento de Instancia EC2 y Conectividad con S3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-21-lanzar-una-instancia-ec2-con-el-rol-de-laboratorio-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.1: Lanzar una instancia EC2 con el rol de laboratorio (LabRole)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-22-conexion-mediante-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.2: Conexión mediante SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-23-generacion-de-datos-de-prueba-en-la-maquina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.3: Generación de datos de prueba en la máquina
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-24-comprobacion-de-conectividad-y-permisos-predeterminados-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.4: Comprobación de conectividad y permisos predeterminados (LabRole)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-3-configuracion-de-politicas-de-bucket-bucket-policies-y-precedencia-de-evaluacion-iam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 3: Configuración de Políticas de Bucket (Bucket Policies) y Precedencia de Evaluación IAM
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 3: Configuración de Políticas de Bucket (Bucket Policies) y Precedencia de Evaluación IAM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-31-obtencion-del-arn-del-rol-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.1: Obtención del ARN del rol LabRole
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-32-aplicar-la-politica-de-bucket-con-deny-para-la-accion-putobject-de-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.2: Aplicar la política de bucket con Deny para la acción PutObject de LabRole
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-33-comprobar-la-restriccion-en-ec2-denegacion-de-subida-y-persistencia-de-lectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.3: Comprobar la restricción en EC2: Denegación de subida y persistencia de lectura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-34-verificacion-de-acceso-externo-desde-el-equipo-local-con-no-sign-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.4: Verificación de acceso externo desde el equipo local con --no-sign-request
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-35-aplicar-la-2a-directiva-lectura-publica-y-verificar-en-navegador-y-cli-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.5: Aplicar la 2ª directiva (Lectura pública) y verificar en Navegador y CLI local
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-36-seguridad-corporativa-avanzada-forzar-cifrado-en-transito-https-obligatorio-con-condition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.6: Seguridad Corporativa Avanzada: Forzar Cifrado en Tránsito (HTTPS obligatorio con Condition)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-4-exploracion-del-control-de-versiones-s3-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 4: Exploración del Control de Versiones (S3 Versioning)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 4: Exploración del Control de Versiones (S3 Versioning)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-41-habilitar-el-control-de-versiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.1: Habilitar el control de versiones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-42-sobreescritura-y-recuperacion-de-versiones-anteriores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.2: Sobreescritura y recuperación de versiones anteriores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-43-borrado-logico-con-marcador-de-eliminacion-soft-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.3: Borrado Lógico con Marcador de Eliminación (Soft Delete)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-44-auditoria-y-recuperacion-ante-desastres-por-cli-aws-s3api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.4: Auditoría y Recuperación ante Desastres por CLI (aws s3api)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-45-borrado-fisico-definitivo-hard-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.5: Borrado Físico Definitivo (Hard Delete)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-5-automatizacion-de-costes-con-reglas-de-ciclo-de-vida-s3-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 5: Automatización de Costes con Reglas de Ciclo de Vida (S3 Lifecycle)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 5: Automatización de Costes con Reglas de Ciclo de Vida (S3 Lifecycle)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-51-configuracion-de-la-regla-de-ciclo-de-vida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 5.1: Configuración de la regla de ciclo de vida
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-52-definicion-de-las-acciones-de-transicion-y-purga" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 5.2: Definición de las acciones de transición y purga
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-53-revision-de-la-linea-temporal-y-guardado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 5.3: Revisión de la línea temporal y guardado
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-limpieza-de-recursos-clean-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Limpieza de Recursos (Clean-up)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Limpieza de Recursos (Clean-up)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-terminar-la-instancia-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Terminar la instancia EC2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-vaciar-y-eliminar-el-bucket-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Vaciar y eliminar el bucket S3
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-entregables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Entregables
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-4-replicacion-multiregion-crr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.4: Replicación Multirregión en Amazon S3 (CRR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-5-acceso-sdk-boto3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.5: Acceso programático a S3 con Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT2/01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción a los Servicios de Almacenamiento en Bloque y Sistemas de Ficheros en Red
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT2/practicas/practica-1-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.1: Creación y Gestión de Volúmenes EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-preparacion-de-los-archivos-de-prueba" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Preparación de los Archivos de Prueba
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-instrucciones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Instrucciones
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Instrucciones">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parte-1-creacion-del-bucket-y-el-contraste-acls-vs-bucket-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 1: Creación del Bucket y el Contraste: ACLs vs. Bucket Policies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 1: Creación del Bucket y el Contraste: ACLs vs. Bucket Policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-11-creacion-del-bucket-con-acls-habilitadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.1: Creación del bucket con ACLs habilitadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-12-carga-del-primer-objeto-y-bloqueo-de-acl-por-bpa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.2: Carga del primer objeto y bloqueo de ACL por BPA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-13-desactivar-bpa-y-hacer-publico-el-objeto-individual-mediante-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.3: Desactivar BPA y hacer público el objeto individual mediante ACL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-14-la-limitacion-de-las-acls-el-problema-de-la-gestion-objeto-a-objeto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 1.4: La limitación de las ACLs (El problema de la gestión objeto a objeto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-2-lanzamiento-de-instancia-ec2-y-conectividad-con-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 2: Lanzamiento de Instancia EC2 y Conectividad con S3
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 2: Lanzamiento de Instancia EC2 y Conectividad con S3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-21-lanzar-una-instancia-ec2-con-el-rol-de-laboratorio-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.1: Lanzar una instancia EC2 con el rol de laboratorio (LabRole)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-22-conexion-mediante-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.2: Conexión mediante SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-23-generacion-de-datos-de-prueba-en-la-maquina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.3: Generación de datos de prueba en la máquina
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-24-comprobacion-de-conectividad-y-permisos-predeterminados-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 2.4: Comprobación de conectividad y permisos predeterminados (LabRole)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-3-configuracion-de-politicas-de-bucket-bucket-policies-y-precedencia-de-evaluacion-iam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 3: Configuración de Políticas de Bucket (Bucket Policies) y Precedencia de Evaluación IAM
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 3: Configuración de Políticas de Bucket (Bucket Policies) y Precedencia de Evaluación IAM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-31-obtencion-del-arn-del-rol-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.1: Obtención del ARN del rol LabRole
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-32-aplicar-la-politica-de-bucket-con-deny-para-la-accion-putobject-de-labrole" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.2: Aplicar la política de bucket con Deny para la acción PutObject de LabRole
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-33-comprobar-la-restriccion-en-ec2-denegacion-de-subida-y-persistencia-de-lectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.3: Comprobar la restricción en EC2: Denegación de subida y persistencia de lectura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-34-verificacion-de-acceso-externo-desde-el-equipo-local-con-no-sign-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.4: Verificación de acceso externo desde el equipo local con --no-sign-request
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-35-aplicar-la-2a-directiva-lectura-publica-y-verificar-en-navegador-y-cli-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.5: Aplicar la 2ª directiva (Lectura pública) y verificar en Navegador y CLI local
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-36-seguridad-corporativa-avanzada-forzar-cifrado-en-transito-https-obligatorio-con-condition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 3.6: Seguridad Corporativa Avanzada: Forzar Cifrado en Tránsito (HTTPS obligatorio con Condition)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-4-exploracion-del-control-de-versiones-s3-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 4: Exploración del Control de Versiones (S3 Versioning)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 4: Exploración del Control de Versiones (S3 Versioning)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-41-habilitar-el-control-de-versiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.1: Habilitar el control de versiones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-42-sobreescritura-y-recuperacion-de-versiones-anteriores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.2: Sobreescritura y recuperación de versiones anteriores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-43-borrado-logico-con-marcador-de-eliminacion-soft-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.3: Borrado Lógico con Marcador de Eliminación (Soft Delete)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-44-auditoria-y-recuperacion-ante-desastres-por-cli-aws-s3api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.4: Auditoría y Recuperación ante Desastres por CLI (aws s3api)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-45-borrado-fisico-definitivo-hard-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 4.5: Borrado Físico Definitivo (Hard Delete)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parte-5-automatizacion-de-costes-con-reglas-de-ciclo-de-vida-s3-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parte 5: Automatización de Costes con Reglas de Ciclo de Vida (S3 Lifecycle)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parte 5: Automatización de Costes con Reglas de Ciclo de Vida (S3 Lifecycle)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#paso-51-configuracion-de-la-regla-de-ciclo-de-vida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 5.1: Configuración de la regla de ciclo de vida
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-52-definicion-de-las-acciones-de-transicion-y-purga" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 5.2: Definición de las acciones de transición y purga
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#paso-53-revision-de-la-linea-temporal-y-guardado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso 5.3: Revisión de la línea temporal y guardado
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-limpieza-de-recursos-clean-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Limpieza de Recursos (Clean-up)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Limpieza de Recursos (Clean-up)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-terminar-la-instancia-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Terminar la instancia EC2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-vaciar-y-eliminar-el-bucket-s3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Vaciar y eliminar el bucket S3
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-entregables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Entregables
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="practica-13-politicas-de-acceso-permisos-iam-versionado-y-ciclo-de-vida-en-amazon-s3">Práctica 1.3: Políticas de Acceso, Permisos IAM, Versionado y Ciclo de Vida en Amazon S3<a class="headerlink" href="#practica-13-politicas-de-acceso-permisos-iam-versionado-y-ciclo-de-vida-en-amazon-s3" title="Permanent link">&para;</a></h1>
+<ul>
+<li><strong>Módulo:</strong> Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN)</li>
+<li><strong>Unidad de Trabajo:</strong> UT1. Servicios de almacenamiento de objetos en la nube (Amazon S3)</li>
+<li><strong>Resultados de Aprendizaje asociados:</strong><ul>
+<li><strong>RA2.b:</strong> Definición de clases de almacenamiento y transición según requisitos de latencia y coste.</li>
+<li><strong>RA2.d:</strong> Aplicación de mecanismos de seguridad y cifrado en almacenamiento de objetos.</li>
+<li><strong>RA2.e:</strong> Configuración de parámetros de visibilidad, acceso y políticas de seguridad (Bucket Policies e IAM).</li>
+<li><strong>RA2.g:</strong> Configuración del control de versiones, marcadores de eliminación y reglas de ciclo de vida.</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="1-preparacion-de-los-archivos-de-prueba">1. Preparación de los Archivos de Prueba<a class="headerlink" href="#1-preparacion-de-los-archivos-de-prueba" title="Permanent link">&para;</a></h2>
+<p>Para realizar las pruebas de transferencia y versionado, utilizaremos dos archivos:</p>
+<p><strong>Archivo de informe gráfico (<code>new-report.png</code>)</strong>
+Puedes utilizar cualquier captura o imagen de prueba local.</p>
+<p><strong>Archivo de texto para versionado (<code>sample-file.txt</code>)</strong>
+Crea en tu equipo local un archivo de texto con el siguiente contenido inicial:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>This sample text file is used to illustrate the use of versioning in an Amazon S3 bucket.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Make it a great day!
+</span></code></pre></div>
+<hr />
+<h2 id="2-instrucciones">2. Instrucciones<a class="headerlink" href="#2-instrucciones" title="Permanent link">&para;</a></h2>
+<h3 id="parte-1-creacion-del-bucket-y-el-contraste-acls-vs-bucket-policies">Parte 1: Creación del Bucket y el Contraste: ACLs vs. Bucket Policies<a class="headerlink" href="#parte-1-creacion-del-bucket-y-el-contraste-acls-vs-bucket-policies" title="Permanent link">&para;</a></h3>
+<h4 id="paso-11-creacion-del-bucket-con-acls-habilitadas">Paso 1.1: Creación del bucket con ACLs habilitadas<a class="headerlink" href="#paso-11-creacion-del-bucket-con-acls-habilitadas" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Accede a la consola de <strong>Amazon S3</strong> en AWS Academy Learner Lab.</li>
+<li>Pulsa en <strong>Crear bucket (Create bucket)</strong>:<ul>
+<li><strong>Tipo de depósito:</strong> <em>General Purpose Bucket</em>.</li>
+<li><strong>Nombre del bucket:</strong> Debe ser un nombre globalmente único. Nómbralo:<br />
+<code>reportbucket-NOMBRE-APELLIDO</code> <em>(todo en minúsculas, números o guiones)</em>.</li>
+<li><strong>Región de AWS:</strong> Mantén la región de tu laboratorio (ej. <code>us-east-1</code> Norte de Virginia).</li>
+<li><strong>Propiedad de objetos (Object Ownership):</strong> Selecciona <strong>ACL habilitadas (ACLs enabled)</strong> y marca <strong>Escritor de objetos (Object writer)</strong>.</li>
+<li><strong>Bloqueo de acceso público (Block Public Access):</strong> Mantén activada la casilla <strong>Bloquear todo el acceso público</strong> (<em>Block all public access</em>).</li>
+<li><strong>Cifrado predeterminado:</strong> SSE-S3.</li>
+</ul>
+</li>
+<li>Haz clic en <strong>Crear bucket</strong>.</li>
+</ol>
+<h4 id="paso-12-carga-del-primer-objeto-y-bloqueo-de-acl-por-bpa">Paso 1.2: Carga del primer objeto y bloqueo de ACL por BPA<a class="headerlink" href="#paso-12-carga-del-primer-objeto-y-bloqueo-de-acl-por-bpa" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Entra al bucket recién creado y pulsa <strong>Cargar (Upload)</strong> -&gt; <strong>Agregar archivos (Add files)</strong>.</li>
+<li>Selecciona la imagen de prueba <code>new-report.png</code> y súbela.</li>
+<li>Haz clic sobre el nombre del archivo <code>new-report.png</code> para abrir su panel de detalles.</li>
+<li>Localiza el campo <strong>URL de objeto (Object URL)</strong> y ábrela en el navegador. Obtendrás el error esperado <code>AccessDenied</code> (privado por defecto).</li>
+<li>Vuelve a la pestaña de <code>new-report.png</code> en la consola de AWS, despliega el menú <strong>Acciones del objeto (Object actions)</strong> y pulsa la última opción: <strong>Hacer público mediante ACL (Make public using ACL)</strong>.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Fallo en la asignación de ACL por Block Public Access</p>
+<p>Observarás una advertencia informando de que el acceso público está bloqueado por la configuración de <strong>Bloqueo de acceso público (BPA)</strong> del bucket. Si pulsas en <em>Hacer público</em>, la consola devolverá un error:
+<code>Failed to edit public access</code>
+Esto demuestra que <strong>Block Public Access actúa como un cortafuegos maestro</strong> que ignora cualquier ACL permisiva.</p>
+</div>
+<h4 id="paso-13-desactivar-bpa-y-hacer-publico-el-objeto-individual-mediante-acl">Paso 1.3: Desactivar BPA y hacer público el objeto individual mediante ACL<a class="headerlink" href="#paso-13-desactivar-bpa-y-hacer-publico-el-objeto-individual-mediante-acl" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Regresa a la página principal del bucket y haz clic en la pestaña <strong>Permisos (Permissions)</strong>.</li>
+<li>En la sección <strong>Bloqueo de acceso público (configuración del bucket)</strong>, pulsa <strong>Editar</strong>.</li>
+<li><strong>Desmarca</strong> la casilla <em>Bloquear todo el acceso público</em>, pulsa <strong>Guardar cambios</strong> y confirma escribiendo <code>confirmar</code> (o <code>confirm</code>).</li>
+<li>Vuelve a la pestaña <strong>Objetos</strong>, entra en <code>new-report.png</code> -&gt; <strong>Acciones del objeto</strong> -&gt; <strong>Hacer público mediante ACL</strong>.</li>
+<li>Pulsa en <strong>Hacer público</strong>: ahora la operación se completará con éxito (<em>Successfully edited public access</em>).</li>
+<li>Recarga la pestaña del navegador con la URL del objeto: la imagen <code>new-report.png</code> se mostrará públicamente.</li>
+</ol>
+<h4 id="paso-14-la-limitacion-de-las-acls-el-problema-de-la-gestion-objeto-a-objeto">Paso 1.4: La limitación de las ACLs (El problema de la gestión objeto a objeto)<a class="headerlink" href="#paso-14-la-limitacion-de-las-acls-el-problema-de-la-gestion-objeto-a-objeto" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Vuelve a la consola de S3 y sube al bucket el segundo archivo de prueba: <code>sample-file.txt</code>.</li>
+<li>Una vez subido, haz clic sobre <code>sample-file.txt</code>, copia su <strong>URL de objeto</strong> y ábrela en una nueva pestaña del navegador.</li>
+</ol>
+<div class="admonition failure">
+<p class="admonition-title">¡Error 403 Forbidden otra vez! ¿Por qué no es visible sample-file.txt?</p>
+<p>Aunque el bucket ya no bloquea el acceso público y se encuentra en el mismo depósito que la imagen, <strong>las ACLs operan de forma aislada a nivel de objeto individual</strong>. </p>
+<p>Cada vez que se sube un nuevo archivo, nace privado por defecto. Para hacerlo público mediante ACL tendrías que repetir manualmente el procedimiento archivo por archivo. En una organización con miles o millones de objetos, esto es ingobernable, imposible de auditar y una fuente crítica de errores de seguridad.</p>
+</div>
+<ol>
+<li>En las siguientes partes conectaremos un servidor EC2 y utilizaremos una <strong>Política de Bucket (Bucket Policy)</strong> centralizada en JSON. Veremos cómo gobernar el acceso público de lectura y cómo aplicar restricciones de seguridad granulares (como denegar la subida de objetos a la máquina virtual y forzar conexiones cifradas HTTPS) sin depender de ACLs individuales.</li>
+</ol>
+<hr />
+<h3 id="parte-2-lanzamiento-de-instancia-ec2-y-conectividad-con-s3">Parte 2: Lanzamiento de Instancia EC2 y Conectividad con S3<a class="headerlink" href="#parte-2-lanzamiento-de-instancia-ec2-y-conectividad-con-s3" title="Permanent link">&para;</a></h3>
+<p>En esta parte desplegaremos un servidor virtual Linux en la nube y verificaremos cómo interactúa con nuestro bucket a través del perfil de instancia y rol IAM asignado (<code>LabRole</code>), comprobando los permisos que tiene por defecto en el entorno del laboratorio.</p>
+<h4 id="paso-21-lanzar-una-instancia-ec2-con-el-rol-de-laboratorio-labrole">Paso 2.1: Lanzar una instancia EC2 con el rol de laboratorio (<code>LabRole</code>)<a class="headerlink" href="#paso-21-lanzar-una-instancia-ec2-con-el-rol-de-laboratorio-labrole" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Desde el menú superior de la consola de AWS, dirígete al servicio <strong>EC2</strong>.</li>
+<li>En el panel izquierdo selecciona <strong>Instancias</strong> y pulsa en <strong>Lanzar instancias (Launch instances)</strong>.</li>
+<li>Configura los parámetros básicos de la instancia:<ul>
+<li><strong>Nombre:</strong> <code>Servidor-Reportes</code>.</li>
+<li><strong>Imagen del sistema operativo (AMI):</strong> <em>Amazon Linux 2023 AMI</em> (Apta para la capa gratuita).</li>
+<li><strong>Tipo de instancia:</strong> <code>t3.micro</code>.</li>
+<li><strong>Par de claves (Key pair):</strong> Crea un par de claves o utiliza uno que ya tengas creado (nos conectaremos directamente mediante ssh).</li>
+<li><strong>Grupo de seguridad (security group):</strong> Crea un grupo de seguridad llamado SSH que abra el puerto 22 a todas las IPs. Para ello deberás pulsar el botón Edit de la sección.</li>
+<li><strong>Configuración de red:</strong> Deja la VPC y subred por defecto.</li>
+</ul>
+</li>
+<li>Despliega la sección <strong>Detalles avanzados (Advanced details)</strong> al final de la página:<ul>
+<li>En el campo <strong>Perfil de instancia de IAM (IAM instance profile)</strong>, selecciona <strong><code>LabInstance</code></strong>.</li>
+</ul>
+</li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Asignación obligatoria de <code>LabInstance</code></p>
+<p>Asignar el perfil de instancia <code>LabInstance</code> proporciona a la máquina virtual el rol <code>LabRole</code> el cual provee de credenciales temporales dentro del Learner Lab con acceso a los recursos creados por el propio usuario.</p>
+</div>
+<ol>
+<li>Pulsa <strong>Lanzar instancia</strong> y espera a que su estado pase a <code>En ejecución</code> (<em>Running</em>).</li>
+</ol>
+<h4 id="paso-22-conexion-mediante-ssh">Paso 2.2: Conexión mediante SSH<a class="headerlink" href="#paso-22-conexion-mediante-ssh" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Apunta la IP pública de la instancia EC2 creada.</li>
+<li>Sitúate con el terminal en la misma carpeta donde tengas el archivo <code>.pem</code> descargado cuando creamos el key pair. Reduce los permisos del archivo con:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>chmod<span class="w"> </span><span class="m">400</span><span class="w"> </span>archivo.pem
+</span></code></pre></div></li>
+<li>Ejecuta la conexión SSH hacia la instancia:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ssh<span class="w"> </span>-i<span class="w"> </span>archivo.pem<span class="w"> </span>ec2-user@IPPúblicaInstanciaEC2
+</span></code></pre></div></li>
+<li>Se abrirá la sesión de terminal interactiva en tu máquina EC2.</li>
+</ol>
+<h4 id="paso-23-generacion-de-datos-de-prueba-en-la-maquina">Paso 2.3: Generación de datos de prueba en la máquina<a class="headerlink" href="#paso-23-generacion-de-datos-de-prueba-en-la-maquina" title="Permanent link">&para;</a></h4>
+<p>En la consola de la máquina EC2, ejecuta los siguientes comandos para crear una carpeta de trabajo con un informe de prueba:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/reports
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>~/reports
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Informe generado por el sistema el </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>report-test1.txt
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>ls<span class="w"> </span>-la
+</span></code></pre></div>
+<h4 id="paso-24-comprobacion-de-conectividad-y-permisos-predeterminados-labrole">Paso 2.4: Comprobación de conectividad y permisos predeterminados (<code>LabRole</code>)<a class="headerlink" href="#paso-24-comprobacion-de-conectividad-y-permisos-predeterminados-labrole" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Comprueba si la máquina puede listar los objetos de tu bucket ejecutando:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/
+</span></code></pre></div>
+<p><em>(Debe mostrarse el archivo <code>new-report.png</code> y <code>sample-file.txt</code> que subiste en la Parte 1).</em></p>
+<ol>
+<li>Sube el archivo de informe generado en el paso anterior hacia el bucket:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>report-test1.txt<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/
+</span></code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Subida exitosa por permisos IAM del rol</p>
+<p>La salida confirmará la subida correctamente:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>upload: ./report-test1.txt to s3://reportbucket-NOMBRE-APELLIDO/report-test1.txt
+</span></code></pre></div></p>
+</div>
+<ol>
+<li>Comprueba también que la máquina puede descargar objetos desde el bucket:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/new-report.png<span class="w"> </span>copia-report.png
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ls<span class="w"> </span>-lh<span class="w"> </span>copia-report.png
+</span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Permisos predeterminados de <code>LabRole</code> en AWS Academy Learner Lab</p>
+<p>Observa que el servidor EC2 puede listar el bucket, subir archivos y descargarlos <strong>sin haber configurado credenciales ni claves locales</strong> en <code>~/.aws/credentials</code>.</p>
+<p>Esto ocurre porque el perfil de instancia <code>LabInstance</code> asocia a la máquina virtual el rol IAM <code>LabRole</code>, el cual dispone por defecto de una política de identidad con permisos amplios para operar sobre todos los buckets de S3 de la cuenta del laboratorio.</p>
+<p>Sin embargo, bajo el principio de <strong>Mínimo Privilegio</strong>, en muchos escenarios necesitamos que un servidor solo actúe como lector o deseamos proteger un bucket contra modificaciones directas. En la Parte 3 comprobaremos cómo una <strong>Política de Bucket (Bucket Policy)</strong> con una directiva de denegación explícita (<code>Deny</code>) prevalece sobre los permisos del rol, permitiendo que la máquina pueda hacer todo en el bucket <strong>excepto subir archivos</strong>.</p>
+</div>
+<hr />
+<h3 id="parte-3-configuracion-de-politicas-de-bucket-bucket-policies-y-precedencia-de-evaluacion-iam">Parte 3: Configuración de Políticas de Bucket (Bucket Policies) y Precedencia de Evaluación IAM<a class="headerlink" href="#parte-3-configuracion-de-politicas-de-bucket-bucket-policies-y-precedencia-de-evaluacion-iam" title="Permanent link">&para;</a></h3>
+<p>En esta parte utilizaremos directivas JSON aplicadas en el propio bucket (<strong>Bucket Policies</strong>) para gobernar el acceso. Primero aplicaremos una política con efecto <strong><code>Deny</code></strong> para la acción <code>PutObject</code> dirigida al rol <code>LabRole</code>, demostrando cómo una directiva de denegación en una política de recurso invalida los permisos de la identidad. Posteriormente, configuraremos lectura pública anónima y exigiremos conexiones cifradas por HTTPS (TLS).</p>
+<h4 id="paso-31-obtencion-del-arn-del-rol-labrole">Paso 3.1: Obtención del ARN del rol <code>LabRole</code><a class="headerlink" href="#paso-31-obtencion-del-arn-del-rol-labrole" title="Permanent link">&para;</a></h4>
+<ol>
+<li>En una nueva pestaña de la consola de AWS, ve al servicio <strong>IAM</strong> -&gt; <strong>Roles</strong>.</li>
+<li>En el cuadro de búsqueda escribe <code>LabRole</code> y haz clic sobre él.</li>
+<li>Copia el <strong>ARN del rol</strong>, que tendrá un formato similar a:
+   <code>arn:aws:iam::123456789012:role/LabRole</code></li>
+</ol>
+<h4 id="paso-32-aplicar-la-politica-de-bucket-con-deny-para-la-accion-putobject-de-labrole">Paso 3.2: Aplicar la política de bucket con <code>Deny</code> para la acción <code>PutObject</code> de <code>LabRole</code><a class="headerlink" href="#paso-32-aplicar-la-politica-de-bucket-con-deny-para-la-accion-putobject-de-labrole" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Vuelve a la consola de <strong>Amazon S3</strong>, entra en tu bucket <code>reportbucket-NOMBRE-APELLIDO</code> y selecciona la pestaña <strong>Permisos (Permissions)</strong>.</li>
+<li>Desplázate hasta la sección <strong>Política de bucket (Bucket policy)</strong> y haz clic en <strong>Editar</strong>.</li>
+<li>Pega la siguiente directiva JSON, sustituyendo <code>123456789012</code> por tu ID de cuenta y <code>reportbucket-NOMBRE-APELLIDO</code> por el nombre real de tu bucket:</li>
+</ol>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DenegarSubidaEC2LabRole"</span><span class="p">,</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">      </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Deny"</span><span class="p">,</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">      </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="nt">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:iam::123456789012:role/LabRole"</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">      </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:PutObject"</span><span class="p">,</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">      </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Lógica de evaluación IAM: Precedencia absoluta del <code>Deny</code> explícito</p>
+<ul>
+<li><strong><code>Effect: Deny</code></strong>: En la lógica de evaluación de AWS IAM, <strong>un <code>Deny</code> explícito siempre prevalece sobre cualquier <code>Allow</code></strong>. Aunque la política de identidad del rol <code>LabRole</code> autorice la escritura en el bucket, el <code>Deny</code> de la Bucket Policy la invalida de inmediato.</li>
+<li><strong><code>Action: s3:PutObject</code></strong>: Únicamente se restringe la acción de subir o sobrescribir objetos. Las acciones de lectura y listado no se ven afectadas por esta regla.</li>
+<li><strong><code>Resource: .../*</code></strong>: Aplica sobre cualquier objeto contenido dentro del depósito.</li>
+</ul>
+</div>
+<ol>
+<li>Haz clic en <strong>Guardar cambios</strong>.</li>
+</ol>
+<h4 id="paso-33-comprobar-la-restriccion-en-ec2-denegacion-de-subida-y-persistencia-de-lectura">Paso 3.3: Comprobar la restricción en EC2: Denegación de subida y persistencia de lectura<a class="headerlink" href="#paso-33-comprobar-la-restriccion-en-ec2-denegacion-de-subida-y-persistencia-de-lectura" title="Permanent link">&para;</a></h4>
+<p>Regresa a la terminal interactiva de la máquina EC2 y realiza las siguientes comprobaciones:</p>
+<ol>
+<li>Crea un segundo archivo de informe e intenta subirlo al bucket:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Informe 2 generado el </span><span class="k">$(</span>date<span class="k">)</span><span class="s2">"</span><span class="w"> </span>&gt;<span class="w"> </span>report-test2.txt
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>report-test2.txt<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/
+</span></code></pre></div>
+<div class="admonition failure">
+<p class="admonition-title">Fallo de autorización por Deny explícito en la Bucket Policy</p>
+<p>El comando devolverá inmediatamente un error:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>upload failed: ./report-test2.txt to s3://reportbucket-NOMBRE-APELLIDO/report-test2.txt
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+</span></code></pre></div>
+<strong>Diagnóstico:</strong> Aunque la máquina dispone del rol <code>LabRole</code>, la política de bucket ha denegado explícitamente <code>s3:PutObject</code>. La subida queda completamente vetada.</p>
+</div>
+<ol>
+<li>Comprueba ahora si la máquina virtual sigue pudiendo listar el contenido del bucket:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/
+</span></code></pre></div>
+<p><em>(El listado se mostrará sin errores, evidenciando que <code>s3:ListBucket</code> sigue permitido por el rol).</em></p>
+<ol>
+<li>Comprueba que la máquina también puede seguir descargando objetos del bucket:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/report-test1.txt<span class="w"> </span>copia-descargada.txt
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>cat<span class="w"> </span>copia-descargada.txt
+</span></code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Comportamiento selectivo comprobado: todo permitido salvo subir archivos</p>
+<p>Hemos verificado cómo la instancia EC2 puede realizar todas las tareas de consulta y lectura gracias a los permisos de <code>LabRole</code>, pero <strong>no puede subir cosas al bucket</strong>, exactamente lo establecido por nuestra política de denegación selectiva.</p>
+</div>
+<h4 id="paso-34-verificacion-de-acceso-externo-desde-el-equipo-local-con-no-sign-request">Paso 3.4: Verificación de acceso externo desde el equipo local con <code>--no-sign-request</code><a class="headerlink" href="#paso-34-verificacion-de-acceso-externo-desde-el-equipo-local-con-no-sign-request" title="Permanent link">&para;</a></h4>
+<p>Ahora que hemos comprobado cómo responde la máquina EC2 ante la política, abre una <strong>segunda terminal en tu propio ordenador local</strong> para comprobar cómo responde el bucket ante peticiones externas sin credenciales.</p>
+<div class="admonition info">
+<p class="admonition-title">¿Por qué utilizaremos el parámetro <code>--no-sign-request</code>?</p>
+<p>En tu ordenador local tienes configuradas en <code>~/.aws/credentials</code> las credenciales de estudiante de AWS Academy Learner Lab. En AWS, dentro de la misma cuenta, <strong>si una política de identidad (IAM) otorga un permiso, este se concede a menos que haya un <code>Deny</code> explícito</strong>. Por tanto, tus credenciales locales de alumno ya disponen de permisos para operar sobre tus buckets.</p>
+<p>Para simular con exactitud cómo responderá S3 ante un <strong>cliente externo, un usuario anónimo o una aplicación de internet sin credenciales</strong>, utilizaremos la bandera <code>--no-sign-request</code>, que obliga al AWS CLI a enviar peticiones sin firmar.</p>
+</div>
+<ol>
+<li>Intenta subir un archivo desde tu terminal local de forma anónima:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"Prueba desde mi terminal local"</span><span class="w"> </span>&gt;<span class="w"> </span>reporte-local.txt
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>reporte-local.txt<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/<span class="w"> </span>--no-sign-request
+</span></code></pre></div>
+<div class="admonition failure">
+<p class="admonition-title">Fallo de autorización en el CLI local: AccessDenied</p>
+<p>La terminal local devolverá el error:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>upload failed: ./reporte-local.txt to s3://reportbucket-NOMBRE-APELLIDO/reporte-local.txt
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>An error occurred (AccessDenied) when calling the PutObject operation: Access Denied
+</span></code></pre></div></p>
+</div>
+<ol>
+<li>Intenta igualmente descargar un archivo sin credenciales:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/new-report.png<span class="w"> </span>copia.png<span class="w"> </span>--no-sign-request
+</span></code></pre></div>
+<p><em>(El comando también fallará con <code>AccessDenied</code>)</em>.</p>
+<p><strong>Conclusión didáctica:</strong> Hasta ahora, el bucket solo permite lectura y listado a identidades autenticadas de la cuenta (como la máquina EC2 mediante <code>LabRole</code>), denegando la escritura a <code>LabRole</code> por la Bucket Policy. Cualquier cliente externo sin autenticar queda bloqueado por denegación implícita predeterminada de S3.</p>
+<hr />
+<h4 id="paso-35-aplicar-la-2a-directiva-lectura-publica-y-verificar-en-navegador-y-cli-local">Paso 3.5: Aplicar la 2ª directiva (Lectura pública) y verificar en Navegador y CLI local<a class="headerlink" href="#paso-35-aplicar-la-2a-directiva-lectura-publica-y-verificar-en-navegador-y-cli-local" title="Permanent link">&para;</a></h4>
+<p>En el <strong>Paso 1.4</strong> comprobamos que <code>sample-file.txt</code> devolvía <code>AccessDenied</code> al abrirlo en el navegador porque no habíamos configurado su ACL individual. </p>
+<p>En lugar de repetir el engorroso proceso de editar la ACL archivo por archivo, utilizaremos la potencia de la <strong>Bucket Policy</strong> para autorizar la lectura a cualquier cliente de internet (navegadores web y peticiones anónimas de terminal), manteniendo intacta la prohibición de subida para la instancia EC2:</p>
+<ol>
+<li>En la pestaña <strong>Permisos (Permissions)</strong> de tu bucket, desplázate hasta <strong>Política de bucket (Bucket policy)</strong> y haz clic en <strong>Editar</strong>.</li>
+<li>Añade una segunda declaración (<code>Statement</code>) a la directiva existente que conceda <code>s3:GetObject</code> a cualquier identidad o público anónimo (<code>Principal: "*"</code>):</li>
+</ol>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="p">{</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span><span class="nt">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">      </span><span class="nt">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DenegarSubidaEC2LabRole"</span><span class="p">,</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">      </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Deny"</span><span class="p">,</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">      </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">        </span><span class="nt">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:iam::123456789012:role/LabRole"</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">      </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:PutObject"</span><span class="p">,</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">      </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="w">      </span><span class="nt">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PermitirLecturaPublicaAnonima"</span><span class="p">,</span>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="w">      </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span>
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="w">      </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span>
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="w">      </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:GetObject"</span><span class="p">,</span>
+</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="w">      </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"</span>
+</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-16-20"><a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-16-21"><a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="p">}</span>
+</span></code></pre></div>
+<ol>
+<li>
+<p>Pulsa <strong>Guardar cambios</strong>.</p>
+</li>
+<li>
+<p><strong>Comprobación 1 (Navegador):</strong><br />
+   Recarga la URL de objeto de <code>sample-file.txt</code> en una ventana de incógnito del navegador: el archivo de texto ahora se visualiza al instante sin autenticación.</p>
+</li>
+<li>
+<p><strong>Comprobación 2 (CLI local - Descarga pública permitida sin credenciales):</strong><br />
+   Vuelve a la terminal de tu equipo local y descarga el archivo usando el CLI de AWS con <code>--no-sign-request</code>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/sample-file.txt<span class="w"> </span>./descarga-local.txt<span class="w"> </span>--no-sign-request
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>cat<span class="w"> </span>descarga-local.txt
+</span></code></pre></div>
+   <em>(La descarga se completa con éxito sin necesidad de credenciales gracias a la directiva pública <code>s3:GetObject</code>)</em>.</p>
+</li>
+<li>
+<p><strong>Comprobación 3 (CLI local - Escritura protegida):</strong><br />
+   Intenta de nuevo subir un archivo de forma anónima desde tu terminal local:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>reporte-local.txt<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/<span class="w"> </span>--no-sign-request
+</span></code></pre></div>
+   <strong>¡Vuelve a fallar con <code>AccessDenied</code>!</strong><br />
+   Aunque el bucket permite que cualquier persona del mundo lea los objetos, <strong>la escritura sigue protegida</strong>. Ningún usuario anónimo puede subir objetos, y nuestra instancia EC2 (<code>LabRole</code>) sigue teniendo denegado el <code>PutObject</code> por la primera regla.</p>
+</li>
+</ol>
+<div class="admonition success">
+<p class="admonition-title">El poder de la Bucket Policy frente a las ACLs</p>
+<p>Con tan solo añadir esas directivas en JSON y apuntar al comodín <code>reportbucket-NOMBRE-APELLIDO/*</code>, <strong>todos los objetos actuales y cualquier archivo que se suba en el futuro quedan gobernados automáticamente</strong>, aplicando políticas granulares (lectura pública para todos, pero subida bloqueada para la máquina EC2 y clientes anónimos). </p>
+<p>No ha hecho falta tocar la ACL individual de ningún archivo. Por este motivo, la arquitectura moderna de AWS promueve <strong>deshabilitar completamente las ACLs (<em>Bucket owner enforced</em>)</strong> y delegar todo el control de acceso en las Políticas de Bucket y las Políticas IAM.</p>
+</div>
+<hr />
+<h4 id="paso-36-seguridad-corporativa-avanzada-forzar-cifrado-en-transito-https-obligatorio-con-condition">Paso 3.6: Seguridad Corporativa Avanzada: Forzar Cifrado en Tránsito (HTTPS obligatorio con <code>Condition</code>)<a class="headerlink" href="#paso-36-seguridad-corporativa-avanzada-forzar-cifrado-en-transito-https-obligatorio-con-condition" title="Permanent link">&para;</a></h4>
+<p>En el Paso 3.5 autorizamos la lectura pública (<code>Principal: "*"</code>). Sin embargo, un estándar de seguridad corporativo estricto (como las directrices del <em>CIS AWS Foundations Benchmark</em> o el Esquema Nacional de Seguridad) exige que toda transferencia de datos en la nube viaje cifrada mediante TLS/HTTPS, prohibiendo terminantemente el protocolo HTTP en texto plano.</p>
+<p>Para aplicar esta restricción sin revocar el acceso legítimo, utilizaremos el elemento más potente de las directivas IAM: el bloque <strong><code>Condition</code></strong>.</p>
+<ol>
+<li>En la consola de S3, accede a tu bucket -&gt; pestaña <strong>Permisos</strong> -&gt; <strong>Política de bucket</strong> -&gt; <strong>Editar</strong>.</li>
+<li>Incorpora una tercera declaración (<code>Statement</code>) con un efecto <code>Deny</code> cuando la condición <code>aws:SecureTransport</code> sea falsa:</li>
+</ol>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="p">{</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="nt">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">  </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">      </span><span class="nt">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DenegarSubidaEC2LabRole"</span><span class="p">,</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">      </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Deny"</span><span class="p">,</span>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">      </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">        </span><span class="nt">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:iam::123456789012:role/LabRole"</span>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">      </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:PutObject"</span><span class="p">,</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">      </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"</span>
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="w">      </span><span class="nt">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PermitirLecturaPublicaAnonima"</span><span class="p">,</span>
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="w">      </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span>
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="w">      </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span>
+</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a><span class="w">      </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:GetObject"</span><span class="p">,</span>
+</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a><span class="w">      </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"</span>
+</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="w">      </span><span class="nt">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ForzarCifradoEnTransitoTLS"</span><span class="p">,</span>
+</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="w">      </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Deny"</span><span class="p">,</span>
+</span><span id="__span-19-23"><a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a><span class="w">      </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span>
+</span><span id="__span-19-24"><a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a><span class="w">      </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:*"</span><span class="p">,</span>
+</span><span id="__span-19-25"><a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a><span class="w">      </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-19-26"><a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a><span class="w">        </span><span class="s2">"arn:aws:s3:::reportbucket-NOMBRE-APELLIDO"</span><span class="p">,</span>
+</span><span id="__span-19-27"><a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a><span class="w">        </span><span class="s2">"arn:aws:s3:::reportbucket-NOMBRE-APELLIDO/*"</span>
+</span><span id="__span-19-28"><a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a><span class="w">      </span><span class="p">],</span>
+</span><span id="__span-19-29"><a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a><span class="w">      </span><span class="nt">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-30"><a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a><span class="w">        </span><span class="nt">"Bool"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-31"><a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a><span class="w">          </span><span class="nt">"aws:SecureTransport"</span><span class="p">:</span><span class="w"> </span><span class="s2">"false"</span>
+</span><span id="__span-19-32"><a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-19-33"><a id="__codelineno-19-33" name="__codelineno-19-33" href="#__codelineno-19-33"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-19-34"><a id="__codelineno-19-34" name="__codelineno-19-34" href="#__codelineno-19-34"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-19-35"><a id="__codelineno-19-35" name="__codelineno-19-35" href="#__codelineno-19-35"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-19-36"><a id="__codelineno-19-36" name="__codelineno-19-36" href="#__codelineno-19-36"></a><span class="p">}</span>
+</span></code></pre></div>
+<ol>
+<li>
+<p>Haz clic en <strong>Guardar cambios</strong>.</p>
+</li>
+<li>
+<p><strong>Comprobación en la terminal local con <code>curl</code>:</strong><br />
+   Verifica el cumplimiento de la condición ejecutando una petición HTTP insegura frente a una petición HTTPS cifrada sobre el archivo público <code>sample-file.txt</code>:</p>
+</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># 1. Petición insegura en texto plano por HTTP ordinario:</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>curl<span class="w"> </span>-I<span class="w"> </span>http://reportbucket-NOMBRE-APELLIDO.s3.amazonaws.com/sample-file.txt
+</span></code></pre></div>
+<div class="admonition failure">
+<p class="admonition-title">Bloqueo por directiva de denegación explícita (HTTP 403 Forbidden)</p>
+<p>La respuesta del servidor será:
+<div class="language-http highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">403</span> <span class="ne">Forbidden</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="na">x-amz-error-code</span><span class="o">:</span> <span class="l">AccessDenied</span>
+</span></code></pre></div>
+<strong>Principio de evaluación de IAM:</strong> Aunque la directiva previa <code>PermitirLecturaPublicaAnonima</code> concede lectura pública (<code>Allow</code>), <strong>un <code>Deny</code> explícito tiene precedencia absoluta e invalida cualquier <code>Allow</code></strong>.</p>
+</div>
+<ol>
+<li>Ejecuta ahora la petición segura a través de HTTPS:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># 2. Petición cifrada y segura por HTTPS (TLS):</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>curl<span class="w"> </span>-I<span class="w"> </span>https://reportbucket-NOMBRE-APELLIDO.s3.amazonaws.com/sample-file.txt
+</span></code></pre></div>
+<div class="admonition success">
+<p class="admonition-title">Acceso concedido mediante canal cifrado (HTTP 200 OK)</p>
+<p>La respuesta devolverá:
+<div class="language-http highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain</span>
+</span></code></pre></div>
+Como la conexión viaja cifrada por TLS (<code>aws:SecureTransport: "true"</code>), la condición del <code>Deny</code> no se cumple y se aplica el <code>Allow</code> público normalmente.</p>
+</div>
+<hr />
+<h3 id="parte-4-exploracion-del-control-de-versiones-s3-versioning">Parte 4: Exploración del Control de Versiones (S3 Versioning)<a class="headerlink" href="#parte-4-exploracion-del-control-de-versiones-s3-versioning" title="Permanent link">&para;</a></h3>
+<p>El versionado protege los datos contra sobrescrituras accidentales o borrados no intencionados, almacenando un histórico completo de cada cambio.</p>
+<h4 id="paso-41-habilitar-el-control-de-versiones">Paso 4.1: Habilitar el control de versiones<a class="headerlink" href="#paso-41-habilitar-el-control-de-versiones" title="Permanent link">&para;</a></h4>
+<ol>
+<li>En la consola de S3, accede a tu bucket <code>reportbucket-NOMBRE-APELLIDO</code> y haz clic en la pestaña <strong>Propiedades (Properties)</strong>.</li>
+<li>En la sección <strong>Control de versiones de buckets (Bucket Versioning)</strong>, pulsa <strong>Editar</strong>.</li>
+<li>Selecciona <strong>Habilitar (Enable)</strong> y pulsa <strong>Guardar cambios</strong>.</li>
+</ol>
+<h4 id="paso-42-sobreescritura-y-recuperacion-de-versiones-anteriores">Paso 4.2: Sobreescritura y recuperación de versiones anteriores<a class="headerlink" href="#paso-42-sobreescritura-y-recuperacion-de-versiones-anteriores" title="Permanent link">&para;</a></h4>
+<ol>
+<li>En tu equipo local, edita el archivo <code>sample-file.txt</code> agregando una nueva línea al final:</li>
+</ol>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>This sample text file is used to illustrate the use of versioning in an Amazon S3 bucket.
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>Make it a great day!
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>Nueva versión actualizada para el laboratorio de ABDAN.
+</span></code></pre></div>
+<ol>
+<li>En la consola de S3, sube el archivo modificado <code>sample-file.txt</code> con el <strong>mismo nombre exacto</strong>.</li>
+<li>Ve a la pestaña del navegador donde tenías abierta la URL del objeto y pulsa recargar (F5):<ul>
+<li>Se mostrará la nueva versión con el texto añadido. Amazon S3 siempre sirve por defecto la versión más reciente (<em>latest version</em>).</li>
+</ul>
+</li>
+<li>Vuelve a la pestaña <strong>Objetos</strong> de tu bucket en la consola de AWS.</li>
+<li>Activa el interruptor <strong>Mostrar versiones (Show versions)</strong> situado en la parte superior derecha de la tabla de objetos.</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Inspección de versiones en la consola</p>
+<p>Observarás que debajo de <code>sample-file.txt</code> aparecen ahora <strong>dos entradas</strong>:
+- La superior corresponde a la versión actual, identificada con un hash único en la columna <strong>ID de versión</strong>.
+- La inferior corresponde a la versión original previa. Si haces clic sobre ella, podrás descargarla o consultar sus metadatos históricos intactos.</p>
+</div>
+<h4 id="paso-43-borrado-logico-con-marcador-de-eliminacion-soft-delete">Paso 4.3: Borrado Lógico con Marcador de Eliminación (Soft Delete)<a class="headerlink" href="#paso-43-borrado-logico-con-marcador-de-eliminacion-soft-delete" title="Permanent link">&para;</a></h4>
+<p>¿Qué ocurre si un usuario o proceso elimina un archivo en un bucket versionado?</p>
+<ol>
+<li>Desactiva el interruptor <strong>Mostrar versiones</strong> (para operar en la vista habitual de S3).</li>
+<li>Marca la casilla de selección de <code>sample-file.txt</code> y haz clic en <strong>Eliminar (Delete)</strong>.</li>
+<li>Confirma escribiendo <code>eliminar</code> y pulsa <strong>Eliminar objetos</strong>.</li>
+<li>Cierra la ventana y observa la lista de objetos: el archivo <code>sample-file.txt</code> <strong>ha desaparecido</strong> de la vista.</li>
+<li>Intenta recargar la URL del objeto en el navegador: obtendrás un error <code>404 Not Found</code>.</li>
+<li>Ahora, vuelve a activar el interruptor <strong>Mostrar versiones</strong>:</li>
+</ol>
+<p>Observa que S3 <strong>no ha borrado ningún dato</strong>. En su lugar, ha insertado un objeto especial llamado <strong>Marcador de eliminación (Delete marker)</strong> en la cima de la pila de versiones.</p>
+<hr />
+<h4 id="paso-44-auditoria-y-recuperacion-ante-desastres-por-cli-aws-s3api">Paso 4.4: Auditoría y Recuperación ante Desastres por CLI (<code>aws s3api</code>)<a class="headerlink" href="#paso-44-auditoria-y-recuperacion-ante-desastres-por-cli-aws-s3api" title="Permanent link">&para;</a></h4>
+<p>En el paso anterior comprobamos cómo la consola gráfica oculta el objeto colocando un marcador en la cabecera. Sin embargo, en entornos corporativos o ante incidentes de borrado accidental masivo, los ingenieros cloud no restauran archivos mediante clics manuales en la web, sino mediante scripts y la API de bajo nivel de AWS (<strong><code>aws s3api</code></strong>).</p>
+<ol>
+<li>Abre tu terminal local y consulta la pila de versiones de <code>sample-file.txt</code> en formato estructurado JSON:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>aws<span class="w"> </span>s3api<span class="w"> </span>list-object-versions<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">    </span>--bucket<span class="w"> </span>reportbucket-NOMBRE-APELLIDO<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">    </span>--prefix<span class="w"> </span>sample-file.txt
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Análisis del JSON de versiones</p>
+<p>Observarás dos arrays principales en la respuesta:
+- <code>"DeleteMarkers"</code>: Contiene el marcador activo actual con su <code>VersionId</code> y <code>"IsLatest": true</code>.
+- <code>"Versions"</code>: Contiene las versiones reales históricas con <code>"IsLatest": false</code>, preservadas íntegramente en los discos de S3.</p>
+</div>
+<ol>
+<li><strong>Extracción automatizada del identificador con filtro JMESPath (<code>--query</code>):</strong><br />
+   Filtra y almacena el <code>VersionId</code> del marcador de eliminación en una variable de entorno:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="nv">MARKER_ID</span><span class="o">=</span><span class="k">$(</span>aws<span class="w"> </span>s3api<span class="w"> </span>list-object-versions<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">    </span>--bucket<span class="w"> </span>reportbucket-NOMBRE-APELLIDO<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="w">    </span>--prefix<span class="w"> </span>sample-file.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="w">    </span>--query<span class="w"> </span><span class="s1">'DeleteMarkers[0].VersionId'</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="w">    </span>--output<span class="w"> </span>text<span class="k">)</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"El VersionId del Delete Marker es: </span><span class="nv">$MARKER_ID</span><span class="s2">"</span>
+</span></code></pre></div>
+<ol>
+<li><strong>Restauración del archivo por línea de comandos:</strong><br />
+   Elimina físicamente el marcador de borrado utilizando su identificador:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>aws<span class="w"> </span>s3api<span class="w"> </span>delete-object<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">    </span>--bucket<span class="w"> </span>reportbucket-NOMBRE-APELLIDO<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">    </span>--key<span class="w"> </span>sample-file.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">    </span>--version-id<span class="w"> </span><span class="s2">"</span><span class="nv">$MARKER_ID</span><span class="s2">"</span>
+</span></code></pre></div>
+<ol>
+<li>Comprueba con el comando ordinario de S3 que el archivo ha "resucitado" y vuelve a estar accesible:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://reportbucket-NOMBRE-APELLIDO/
+</span></code></pre></div>
+<p><em>(El archivo <code>sample-file.txt</code> reaparece en el listado y vuelve a responder con código 200 en el navegador)</em>.</p>
+<hr />
+<h4 id="paso-45-borrado-fisico-definitivo-hard-delete">Paso 4.5: Borrado Físico Definitivo (Hard Delete)<a class="headerlink" href="#paso-45-borrado-fisico-definitivo-hard-delete" title="Permanent link">&para;</a></h4>
+<ol>
+<li>En la consola de AWS, vuelve a la pestaña de objetos y activa el interruptor <strong>Mostrar versiones</strong>.</li>
+<li>Selecciona únicamente la <strong>versión más reciente</strong> de <code>sample-file.txt</code> (la que tiene el texto añadido) y haz clic en <strong>Eliminar</strong>.</li>
+<li>En el cuadro de diálogo se te advertirá: <em>¿Desea eliminar permanentemente los objetos?</em>. Escribe <code>eliminar permanentemente</code> y confirma.</li>
+<li>Cierra la ventana, desactiva <em>Mostrar versiones</em> y recarga la URL del objeto en tu navegador.</li>
+<li>Comprobarás que la versión actual es ahora la versión original del archivo, ya que la versión posterior ha sido destruida de forma irreversible.</li>
+</ol>
+<hr />
+<h3 id="parte-5-automatizacion-de-costes-con-reglas-de-ciclo-de-vida-s3-lifecycle">Parte 5: Automatización de Costes con Reglas de Ciclo de Vida (S3 Lifecycle)<a class="headerlink" href="#parte-5-automatizacion-de-costes-con-reglas-de-ciclo-de-vida-s3-lifecycle" title="Permanent link">&para;</a></h3>
+<p>Como has comprobado en la Parte 4, el versionado preserva todos los cambios históricos. Sin embargo, en un entorno de producción con miles de actualizaciones diarias, <strong>las versiones no actuales (<em>noncurrent versions</em>) y los marcadores de eliminación se acumulan indefinidamente</strong>, incrementando la factura mensual de almacenamiento sin aportar valor operativo.</p>
+<p>Para resolver este desafío sin intervención manual, implementaremos una <strong>Regla de Ciclo de Vida (Lifecycle Rule)</strong> que gestione el ciclo vital de las versiones obsoletas.</p>
+<h4 id="paso-51-configuracion-de-la-regla-de-ciclo-de-vida">Paso 5.1: Configuración de la regla de ciclo de vida<a class="headerlink" href="#paso-51-configuracion-de-la-regla-de-ciclo-de-vida" title="Permanent link">&para;</a></h4>
+<ol>
+<li>En la consola de S3, accede a tu bucket <code>reportbucket-NOMBRE-APELLIDO</code>.</li>
+<li>Haz clic en la pestaña <strong>Administración (Management)</strong>.</li>
+<li>En la sección <strong>Reglas de ciclo de vida (Lifecycle rules)</strong>, pulsa en <strong>Crear regla de ciclo de vida (Create lifecycle rule)</strong>.</li>
+<li>Configura los parámetros iniciales de la regla:<ul>
+<li><strong>Nombre de la regla:</strong> <code>GestionarVersionesAntiguas</code>.</li>
+<li><strong>Ámbito de la regla (Rule scope):</strong> Selecciona <strong>Aplicar a todos los objetos del bucket (Apply to all objects in the bucket)</strong>.</li>
+<li>Marca la casilla de verificación: <em>Reozco que esta regla se aplicará a todos los objetos del bucket</em>.</li>
+</ul>
+</li>
+</ol>
+<h4 id="paso-52-definicion-de-las-acciones-de-transicion-y-purga">Paso 5.2: Definición de las acciones de transición y purga<a class="headerlink" href="#paso-52-definicion-de-las-acciones-de-transicion-y-purga" title="Permanent link">&para;</a></h4>
+<p>En la sección <strong>Acciones de la regla de ciclo de vida (Lifecycle rule actions)</strong>, marca las siguientes tres casillas:</p>
+<ol>
+<li>
+<p><strong>Mover versiones no actuales de objetos entre clases de almacenamiento (Move noncurrent versions of objects between storage classes)</strong>:</p>
+<ul>
+<li>En <em>Transiciones de versiones no actuales</em>:<ul>
+<li><strong>Clase de almacenamiento:</strong> Selecciona <strong>Glacier Flexible Retrieval</strong> (antes <em>Amazon Glacier</em>).</li>
+<li><strong>Días después de que los objetos se conviertan en versiones no actuales:</strong> Introduce <code>90</code> días.</li>
+<li><strong>Número de versiones más recientes que se conservarán (opcional):</strong> Introduce <code>2</code> (para asegurar que siempre se retengan al menos las 2 versiones inmediatamente anteriores).</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Eliminar permanentemente las versiones no actuales de los objetos (Permanently delete noncurrent versions of objects)</strong>:</p>
+<ul>
+<li><strong>Días después de que los objetos se conviertan en versiones no actuales:</strong> Introduce <code>365</code> días (al transcurrir 1 año, las versiones archivadas se eliminarán físicamente).</li>
+</ul>
+</li>
+<li>
+<p><strong>Eliminar marcadores de eliminación de objetos caducados o cargas分partes incompletas (Delete expired object delete markers or incomplete multipart uploads)</strong>:</p>
+<ul>
+<li>Marca <strong>Eliminar marcadores de eliminación de objetos caducados (Delete expired object delete markers)</strong>.</li>
+</ul>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">¿Qué es un marcador de eliminación caducado (<em>Expired delete marker</em>)?</p>
+<p>Cuando todas las versiones históricas de un objeto han sido finalmente eliminadas por una regla de expiración, el <em>Delete Marker</em> se queda solo en el bucket ("huérfano"). Activar esta opción indica a S3 que elimine automáticamente dicho marcador, liberando el bucket de residuos lógicos sin coste.</p>
+</div>
+<h4 id="paso-53-revision-de-la-linea-temporal-y-guardado">Paso 5.3: Revisión de la línea temporal y guardado<a class="headerlink" href="#paso-53-revision-de-la-linea-temporal-y-guardado" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Desplázate al final de la página y examina la tabla de resumen <strong>Acciones de ciclo de vida para las versiones no actuales</strong>.</li>
+<li>Observa la progresión temporal:<ul>
+<li><strong>Día 0:</strong> El objeto se convierte en versión no actual.</li>
+<li><strong>Día 90:</strong> Se transiciona automáticamente a <em>S3 Glacier Flexible Retrieval</em>.</li>
+<li><strong>Día 365:</strong> Se destruye permanentemente.</li>
+</ul>
+</li>
+<li>Haz clic en <strong>Crear regla (Create rule)</strong>.</li>
+</ol>
+<hr />
+<h2 id="3-limpieza-de-recursos-clean-up">3. Limpieza de Recursos (Clean-up)<a class="headerlink" href="#3-limpieza-de-recursos-clean-up" title="Permanent link">&para;</a></h2>
+<p>Para evitar consumos de cómputo innecesarios en tu cuenta de AWS Academy:</p>
+<h3 id="1-terminar-la-instancia-ec2">1. Terminar la instancia EC2<a class="headerlink" href="#1-terminar-la-instancia-ec2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Dirígete a la consola de <strong>EC2</strong> -&gt; <strong>Instancias</strong>.</li>
+<li>Selecciona la instancia <code>Servidor-Reportes</code>.</li>
+<li>Haz clic en <strong>Estado de la instancia</strong> -&gt; <strong>Terminar instancia (Terminate instance)</strong> y confirma.</li>
+</ol>
+<h3 id="2-vaciar-y-eliminar-el-bucket-s3">2. Vaciar y eliminar el bucket S3<a class="headerlink" href="#2-vaciar-y-eliminar-el-bucket-s3" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Dirígete a <strong>S3</strong> -&gt; selecciona tu bucket <code>reportbucket-NOMBRE-APELLIDO</code>.</li>
+<li>Pulsa en <strong>Vaciar (Empty)</strong>.
+   <em>(Al estar el versionado activo, el proceso de vaciado eliminará de forma secuencial todas las versiones históricas y marcadores de eliminación)</em>. Confirma escribiendo <code>vaciar permanentemente</code>.</li>
+<li>Una vez vacío, pulsa en <strong>Eliminar (Delete)</strong> y confirma escribiendo el nombre del bucket.</li>
+</ol>
+<hr />
+<h2 id="4-entregables">4. Entregables<a class="headerlink" href="#4-entregables" title="Permanent link">&para;</a></h2>
+<p>Presenta un documento o memoria de prácticas que contenga:</p>
+<ol>
+<li><strong>Captura de terminal en EC2:</strong> Salida del comando <code>aws s3 cp</code> demostrando la subida inicial exitosa gracias a los permisos predeterminados de <code>LabRole</code> (Paso 2.4), y captura posterior demostrando el error <code>AccessDenied</code> al intentar subir un archivo tras aplicar la directiva <code>Deny</code> en la política de bucket, contrastado con la capacidad de seguir listando y descargando objetos (Paso 3.3).</li>
+<li><strong>Captura de terminal local (AWS CLI con <code>--no-sign-request</code>):</strong> Salida que demuestre el error <code>AccessDenied</code> al intentar subir archivos tras la 1ª política, y la posterior descarga satisfactoria de <code>sample-file.txt</code> tras añadir la 2ª política pública.</li>
+<li><strong>Captura de forzado de cifrado TLS (curl):</strong> Salida en la terminal local ejecutando <code>curl -I http://...</code> (bloqueado con <code>403 Forbidden</code>) frente a <code>curl -I https://...</code> (autorizado con <code>200 OK</code>).</li>
+<li><strong>Documento de la Política de Bucket:</strong> El JSON final configurado en el bucket con las tres declaraciones (<code>Deny</code> a <code>PutObject</code> para <code>LabRole</code>, lectura pública anónima y denegación de tráfico no TLS), justificando brevemente la función de cada bloque.</li>
+<li><strong>Captura de recuperación ante desastres por CLI (<code>aws s3api</code>):</strong> Salida de la terminal local ejecutando <code>aws s3api list-object-versions</code> y la eliminación del <em>Delete Marker</em> con <code>aws s3api delete-object</code> restaurando el archivo.</li>
+<li><strong>Captura de la Regla de Ciclo de Vida:</strong> Captura del resumen de la regla creada en la pestaña <em>Administración</em> mostrando las transiciones a Glacier y la eliminación programada.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["header.autohide", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>
