@@ -101,9 +101,11 @@ nav:
       - "Práctica 1.5: Acceso programático a S3 con Python (Boto3)": "UT1/practicas/practica-5-acceso-sdk-boto3.md"
   - UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red:
     - "1. Introducción a los Servicios de Almacenamiento en Bloque y Sistemas de Ficheros en Red": "UT2/01-introduccion.md"
+    - "2. Amazon EBS: Elastic Block Store": "UT2/02-ebs.md"
     - Prácticas de Laboratorio:
       - "Práctica 2.1: Creación y Gestión de Volúmenes EBS": "UT2/practicas/practica-1-ebs.md"
-      #- "Práctica 2.2: Configuración y Uso de Amazon EFS": "UT2/practicas/practica-2-amazon-efs.md"
+      - "Práctica 2.2: Modificación de un Volumen EBS": "UT2/practicas/practica-2-modificar-ebs.md"
+      #- "Práctica 2.3: Configuración y Uso de Amazon EFS": "UT2/practicas/practica-3-amazon-efs.md"
       #- "Práctica 2.3: Implementación de Amazon FSx para Windows File Server": "UT2/practicas/practica-3-amazon-fsx-windows.md"
       #- "Práctica 2.4: Implementación de Amazon FSx para Lustre": "UT2/practicas/practica-4-amazon-fsx-lustre.md"
 
