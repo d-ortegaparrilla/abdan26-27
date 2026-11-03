@@ -41,9 +41,8 @@ en el proceso
 - b. Espera hasta que el estado de la copia esté completo. Puedes monitorizar el estado del snapshot con el comando `aws ec2 describe-snapshots`
 
 
-> [!WARNING]
-> **No modifiques el volumen hasta que el snapshot esté completo**
-> Si la modificación del volumen fallara y no dispusieras de una copia de seguridad completada, podrías perder el acceso al sistema operativo de la instancia. La instantánea es tu red de seguridad.
+!!! warning "No modifiques el volumen hasta que el snapshot esté completo"
+    Si la modificación del volumen fallara y no dispusieras de una copia de seguridad completada, podrías perder el acceso al sistema operativo de la instancia. La instantánea es tu red de seguridad.
 
 ---
 

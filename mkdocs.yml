@@ -106,8 +106,9 @@ nav:
       - "Práctica 2.1: Creación y Gestión de Volúmenes EBS": "UT2/practicas/practica-1-ebs.md"
       - "Práctica 2.2: Modificación de un Volumen EBS": "UT2/practicas/practica-2-modificar-ebs.md"
       #- "Práctica 2.3: Configuración y Uso de Amazon EFS": "UT2/practicas/practica-3-amazon-efs.md"
+      - "Práctica 2.4: Amazon EFS — Creación de un Sistema de Ficheros NFS": "UT2/practicas/practica-4-amazon-efs.md"
       #- "Práctica 2.3: Implementación de Amazon FSx para Windows File Server": "UT2/practicas/practica-3-amazon-fsx-windows.md"
-      #- "Práctica 2.4: Implementación de Amazon FSx para Lustre": "UT2/practicas/practica-4-amazon-fsx-lustre.md"
+      #- "Práctica 2.5: Implementación de Amazon FSx para Lustre": "UT2/practicas/practica-5-amazon-fsx-lustre.md"
 
 #   
 #   - "7. Replicación y Transferencia en S3": "UT1/07-replicacion-movimiento-datos.md"

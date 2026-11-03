@@ -7,9 +7,8 @@
 
 ## Fase 1: Despliegue inicial en la misma AZ (`us-east-1a`)
 
-> [!WARNING]
-> **Requisito crítico: La misma Zona de Disponibilidad**
-> Un volumen EBS reside físicamente en una única Zona de Disponibilidad (AZ). Para estas primeras fases, ambas instancias EC2 y el volumen EBS deben crearse exactamente en la misma AZ (por ejemplo, `us-east-1a`).
+!!! warning "Requisito crítico: La misma Zona de Disponibilidad"
+    Un volumen EBS reside físicamente en una única Zona de Disponibilidad (AZ). Para estas primeras fases, ambas instancias EC2 y el volumen EBS deben crearse exactamente en la misma AZ (por ejemplo, `us-east-1a`).
 
 1. Accede a la consola de EC2 y lanza dos instancias (**Amazon Linux 2023**, tipo `t3.micro`):
 
@@ -48,9 +47,8 @@
     lsblk
     ```
 
-    > [!NOTE]
-    > **¿Por qué se llama `/dev/nvme1n1` y no `/dev/sdf`?**
-    > Las instancias modernas de AWS utilizan el hipervisor **Nitro**, que expone los discos EBS a través de controladores NVMe de alto rendimiento. Aunque en la consola web asignes `/dev/sdf`, el kernel de Linux lo detectará como `/dev/nvme1n1` (creando internamente un enlace simbólico `/dev/sdf -> nvme1n1` mediante reglas `udev`).
+    !!! note "¿Por qué se llama `/dev/nvme1n1` y no `/dev/sdf`?"
+        Las instancias modernas de AWS utilizan el hipervisor **Nitro**, que expone los discos EBS a través de controladores NVMe de alto rendimiento. Aunque en la consola web asignes `/dev/sdf`, el kernel de Linux lo detectará como `/dev/nvme1n1` (creando internamente un enlace simbólico `/dev/sdf -> nvme1n1` mediante reglas `udev`).
 
 4. Comprueba que el volumen es un disco virgen en crudo (sin sistema de archivos):
 
@@ -81,9 +79,8 @@
     UUID=TU-UUID-AQUI  /mnt/datos  ext4  defaults,nofail  0  2
     ```
 
-    > [!TIP]
-    > **Por qué nunca debes usar `/dev/nvme1n1` en el fstab**
-    > En instancias Nitro con varios discos, el orden en que el kernel numera los dispositivos `nvmeXn1` puede cambiar entre reinicios. Usar el UUID garantiza que siempre se monte el disco correcto. Además, la opción `nofail` permite que el servidor arranque con normalidad aunque el disco no esté presente, evitando perder el acceso por SSH.
+    !!! tip "Por qué nunca debes usar `/dev/nvme1n1` en el fstab"
+        En instancias Nitro con varios discos, el orden en que el kernel numera los dispositivos `nvmeXn1` puede cambiar entre reinicios. Usar el UUID garantiza que siempre se monte el disco correcto. Además, la opción `nofail` permite que el servidor arranque con normalidad aunque el disco no esté presente, evitando perder el acceso por SSH.
 
 8. Monta todos los sistemas de archivos declarados en `/etc/fstab` y verifica el montaje:
 
@@ -100,9 +97,8 @@
     ls -ld /mnt/datos
     ```
 
-    > [!WARNING]
-    > **¡Cambia el propietario siempre DESPUÉS de montar!**
-    > Si ejecutas `chown` sobre `/mnt/datos` antes de hacer el `mount`, solo estarás cambiando los permisos de la carpeta vacía en el disco principal. Al hacerlo con el volumen ya montado, el cambio de propietario (UID 1000) se graba directamente en el inodo raíz del volumen EBS y viajará con él a cualquier otra máquina.
+    !!! warning "¡Cambia el propietario siempre DESPUÉS de montar!"
+        Si ejecutas `chown` sobre `/mnt/datos` antes de hacer el `mount`, solo estarás cambiando los permisos de la carpeta vacía en el disco principal. Al hacerlo con el volumen ya montado, el cambio de propietario (UID 1000) se graba directamente en el inodo raíz del volumen EBS y viajará con él a cualquier otra máquina.
 
 10. Crea un archivo de prueba directamente con tu usuario sin privilegios (`ec2-user`):
 
@@ -147,9 +143,8 @@ Para retirar un volumen EBS de una instancia en caliente sin corromper el sistem
 
     Observa cómo en la columna `FSTYPE` ya aparece `ext4` y conserva exactamente el mismo UUID que tenía en la primera máquina.
 
-    > [!CAUTION]
-    > **¡No ejecutes `mkfs` en `Nodo-Destino-A`!**
-    > El disco ya contiene una tabla de inodos, un sistema de archivos `ext4` y tus datos. Si vuelves a ejecutar `mkfs -t ext4`, formatearás el volumen de nuevo y destruirás toda la información creada en `Nodo-Origen-A`.
+    !!! danger "¡No ejecutes `mkfs` en `Nodo-Destino-A`!"
+        El disco ya contiene una tabla de inodos, un sistema de archivos `ext4` y tus datos. Si vuelves a ejecutar `mkfs -t ext4`, formatearás el volumen de nuevo y destruirás toda la información creada en `Nodo-Origen-A`.
 
 3. Crea el directorio de montaje en `Nodo-Destino-A`:
 
@@ -193,9 +188,8 @@ Para retirar un volumen EBS de una instancia en caliente sin corromper el sistem
     - En la consola de AWS, ve a **Elastic Block Store > Volumes**, selecciona `EBS-Datos-Compartidos` y haz clic en **Actions > Create snapshot**.
     - **Description:** `Snapshot-Migracion-AZ` y pulsa **Create snapshot**.
 
-    > [!NOTE]
-    > **Por qué el Snapshot sí puede cambiar de AZ**
-    > Cuando creas un Snapshot de EBS, AWS guarda una copia de los bloques internamente en **Amazon S3**, que es un almacenamiento regional replicado en múltiples zonas. Desde ese Snapshot en S3 puedes engendrar nuevos volúmenes EBS en **cualquier Zona de Disponibilidad de la región**.
+    !!! note "Por qué el Snapshot sí puede cambiar de AZ"
+        Cuando creas un Snapshot de EBS, AWS guarda una copia de los bloques internamente en **Amazon S3**, que es un almacenamiento regional replicado en múltiples zonas. Desde ese Snapshot en S3 puedes engendrar nuevos volúmenes EBS en **cualquier Zona de Disponibilidad de la región**.
 
 4. **Creación del nuevo volumen en la segunda AZ (`us-east-1b`):**
 
