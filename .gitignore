@@ -6,3 +6,13 @@ __pycache__/
 *.pyc
 .DS_Store
 *~
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+
