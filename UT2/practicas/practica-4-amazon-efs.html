@@ -1,0 +1,2215 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Apuntes del módulo de Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN) - CE Recursos y Servicios en la Nube">
+      
+      
+        <meta name="author" content="David Ortega Parrilla">
+      
+      
+        <link rel="canonical" href="https://d-ortegaparrilla.github.io/abdan26-27/UT2/practicas/practica-4-amazon-efs.html">
+      
+      
+        <link rel="prev" href="practica-3-ebs-performance.html">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Práctica 2.4: Amazon EFS. Creación de un Sistema de Ficheros NFS - Administración de Bases de Datos y Almacenamiento en la Nube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#practica-4-amazon-efs-creacion-de-un-sistema-de-ficheros-nfs" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-header__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Administración de Bases de Datos y Almacenamiento en la Nube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Práctica 2.4: Amazon EFS. Creación de un Sistema de Ficheros NFS
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../planificacion.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Planificación del Módulo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../UT1/01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-nav__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    Administración de Bases de Datos y Almacenamiento en la Nube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../planificacion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planificación del Módulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/02-arquitectura-s3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Arquitectura y Componentes de Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/03-clases-almacenamiento.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Clases de Almacenamiento y S3 Glacier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/04-ciclo-de-vida-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ciclo de Vida, Versionado e Inmutabilidad
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/05-seguridad-control-acceso.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Seguridad, Control de Acceso y Cifrado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/06-sitios-web-estaticos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Alojamiento de Sitios Web Estáticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/07-interaccion-sdk.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Interacción con SDK de Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-1-operaciones-basicas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-2-sitio-web-estatico.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.2: Alojamiento de un Sitio Web Estático en S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-3-politicas-acceso-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-4-replicacion-multiregion-crr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.4: Replicación Multirregión en Amazon S3 (CRR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-5-acceso-sdk-boto3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.5: Acceso programático a S3 con Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción a los Servicios de Almacenamiento en Bloque y Sistemas de Ficheros en Red
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Amazon EBS: Elastic Block Store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-1-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.1: Creación y Gestión de Volúmenes EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-2-modificar-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.2: Modificación de un Volumen EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-3-ebs-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.3: Amazon EBS. Benchmarking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.4: Amazon EFS. Creación de un Sistema de Ficheros NFS
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="practica-4-amazon-efs.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.4: Amazon EFS. Creación de un Sistema de Ficheros NFS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introducción
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introducción">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-propuesta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitectura propuesta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requerimientos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requerimientos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-configuracion-de-la-infraestructura-de-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1: Configuración de la infraestructura de red
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-creacion-del-grupo-de-seguridad-para-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2: Creación del grupo de seguridad para EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-creacion-del-sistema-de-ficheros-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3: Creación del sistema de ficheros Amazon EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-verificacion-de-los-destinos-de-montaje" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4: Verificación de los destinos de montaje
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-montaje-del-sistema-de-ficheros-en-la-instancia1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5: Montaje del sistema de ficheros en la Instancia1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-6-montaje-con-punto-de-acceso-en-la-instancia2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 6: Montaje con punto de acceso en la Instancia2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 6: Montaje con punto de acceso en la Instancia2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creacion-del-punto-de-acceso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación del punto de acceso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#montaje-en-la-instancia2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Montaje en la Instancia2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-7-montaje-persistente-mediante-etcfstab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 7: Montaje persistente mediante /etc/fstab
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 7: Montaje persistente mediante /etc/fstab">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instancia1-montaje-completo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instancia1 (montaje completo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancia2-montaje-con-punto-de-acceso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instancia2 (montaje con punto de acceso)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-8-limpieza-del-laboratorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 8: Limpieza del laboratorio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entregables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entregables
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introducción
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introducción">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-propuesta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitectura propuesta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requerimientos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requerimientos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-configuracion-de-la-infraestructura-de-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1: Configuración de la infraestructura de red
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-creacion-del-grupo-de-seguridad-para-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2: Creación del grupo de seguridad para EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-creacion-del-sistema-de-ficheros-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3: Creación del sistema de ficheros Amazon EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-verificacion-de-los-destinos-de-montaje" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4: Verificación de los destinos de montaje
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-montaje-del-sistema-de-ficheros-en-la-instancia1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5: Montaje del sistema de ficheros en la Instancia1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-6-montaje-con-punto-de-acceso-en-la-instancia2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 6: Montaje con punto de acceso en la Instancia2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 6: Montaje con punto de acceso en la Instancia2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creacion-del-punto-de-acceso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación del punto de acceso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#montaje-en-la-instancia2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Montaje en la Instancia2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-7-montaje-persistente-mediante-etcfstab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 7: Montaje persistente mediante /etc/fstab
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 7: Montaje persistente mediante /etc/fstab">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instancia1-montaje-completo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instancia1 (montaje completo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancia2-montaje-con-punto-de-acceso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instancia2 (montaje con punto de acceso)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-8-limpieza-del-laboratorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 8: Limpieza del laboratorio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entregables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entregables
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="practica-4-amazon-efs-creacion-de-un-sistema-de-ficheros-nfs">Práctica 4: Amazon EFS — Creación de un Sistema de Ficheros NFS<a class="headerlink" href="#practica-4-amazon-efs-creacion-de-un-sistema-de-ficheros-nfs" title="Permanent link">&para;</a></h1>
+<ul>
+<li><strong>Módulo:</strong> Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN)</li>
+<li><strong>Unidad de Trabajo:</strong> UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red</li>
+</ul>
+<hr />
+<h2 id="introduccion">Introducción<a class="headerlink" href="#introduccion" title="Permanent link">&para;</a></h2>
+<p><strong>Amazon Elastic File System (EFS)</strong> es un servicio completamente administrado, de alta disponibilidad y durabilidad, que proporciona un almacenamiento de ficheros totalmente elástico y sin servidor. Permite compartir datos de archivos sin necesidad de aprovisionar o administrar la capacidad de almacenamiento y el rendimiento. Los sistemas de ficheros de Amazon EFS escalan automáticamente hasta PBytes de datos y permiten que miles de servidores, instancias o máquinas virtuales puedan acceder simultáneamente y de forma consistente.</p>
+<p>En esta práctica exploraremos el servicio de Amazon EFS y aprenderemos cómo crear un sistema de archivos NFS (<em>Network File System</em>) utilizando Amazon EFS en una infraestructura de red prediseñada. Montaremos el sistema de ficheros en dos instancias de Amazon EC2, crearemos puntos de acceso (<em>access points</em>) para restringir la visibilidad de un directorio concreto y configuraremos el montaje persistente a través de <code>/etc/fstab</code>.</p>
+<h3 id="arquitectura-propuesta">Arquitectura propuesta<a class="headerlink" href="#arquitectura-propuesta" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    subgraph VPC["vpc-Practica-EFS (10.1.0.0/16)"]
+        subgraph AZ1["us-east-1a"]
+            subgraph Pub1["Practica-EFS-publica-1\n10.1.0.0/24"]
+                EC2A["Instancia1\nt4g.micro"]
+            end
+            subgraph Priv1["Practica-EFS-privada-1\n10.1.1.0/24"]
+                MT1["Mount Target 1\n(ENI + IP privada)"]
+            end
+        end
+        subgraph AZ2["us-east-1b"]
+            subgraph Pub2["Practica-EFS-publica-2\n10.1.2.0/24"]
+                EC2B["Instancia2\nt4g.micro"]
+            end
+            subgraph Priv2["Practica-EFS-privada-2\n10.1.3.0/24"]
+                MT2["Mount Target 2\n(ENI + IP privada)"]
+            end
+        end
+        EFS["Amazon EFS\nmi-efs"]
+        MT1 --- EFS
+        MT2 --- EFS
+        EC2A -. "NFS (puerto 2049)" .-&gt; MT1
+        EC2B -. "NFS (puerto 2049)" .-&gt; MT2
+    end</code></pre>
+<h3 id="requerimientos">Requerimientos<a class="headerlink" href="#requerimientos" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Disponer de acceso a los recursos de AWS a través de un sandbox de <strong>AWS Academy Learner Lab</strong>.</li>
+<li>Disponer de una máquina con la <strong>AWS CLI</strong> configurada con las credenciales de AWS Academy Learner Lab.</li>
+</ul>
+<hr />
+<h2 id="fase-1-configuracion-de-la-infraestructura-de-red">Fase 1: Configuración de la infraestructura de red<a class="headerlink" href="#fase-1-configuracion-de-la-infraestructura-de-red" title="Permanent link">&para;</a></h2>
+<p>El objetivo de esta práctica no es configurar la infraestructura de red, por lo que automatizaremos su despliegue mediante <strong>AWS CloudFormation</strong>.</p>
+<ol>
+<li>
+<p>Descarga los dos archivos de plantilla necesarios:</p>
+<ul>
+<li><a href="practica-4-efs/practica-efs.yaml"><code>practica-efs.yaml</code></a> — plantilla principal que crea las instancias EC2.</li>
+<li><a href="practica-4-efs/vpc.yaml"><code>vpc.yaml</code></a> — plantilla anidada que crea la VPC, subredes y demás recursos de red.</li>
+</ul>
+</li>
+<li>
+<p>Desde la AWS CLI, crea un bucket de Amazon S3 para alojar los recursos de CloudFormation (el nombre del bucket debe ser único globalmente):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>aws<span class="w"> </span>s3<span class="w"> </span>mb<span class="w"> </span>s3://&lt;nombre-bucket&gt;<span class="w"> </span>--region<span class="w"> </span>us-east-1
+</span></code></pre></div>
+</li>
+<li>
+<p>A continuación, ubícate en el directorio donde se encuentran los archivos descargados y ejecuta las siguientes instrucciones para empaquetar y desplegar la infraestructura:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>aws<span class="w"> </span>cloudformation<span class="w"> </span>package<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span>--s3-bucket<span class="w"> </span>&lt;nombre-bucket&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>--template-file<span class="w"> </span>practica-efs.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>--output-template-file<span class="w"> </span>packaged.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span>--region<span class="w"> </span>us-east-1
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>aws<span class="w"> </span>cloudformation<span class="w"> </span>deploy<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span>--template-file<span class="w"> </span>packaged.yaml<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span>--stack-name<span class="w"> </span>efs-stack<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span>--region<span class="w"> </span>us-east-1
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">¿Qué hace el comando <code>package</code>?</p>
+<p>CloudFormation no puede referenciar plantillas anidadas desde archivos locales. El comando <code>package</code> sube la plantilla <code>vpc.yaml</code> a S3 y reescribe la referencia <code>TemplateURL</code> en <code>practica-efs.yaml</code> para que apunte a la URL de S3, generando el archivo <code>packaged.yaml</code>.</p>
+</div>
+</li>
+<li>
+<p>Tras esperar unos minutos, se habrá completado el despliegue. La arquitectura desplegada contiene los siguientes recursos:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Recurso</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>VPC</strong> <code>vpc-Practica-EFS</code></td>
+<td style="text-align: left;">Bloque CIDR <code>10.1.0.0/16</code>, 2 zonas de disponibilidad</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred</strong> <code>Practica-EFS-publica-1</code></td>
+<td style="text-align: left;">CIDR <code>10.1.0.0/24</code>, zona <code>us-east-1a</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred</strong> <code>Practica-EFS-publica-2</code></td>
+<td style="text-align: left;">CIDR <code>10.1.2.0/24</code>, zona <code>us-east-1b</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred</strong> <code>Practica-EFS-privada-1</code></td>
+<td style="text-align: left;">CIDR <code>10.1.1.0/24</code>, zona <code>us-east-1a</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred</strong> <code>Practica-EFS-privada-2</code></td>
+<td style="text-align: left;">CIDR <code>10.1.3.0/24</code>, zona <code>us-east-1b</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Instancia1</strong></td>
+<td style="text-align: left;"><code>t4g.micro</code>, desplegada en <code>Practica-EFS-publica-1</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Instancia2</strong></td>
+<td style="text-align: left;"><code>t4g.micro</code>, desplegada en <code>Practica-EFS-publica-2</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Grupo de seguridad</strong> <code>sg-ec2</code></td>
+<td style="text-align: left;">Asignado a las instancias EC2, sin reglas de entrada (se administran mediante AWS SSM)</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ol>
+<hr />
+<h2 id="fase-2-creacion-del-grupo-de-seguridad-para-efs">Fase 2: Creación del grupo de seguridad para EFS<a class="headerlink" href="#fase-2-creacion-del-grupo-de-seguridad-para-efs" title="Permanent link">&para;</a></h2>
+<p>Amazon EFS escucha las solicitudes a través del protocolo NFS por el <strong>puerto 2049 TCP</strong>. Debemos crear un grupo de seguridad que permita el tráfico entrante por este puerto, restringiendo el origen únicamente a nuestras instancias EC2.</p>
+<ol>
+<li>
+<p>Desde la consola de <strong>Amazon EC2</strong>, accede al menú lateral <strong>Network &amp; Security → Security Groups</strong> y presiona el botón <strong>Create security group</strong>.</p>
+</li>
+<li>
+<p>Configura el grupo de seguridad con los siguientes valores:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Campo</th>
+<th style="text-align: left;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Security group name</strong></td>
+<td style="text-align: left;"><code>efs-sg</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Description</strong></td>
+<td style="text-align: left;"><code>Grupo de seguridad para el sistema de ficheros EFS</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>VPC</strong></td>
+<td style="text-align: left;"><code>vpc-Practica-EFS</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>En el apartado <strong>Inbound rules</strong>, añade una nueva regla:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Campo</th>
+<th style="text-align: left;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Type</strong></td>
+<td style="text-align: left;"><code>NFS</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Source</strong></td>
+<td style="text-align: left;"><code>Custom</code> → selecciona el grupo de seguridad <code>sg-ec2</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Buenas prácticas de seguridad</p>
+<p>Al indicar como origen el grupo de seguridad <code>sg-ec2</code> en lugar de una dirección IP o un bloque CIDR, estamos siguiendo el principio de mínimo privilegio. Solo las instancias que tengan asignado ese grupo de seguridad podrán acceder al sistema de ficheros EFS.</p>
+</div>
+</li>
+<li>
+<p>En el apartado <strong>Tags</strong>, añade una etiqueta con clave <code>Name</code> y valor <code>sg-efs</code>.</p>
+</li>
+<li>
+<p>Presiona el botón <strong>Create security group</strong>.</p>
+</li>
+<li>
+<p>Desde el menú <strong>Network &amp; Security → Security Groups</strong>, comprueba que ya dispones de los dos grupos de seguridad necesarios: <code>sg-ec2</code> y <code>sg-efs</code>.</p>
+</li>
+</ol>
+<hr />
+<h2 id="fase-3-creacion-del-sistema-de-ficheros-amazon-efs">Fase 3: Creación del sistema de ficheros Amazon EFS<a class="headerlink" href="#fase-3-creacion-del-sistema-de-ficheros-amazon-efs" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>Desde la consola del servicio <strong>Amazon EFS</strong>, accede a la opción <strong>File Systems</strong> del menú lateral y presiona el botón <strong>Create file system</strong>.</p>
+</li>
+<li>
+<p>En la ventana emergente, presiona directamente el botón <strong>Customize</strong> (sin introducir ningún otro valor).</p>
+</li>
+<li>
+<p><strong>Paso 1 — File system settings.</strong> Configura los siguientes campos:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Campo</th>
+<th style="text-align: left;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Name</strong></td>
+<td style="text-align: left;"><code>mi-efs</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Storage class</strong></td>
+<td style="text-align: left;"><code>Standard</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Automatic backups</strong></td>
+<td style="text-align: left;">Desmarcar la casilla</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Lifecycle management</strong></td>
+<td style="text-align: left;">Dejar los valores por defecto</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Encryption</strong></td>
+<td style="text-align: left;">Dejar el valor por defecto (cifrado habilitado)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Throughput mode</strong></td>
+<td style="text-align: left;"><code>Elastic</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Modos de rendimiento (Throughput mode)</p>
+<ul>
+<li><strong>Elastic:</strong> Para cargas de trabajo impredecibles. Recomendado en la mayoría de casos.</li>
+<li><strong>Provisioned:</strong> Permite ajustar el rendimiento en MiB/s. Útil cuando se conocen los requisitos de la carga.</li>
+<li><strong>Bursting:</strong> Escala la productividad proporcionalmente a la cantidad de almacenamiento del sistema de ficheros.</li>
+</ul>
+</div>
+<p>Presiona el botón <strong>Next</strong>.</p>
+</li>
+<li>
+<p><strong>Paso 2 — Network.</strong> Configura la información de red:</p>
+<ul>
+<li>En <strong>Virtual Private Cloud (VPC)</strong>, selecciona <code>vpc-Practica-EFS</code>.</li>
+<li>En el apartado <strong>Mount targets</strong>, para cada zona de disponibilidad:<ul>
+<li>En <strong>Subnet ID</strong>, selecciona las <strong>subredes privadas</strong> (<code>Practica-EFS-privada-1</code> y <code>Practica-EFS-privada-2</code>).</li>
+<li>En <strong>Security groups</strong>, elimina el grupo de seguridad <code>default</code> y añade el grupo de seguridad <code>sg-efs</code>.</li>
+</ul>
+</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">¿Por qué subredes privadas?</p>
+<p>Los destinos de montaje (<em>mount targets</em>) se despliegan en las subredes privadas para que el tráfico NFS no salga a Internet. Las instancias EC2 en las subredes públicas accederán al sistema de ficheros a través de la red interna de la VPC.</p>
+</div>
+<p>Presiona el botón <strong>Next</strong>.</p>
+</li>
+<li>
+<p><strong>Paso 3 — File system policy.</strong> En este paso se puede configurar una política basada en el recurso para controlar el acceso mediante permisos de AWS IAM. Para simplificar esta práctica, <strong>no configuraremos ninguna política</strong>. Presiona el botón <strong>Next</strong>.</p>
+</li>
+<li>
+<p><strong>Paso 4 — Review and create.</strong> Revisa la configuración elegida y presiona el botón <strong>Create</strong> para crear el sistema de ficheros.</p>
+</li>
+<li>
+<p>En cuestión de pocos segundos, el sistema de ficheros estará creado y podrá visualizarse desde la consola de Amazon EFS.</p>
+</li>
+</ol>
+<hr />
+<h2 id="fase-4-verificacion-de-los-destinos-de-montaje">Fase 4: Verificación de los destinos de montaje<a class="headerlink" href="#fase-4-verificacion-de-los-destinos-de-montaje" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>Desde la consola de Amazon EFS, haz clic en el nombre del sistema de ficheros (<code>mi-efs</code>) y activa la pestaña <strong>Network</strong>.</p>
+</li>
+<li>
+<p>Comprueba que se ha creado un <strong>destino de montaje</strong> (<em>mount target</em>) en cada una de las dos zonas de disponibilidad:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Zona de Disponibilidad</th>
+<th style="text-align: left;">Subred</th>
+<th style="text-align: left;">Dirección IP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>us-east-1a</code></td>
+<td style="text-align: left;"><code>Practica-EFS-privada-1</code></td>
+<td style="text-align: left;">IP privada del bloque <code>10.1.1.0/24</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>us-east-1b</code></td>
+<td style="text-align: left;"><code>Practica-EFS-privada-2</code></td>
+<td style="text-align: left;">IP privada del bloque <code>10.1.3.0/24</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cada punto de montaje está implementado mediante una <strong>Interfaz de Red Elástica (ENI)</strong> con una IP privada dentro del bloque CIDR de la subred correspondiente.</p>
+<div class="admonition note">
+<p class="admonition-title">Resolución DNS condicional</p>
+<p>Amazon EFS asigna un nombre DNS al sistema de ficheros que se resuelve de forma privada y condicional: los clientes en <code>us-east-1a</code> resolverán a la IP del mount target de esa misma zona, y los clientes en <code>us-east-1b</code> resolverán a la IP del mount target de su zona. Esto garantiza que el tráfico NFS no cruce entre zonas de disponibilidad, minimizando la latencia.</p>
+</div>
+</li>
+<li>
+<p><strong>Copia el nombre DNS</strong> del sistema de ficheros (o su ID, como <code>fs-xxxxxxxxxxxxxxxxx</code>), ya que lo necesitarás en los siguientes pasos.</p>
+</li>
+</ol>
+<hr />
+<h2 id="fase-5-montaje-del-sistema-de-ficheros-en-la-instancia1">Fase 5: Montaje del sistema de ficheros en la Instancia1<a class="headerlink" href="#fase-5-montaje-del-sistema-de-ficheros-en-la-instancia1" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>Accede a la consola de <strong>Amazon EC2</strong>. Comprueba que las dos instancias EC2 (<code>Instancia1</code> e <code>Instancia2</code>) están en ejecución.</p>
+</li>
+<li>
+<p>Selecciona la instancia <code>Instancia1</code> y presiona el botón <strong>Connect</strong>. Ubícate en la pestaña <strong>Session Manager</strong> y presiona <strong>Connect</strong> para abrir una sesión de terminal.</p>
+</li>
+<li>
+<p>Instala los paquetes necesarios:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>amazon-efs-utils<span class="w"> </span>tree
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">amazon-efs-utils</p>
+<p>Este paquete proporciona el helper de montaje <code>mount.efs</code>, que simplifica el montaje de sistemas de ficheros EFS con soporte integrado para cifrado en tránsito (TLS) y la autenticación IAM.</p>
+</div>
+</li>
+<li>
+<p>Crea el directorio de montaje y monta el sistema de ficheros EFS. Sustituye <code>&lt;nombre-dns-efs&gt;</code> por el nombre DNS de tu sistema de ficheros:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">fs</span><span class="o">=</span>&lt;nombre-dns-efs&gt;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>/mnt/efs
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls<span class="w"> </span><span class="nv">$fs</span>:/<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+</li>
+<li>
+<p>Crea un directorio llamado <code>instancia2</code> e introduce archivos de prueba tanto en la raíz del sistema EFS como dentro de dicho directorio:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>/mnt/efs/instancia2
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">"echo 'Fichero 1. Sólo accesible por la instancia1' &gt; /mnt/efs/fichero1.txt"</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">"echo 'Fichero 2. Accesible por ambas instancias' &gt; /mnt/efs/instancia2/fichero2.txt"</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>Visualiza la estructura de ficheros creada:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>tree<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+<p>La salida esperada debería ser similar a:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>/mnt/efs
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>├── fichero1.txt
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>└── instancia2
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    └── fichero2.txt
+</span></code></pre></div>
+</li>
+</ol>
+<hr />
+<h2 id="fase-6-montaje-con-punto-de-acceso-en-la-instancia2">Fase 6: Montaje con punto de acceso en la Instancia2<a class="headerlink" href="#fase-6-montaje-con-punto-de-acceso-en-la-instancia2" title="Permanent link">&para;</a></h2>
+<p>En esta fase montaremos el sistema de ficheros EFS en la <code>Instancia2</code>, pero <strong>restringiendo la visibilidad</strong> al directorio <code>instancia2</code>. Para ello, crearemos un <strong>punto de acceso</strong> (<em>access point</em>) en Amazon EFS.</p>
+<h3 id="creacion-del-punto-de-acceso">Creación del punto de acceso<a class="headerlink" href="#creacion-del-punto-de-acceso" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Desde la consola de <strong>Amazon EFS</strong>, en el menú lateral, selecciona la opción <strong>Access points</strong> y presiona el botón <strong>Create access point</strong>.</p>
+</li>
+<li>
+<p>Configura el punto de acceso con los siguientes valores:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Campo</th>
+<th style="text-align: left;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>File system</strong></td>
+<td style="text-align: left;"><code>mi-efs</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Name</strong></td>
+<td style="text-align: left;"><code>Punto de acceso para Instancia2</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Root directory path</strong></td>
+<td style="text-align: left;"><code>/instancia2</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">¿Qué es un punto de acceso?</p>
+<p>Un punto de acceso de Amazon EFS permite definir un directorio raíz específico y, opcionalmente, una identidad POSIX (UID/GID) para todas las operaciones realizadas por los clientes NFS que se conecten a través de él. Esto permite segmentar y restringir el acceso al sistema de ficheros sin necesidad de modificar permisos a nivel de sistema operativo.</p>
+</div>
+<p>Los campos del grupo <strong>POSIX user</strong> y <strong>Root directory creation permissions</strong> se dejarán con sus valores por defecto.</p>
+</li>
+<li>
+<p>Presiona el botón <strong>Create access point</strong>. En breves instantes, el punto de acceso estará disponible.</p>
+</li>
+<li>
+<p><strong>Copia el ID del punto de acceso</strong> (por ejemplo, <code>fsap-xxxxxxxxxxxxxxxxx</code>).</p>
+</li>
+</ol>
+<h3 id="montaje-en-la-instancia2">Montaje en la Instancia2<a class="headerlink" href="#montaje-en-la-instancia2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Abre una sesión en la <code>Instancia2</code> mediante <strong>Session Manager</strong> (igual que en el apartado anterior).</p>
+</li>
+<li>
+<p>Instala los paquetes necesarios:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>amazon-efs-utils<span class="w"> </span>tree
+</span></code></pre></div>
+</li>
+<li>
+<p>Monta el sistema de ficheros EFS utilizando el punto de acceso. Sustituye los <em>placeholders</em> por tus valores:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nv">fs</span><span class="o">=</span>&lt;nombre-dns-efs&gt;
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nv">fsap</span><span class="o">=</span>&lt;ID-punto-acceso&gt;
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>/mnt/efs
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls,accesspoint<span class="o">=</span><span class="nv">$fsap</span><span class="w"> </span><span class="nv">$fs</span>:/<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+</li>
+<li>
+<p>Comprueba que desde el directorio <code>/mnt/efs</code> solo se ve el contenido del directorio <code>/instancia2</code> del sistema de ficheros EFS:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>tree<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+<p>La salida esperada debería ser:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>/mnt/efs
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>└── fichero2.txt
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Verificación cruzada</p>
+<p>Puedes leer el contenido de <code>fichero2.txt</code> desde ambas instancias para comprobar que se trata del mismo archivo compartido: <code>cat /mnt/efs/instancia2/fichero2.txt</code> (desde Instancia1) y <code>cat /mnt/efs/fichero2.txt</code> (desde Instancia2).</p>
+</div>
+</li>
+</ol>
+<hr />
+<h2 id="fase-7-montaje-persistente-mediante-etcfstab">Fase 7: Montaje persistente mediante <code>/etc/fstab</code><a class="headerlink" href="#fase-7-montaje-persistente-mediante-etcfstab" title="Permanent link">&para;</a></h2>
+<p>La solución de montaje adoptada hasta ahora es <strong>temporal</strong>: si reiniciamos las instancias EC2, habría que montar de nuevo el sistema de ficheros. Para que el sistema de ficheros EFS se monte automáticamente en cada arranque, es necesario añadir una entrada en el archivo <code>/etc/fstab</code>.</p>
+<h3 id="instancia1-montaje-completo">Instancia1 (montaje completo)<a class="headerlink" href="#instancia1-montaje-completo" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>En la sesión de la <code>Instancia1</code>, ejecuta la siguiente orden (la variable <code>$fs</code> debe contener el nombre DNS del sistema de ficheros):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sudo<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">"echo '</span><span class="nv">$fs</span><span class="s2">:/ /mnt/efs nfs4 nfsvers=4.1,rsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0' &gt;&gt; /etc/fstab"</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>Comprueba el contenido de <code>/etc/fstab</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>cat<span class="w"> </span>/etc/fstab
+</span></code></pre></div>
+</li>
+<li>
+<p>Reinicia la instancia y verifica que el montaje se realiza automáticamente:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>reboot
+</span></code></pre></div>
+<p>Tras reconectar a la sesión, ejecuta:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>df<span class="w"> </span>-hT<span class="w"> </span>/mnt/efs
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>tree<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+</li>
+</ol>
+<h3 id="instancia2-montaje-con-punto-de-acceso">Instancia2 (montaje con punto de acceso)<a class="headerlink" href="#instancia2-montaje-con-punto-de-acceso" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>En la sesión de la <code>Instancia2</code>, la sintaxis es ligeramente diferente al utilizar un punto de acceso. Ejecuta la siguiente orden (las variables <code>$fs</code> y <code>$fsap</code> deben contener los valores correspondientes):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">"echo '</span><span class="nv">$fs</span><span class="s2"> /mnt/efs efs _netdev,tls,accesspoint=</span><span class="nv">$fsap</span><span class="s2"> 0 0' &gt;&gt; /etc/fstab"</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>Reinicia la instancia y verifica que el montaje con punto de acceso se realiza automáticamente:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sudo<span class="w"> </span>reboot
+</span></code></pre></div>
+<p>Tras reconectar a la sesión, ejecuta:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>df<span class="w"> </span>-hT<span class="w"> </span>/mnt/efs
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>tree<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Variables de entorno tras el reinicio</p>
+<p>Si has utilizado variables de shell (<code>$fs</code>, <code>$fsap</code>) para definir los valores, recuerda que <strong>deben tener valor en el momento de ejecutar el <code>echo</code></strong>, ya que el contenido se escribe literalmente en <code>/etc/fstab</code>. Tras un reinicio las variables de shell se pierden, pero la línea escrita en el archivo ya contiene los valores reales.</p>
+</div>
+<hr />
+<h2 id="fase-8-limpieza-del-laboratorio">Fase 8: Limpieza del laboratorio<a class="headerlink" href="#fase-8-limpieza-del-laboratorio" title="Permanent link">&para;</a></h2>
+<p>Para liberar los recursos creados y evitar el consumo innecesario de créditos de AWS Academy Learner Labs, sigue estos pasos <strong>en orden</strong>:</p>
+<ol>
+<li>
+<p><strong>Eliminar el sistema de ficheros de Amazon EFS.</strong> Desde la consola del servicio Amazon EFS, selecciona el sistema de ficheros <code>mi-efs</code> y presiona el botón <strong>Delete</strong>.</p>
+</li>
+<li>
+<p><strong>Eliminar el grupo de seguridad del EFS.</strong> Desde la consola de Amazon EC2, accede al menú lateral <strong>Network &amp; Security → Security Groups</strong>, selecciona el grupo de seguridad <code>sg-efs</code> y presiona <strong>Actions → Delete security groups</strong>.</p>
+</li>
+<li>
+<p><strong>Desaprovisionar la infraestructura de red y las instancias EC2.</strong> Desde la terminal de tu máquina local, ejecuta:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>aws<span class="w"> </span>cloudformation<span class="w"> </span>delete-stack<span class="w"> </span>--stack-name<span class="w"> </span>efs-stack<span class="w"> </span>--region<span class="w"> </span>us-east-1
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>La instrucción anterior no devuelve resultado alguno, pero en cuestión de pocos minutos la infraestructura de red y las instancias EC2 se habrán desaprovisionado completamente.</p>
+</div>
+</li>
+</ol>
+<hr />
+<h2 id="entregables">Entregables<a class="headerlink" href="#entregables" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Captura 1 — Infraestructura desplegada:</strong> Captura de la consola de Amazon EC2 mostrando las dos instancias (<code>Instancia1</code> e <code>Instancia2</code>) en estado <em>Running</em>.</p>
+</li>
+<li>
+<p><strong>Captura 2 — Grupos de seguridad:</strong> Captura desde la consola de EC2 (Security Groups) mostrando los grupos de seguridad <code>sg-ec2</code> y <code>sg-efs</code>, con la regla de entrada NFS (puerto 2049) del grupo <code>sg-efs</code> visible.</p>
+</li>
+<li>
+<p><strong>Captura 3 — Mount targets del sistema de ficheros:</strong> Captura de la pestaña <strong>Network</strong> del sistema de ficheros <code>mi-efs</code> en la consola de Amazon EFS, mostrando los dos destinos de montaje en las subredes privadas con sus direcciones IP.</p>
+</li>
+<li>
+<p><strong>Captura 4 — Montaje en Instancia1:</strong> Salida del terminal de la <code>Instancia1</code> tras ejecutar <code>tree /mnt/efs</code>, donde se aprecie la estructura completa del sistema de ficheros (con <code>fichero1.txt</code> e <code>instancia2/fichero2.txt</code>).</p>
+</li>
+<li>
+<p><strong>Captura 5 — Montaje con punto de acceso en Instancia2:</strong> Salida del terminal de la <code>Instancia2</code> tras ejecutar <code>tree /mnt/efs</code>, donde se aprecie que únicamente es visible el contenido del directorio <code>instancia2</code> (<code>fichero2.txt</code>).</p>
+</li>
+<li>
+<p><strong>Captura 6 — Persistencia tras reinicio:</strong> Salida de <code>df -hT /mnt/efs</code> y <code>tree /mnt/efs</code> en cualquiera de las dos instancias <strong>después</strong> de ejecutar <code>sudo reboot</code>, demostrando que el montaje automático vía <code>/etc/fstab</code> funciona correctamente.</p>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["header.autohide", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

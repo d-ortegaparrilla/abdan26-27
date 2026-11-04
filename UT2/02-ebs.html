@@ -1,0 +1,2406 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Apuntes del módulo de Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN) - CE Recursos y Servicios en la Nube">
+      
+      
+        <meta name="author" content="David Ortega Parrilla">
+      
+      
+        <link rel="canonical" href="https://d-ortegaparrilla.github.io/abdan26-27/UT2/02-ebs.html">
+      
+      
+        <link rel="prev" href="01-introduccion.html">
+      
+      
+        <link rel="next" href="practicas/practica-1-ebs.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>2. Amazon EBS: Elastic Block Store - Administración de Bases de Datos y Almacenamiento en la Nube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2-amazon-ebs-elastic-block-store" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-header__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Administración de Bases de Datos y Almacenamiento en la Nube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2. Amazon EBS: Elastic Block Store
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../planificacion.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Planificación del Módulo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../UT1/01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-nav__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    Administración de Bases de Datos y Almacenamiento en la Nube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../planificacion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planificación del Módulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/02-arquitectura-s3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Arquitectura y Componentes de Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/03-clases-almacenamiento.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Clases de Almacenamiento y S3 Glacier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/04-ciclo-de-vida-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ciclo de Vida, Versionado e Inmutabilidad
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/05-seguridad-control-acceso.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Seguridad, Control de Acceso y Cifrado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/06-sitios-web-estaticos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Alojamiento de Sitios Web Estáticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/07-interaccion-sdk.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Interacción con SDK de Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-1-operaciones-basicas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-2-sitio-web-estatico.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.2: Alojamiento de un Sitio Web Estático en S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-3-politicas-acceso-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-4-replicacion-multiregion-crr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.4: Replicación Multirregión en Amazon S3 (CRR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-5-acceso-sdk-boto3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.5: Acceso programático a S3 con Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción a los Servicios de Almacenamiento en Bloque y Sistemas de Ficheros en Red
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Amazon EBS: Elastic Block Store
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="02-ebs.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Amazon EBS: Elastic Block Store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Características Principales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Características Principales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de uso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#independencia-del-volumen-ebs-respecto-a-la-instancia-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Independencia del Volumen EBS respecto a la Instancia EC2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tipos-de-volumenes-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipos de Volúmenes de Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tipos de Volúmenes de Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#volumenes-con-respaldo-de-ssd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volúmenes con respaldo de SSD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volumenes-con-respaldo-de-hdd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volúmenes con respaldo de HDD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-uso-por-tipo-de-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de Uso por Tipo de Volumen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instancias-optimizadas-para-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instancias Optimizadas para Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instancias Optimizadas para Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beneficios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Beneficios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ciclo-de-vida-del-volumen-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ciclo de Vida del Volumen de Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ciclo de Vida del Volumen de Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#descripcion-de-las-etapas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descripción de las etapas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comandos-cli-para-gestion-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos CLI para gestión de volúmenes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitorizacion-de-volumenes-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitorización de Volúmenes EBS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instantaneas-de-amazon-ebs-snapshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instantáneas de Amazon EBS (Snapshots)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instantáneas de Amazon EBS (Snapshots)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-son" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ¿Qué son?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creacion-de-instantaneas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación de instantáneas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copia-de-instantaneas-entre-regiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copia de instantáneas entre regiones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restauracion-de-una-instantanea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restauración de una instantánea
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#administracion-del-ciclo-de-vida-de-las-instantaneas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administración del Ciclo de Vida de las Instantáneas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Administración del Ciclo de Vida de las Instantáneas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#componentes-de-una-politica-dlm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes de una política DLM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coste-de-uso-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coste de Uso de Amazon EBS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otros-aspectos-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otros Aspectos de Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otros Aspectos de Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cifrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cifrado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rendimiento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#papelera-de-reciclaje-recycle-bin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Papelera de Reciclaje (Recycle Bin)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seguridad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seguridad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitorizacion-avanzada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitorización avanzada
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-1-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.1: Creación y Gestión de Volúmenes EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-2-modificar-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.2: Modificación de un Volumen EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-3-ebs-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.3: Amazon EBS. Benchmarking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-4-amazon-efs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.4: Amazon EFS. Creación de un Sistema de Ficheros NFS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Características Principales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Características Principales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de uso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#independencia-del-volumen-ebs-respecto-a-la-instancia-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Independencia del Volumen EBS respecto a la Instancia EC2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tipos-de-volumenes-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tipos de Volúmenes de Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tipos de Volúmenes de Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#volumenes-con-respaldo-de-ssd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volúmenes con respaldo de SSD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volumenes-con-respaldo-de-hdd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volúmenes con respaldo de HDD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-uso-por-tipo-de-volumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de Uso por Tipo de Volumen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instancias-optimizadas-para-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instancias Optimizadas para Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instancias Optimizadas para Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beneficios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Beneficios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ciclo-de-vida-del-volumen-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ciclo de Vida del Volumen de Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ciclo de Vida del Volumen de Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#descripcion-de-las-etapas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descripción de las etapas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comandos-cli-para-gestion-de-volumenes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos CLI para gestión de volúmenes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitorizacion-de-volumenes-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitorización de Volúmenes EBS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instantaneas-de-amazon-ebs-snapshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instantáneas de Amazon EBS (Snapshots)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Instantáneas de Amazon EBS (Snapshots)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-son" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ¿Qué son?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creacion-de-instantaneas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación de instantáneas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copia-de-instantaneas-entre-regiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copia de instantáneas entre regiones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restauracion-de-una-instantanea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restauración de una instantánea
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#administracion-del-ciclo-de-vida-de-las-instantaneas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administración del Ciclo de Vida de las Instantáneas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Administración del Ciclo de Vida de las Instantáneas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#componentes-de-una-politica-dlm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes de una política DLM
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coste-de-uso-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coste de Uso de Amazon EBS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otros-aspectos-de-amazon-ebs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otros Aspectos de Amazon EBS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otros Aspectos de Amazon EBS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cifrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cifrado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rendimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rendimiento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#papelera-de-reciclaje-recycle-bin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Papelera de Reciclaje (Recycle Bin)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seguridad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seguridad
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitorizacion-avanzada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitorización avanzada
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="2-amazon-ebs-elastic-block-store">2. Amazon EBS: Elastic Block Store<a class="headerlink" href="#2-amazon-ebs-elastic-block-store" title="Permanent link">&para;</a></h1>
+<p>Amazon Elastic Block Store (Amazon EBS) es el servicio de almacenamiento en bloque persistente de AWS, diseñado para ofrecer volúmenes de disco de alto rendimiento conectados en red a instancias EC2.</p>
+<hr />
+<h2 id="caracteristicas-principales">Características Principales<a class="headerlink" href="#caracteristicas-principales" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Almacenamiento a nivel de bloque</strong> similar a un disco duro externo, dividido en bloques de tamaño fijo.</li>
+<li><strong>Datos persistentes:</strong> Los datos se almacenan de forma independiente de la vida de la instancia EC2. Si la instancia falla por un defecto de hardware, el volumen y sus datos permanecen intactos.</li>
+<li><strong>Vinculación a una Zona de Disponibilidad:</strong> Un volumen EBS se puede asociar a cualquier instancia dentro de la <strong>misma Zona de Disponibilidad (AZ)</strong>.</li>
+<li><strong>Soporte HDD y SSD:</strong> Utiliza unidades de disco duro (HDD) o de estado sólido (SSD) con interfaz SATA o NVMe.</li>
+<li><strong>Cifrado integrado:</strong> Los volúmenes EBS se pueden cifrar de forma transparente mediante AWS KMS.</li>
+<li><strong>Instantáneas (<em>snapshots</em>):</strong> Admite la creación de copias de seguridad incrementales almacenadas de forma persistente en Amazon S3.</li>
+</ul>
+<h3 id="casos-de-uso">Casos de uso<a class="headerlink" href="#casos-de-uso" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Volúmenes de arranque (<em>boot</em>) y almacenamiento para instancias EC2.</li>
+<li>Bases de datos sobre instancias EC2 (MySQL, PostgreSQL, Oracle, SQL Server).</li>
+<li>Almacenamiento general de datos de aplicaciones.</li>
+</ul>
+<hr />
+<h2 id="independencia-del-volumen-ebs-respecto-a-la-instancia-ec2">Independencia del Volumen EBS respecto a la Instancia EC2<a class="headerlink" href="#independencia-del-volumen-ebs-respecto-a-la-instancia-ec2" title="Permanent link">&para;</a></h2>
+<p>Los volúmenes de EBS <strong>no forman parte de la instancia EC2</strong>: son un recurso de red independiente. Sin importar si se detiene la máquina virtual o si falla por un defecto de hardware, el volumen y los datos permanecerán intactos.</p>
+<div class="admonition note">
+<p class="admonition-title">Comportamiento de <code>DeleteOnTermination</code></p>
+<ul>
+<li><strong>Volumen raíz:</strong> Por defecto, AWS establece el atributo <code>DeleteOnTermination</code> a <code>true</code>. Esto significa que al <strong>terminar</strong> la instancia EC2, el volumen raíz se eliminará automáticamente.</li>
+<li><strong>Volúmenes de datos adicionales:</strong> Por defecto, <code>DeleteOnTermination</code> se establece a <code>false</code>. Estos volúmenes <strong>permanecerán</strong> incluso tras terminar la instancia.</li>
+</ul>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Amazon EBS Multi-Attach</p>
+<p>Aunque un volumen EBS está pensado para asociarse a una <strong>única instancia</strong>, existe la funcionalidad <strong>Multi-Attach</strong> que permite asociar un volumen <code>io1</code>/<code>io2</code> a <strong>varias instancias EC2 simultáneamente</strong> dentro de la misma Zona de Disponibilidad. Es útil para aplicaciones en clúster que requieren acceso concurrente al mismo almacenamiento en bloque.</p>
+</div>
+<hr />
+<h2 id="tipos-de-volumenes-de-amazon-ebs">Tipos de Volúmenes de Amazon EBS<a class="headerlink" href="#tipos-de-volumenes-de-amazon-ebs" title="Permanent link">&para;</a></h2>
+<p>Amazon EBS ofrece cuatro tipos de volúmenes agrupados en dos familias de hardware, lo que permite ajustar el rendimiento y el coste a las necesidades de cada aplicación:</p>
+<pre class="mermaid"><code>flowchart TD
+    EBS["Tipos de Volúmenes\nAmazon EBS"]
+
+    EBS --&gt; SSD["Unidades de Estado Sólido\n(SSD)"]
+    EBS --&gt; HDD["Unidades de Disco Duro\n(HDD)"]
+
+    SSD --&gt; GP["SSD de Uso General\n(gp2, gp3)"]
+    SSD --&gt; IO["SSD de IOPS Provisionadas\n(io1, io2)"]
+
+    HDD --&gt; ST["HDD Optimizado para\nRendimiento (st1)"]
+    HDD --&gt; SC["HDD Frío\n(sc1)"]</code></pre>
+<h3 id="volumenes-con-respaldo-de-ssd">Volúmenes con respaldo de SSD<a class="headerlink" href="#volumenes-con-respaldo-de-ssd" title="Permanent link">&para;</a></h3>
+<p>Los volúmenes SSD están optimizados para cargas de trabajo <strong>transaccionales</strong> con operaciones de lectura/escritura frecuentes de tamaño pequeño, donde el atributo de rendimiento dominante es <strong>IOPS</strong> (Operaciones de Entrada/Salida Por Segundo).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Atributo</th>
+<th style="text-align: left;">SSD de Uso General (gp3)</th>
+<th style="text-align: left;">SSD de Uso General (gp2)</th>
+<th style="text-align: left;">IOPS Provisionadas (io2 Block Express)</th>
+<th style="text-align: left;">IOPS Provisionadas (io1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Tamaño del volumen</strong></td>
+<td style="text-align: left;">1 GiB – 16 TiB</td>
+<td style="text-align: left;">1 GiB – 16 TiB</td>
+<td style="text-align: left;">4 GiB – 64 TiB</td>
+<td style="text-align: left;">4 GiB – 16 TiB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IOPS máximas</strong></td>
+<td style="text-align: left;">16.000</td>
+<td style="text-align: left;">16.000</td>
+<td style="text-align: left;">256.000</td>
+<td style="text-align: left;">64.000</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Rendimiento máximo</strong></td>
+<td style="text-align: left;">1.000 MiB/s</td>
+<td style="text-align: left;">250 MiB/s</td>
+<td style="text-align: left;">4.000 MiB/s</td>
+<td style="text-align: left;">1.000 MiB/s</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Volumen de arranque</strong></td>
+<td style="text-align: left;">✅ Sí</td>
+<td style="text-align: left;">✅ Sí</td>
+<td style="text-align: left;">✅ Sí</td>
+<td style="text-align: left;">✅ Sí</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Multi-Attach</strong></td>
+<td style="text-align: left;">❌ No</td>
+<td style="text-align: left;">❌ No</td>
+<td style="text-align: left;">✅ Sí</td>
+<td style="text-align: left;">✅ Sí</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volumenes-con-respaldo-de-hdd">Volúmenes con respaldo de HDD<a class="headerlink" href="#volumenes-con-respaldo-de-hdd" title="Permanent link">&para;</a></h3>
+<p>Los volúmenes HDD están optimizados para cargas de trabajo de <strong>streaming</strong> secuencial donde la métrica de rendimiento clave es el <strong>throughput</strong> (MiB/s), no las IOPS. <strong>No pueden usarse como volúmenes raíz o de arranque.</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Atributo</th>
+<th style="text-align: left;">HDD Optimizado para Rendimiento (st1)</th>
+<th style="text-align: left;">HDD Frío (sc1)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Tamaño del volumen</strong></td>
+<td style="text-align: left;">125 GiB – 16 TiB</td>
+<td style="text-align: left;">125 GiB – 16 TiB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IOPS máximas</strong></td>
+<td style="text-align: left;">500</td>
+<td style="text-align: left;">250</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Rendimiento máximo</strong></td>
+<td style="text-align: left;">500 MiB/s</td>
+<td style="text-align: left;">250 MiB/s</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Volumen de arranque</strong></td>
+<td style="text-align: left;">❌ No</td>
+<td style="text-align: left;">❌ No</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="casos-de-uso-por-tipo-de-volumen">Casos de Uso por Tipo de Volumen<a class="headerlink" href="#casos-de-uso-por-tipo-de-volumen" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tipo de volumen</th>
+<th style="text-align: left;">Recomendado para...</th>
+<th style="text-align: left;">No recomendado para...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>gp3 (SSD Uso General)</strong></td>
+<td style="text-align: left;">Opción predeterminada para la mayoría de cargas: volúmenes de arranque, aplicaciones con carga de E/S baja a media, entornos de desarrollo</td>
+<td style="text-align: left;">Cargas de trabajo que requieran IOPS garantizadas por encima de 16.000</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>io2 / io1 (SSD IOPS Provisionadas)</strong></td>
+<td style="text-align: left;">Bases de datos críticas para el negocio (Oracle, SAP HANA), cargas intensivas en E/S aleatoria</td>
+<td style="text-align: left;">Almacenamiento de bajo coste o archivos secuenciales</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>st1 (HDD Rendimiento)</strong></td>
+<td style="text-align: left;">Cargas de trabajo con E/S secuencial y grandes volúmenes de datos: Big Data, <em>data warehousing</em>, procesamiento de logs</td>
+<td style="text-align: left;">Cargas que requieran E/S pequeña y aleatoria</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>sc1 (HDD Frío)</strong></td>
+<td style="text-align: left;">Almacenamiento de bajo coste para datos con accesos poco frecuentes y secuenciales</td>
+<td style="text-align: left;">Cargas que requieran E/S aleatoria o baja latencia</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Regla de oro para elegir tipo de volumen</p>
+<p>Comienza siempre con <strong>gp3</strong> como opción por defecto. Si la carga de trabajo requiere más IOPS de las que gp3 puede ofrecer, pasa a <strong>io2</strong>. Si la carga es fundamentalmente secuencial y masiva, valora <strong>st1</strong>. Si además el coste es prioritario y el acceso es infrecuente, elige <strong>sc1</strong>.</p>
+</div>
+<hr />
+<h2 id="instancias-optimizadas-para-amazon-ebs">Instancias Optimizadas para Amazon EBS<a class="headerlink" href="#instancias-optimizadas-para-amazon-ebs" title="Permanent link">&para;</a></h2>
+<p>Determinados tipos de instancias EC2 pueden configurarse como <strong>optimizados para EBS</strong>, lo que proporciona una <strong>conexión de red dedicada</strong> entre la instancia y los volúmenes EBS asociados.</p>
+<h3 id="beneficios">Beneficios<a class="headerlink" href="#beneficios" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Conexión de red dedicada exclusiva para el tráfico de E/S hacia los volúmenes EBS.</li>
+<li>Mayor rendimiento de E/S al eliminar la contención con el tráfico de red general.</li>
+<li>Las instancias basadas en el <strong>sistema Nitro</strong> de Amazon EC2 obtienen un rendimiento aún mayor.</li>
+</ul>
+<h3 id="uso">Uso<a class="headerlink" href="#uso" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Para los tipos de instancias optimizadas para EBS, la optimización está <strong>habilitada de forma predeterminada</strong>.</li>
+<li>Para otros tipos de instancias que admiten la optimización, se la debe habilitar de forma manual y se paga una cuota por hora adicional.</li>
+</ul>
+<hr />
+<h2 id="ciclo-de-vida-del-volumen-de-amazon-ebs">Ciclo de Vida del Volumen de Amazon EBS<a class="headerlink" href="#ciclo-de-vida-del-volumen-de-amazon-ebs" title="Permanent link">&para;</a></h2>
+<p>El ciclo de vida de un volumen EBS abarca desde su creación hasta su eliminación, pasando por múltiples operaciones de gestión:</p>
+<pre class="mermaid"><code>flowchart LR
+    CREAR["1. Crear volumen\n(vacío o desde snapshot)"]
+    ASOCIAR["2. Asociar a\ninstancia EC2"]
+    FORMATEAR["3. Formatear y\nmontar en el SO"]
+    USAR["4. Usar\n(lectura/escritura)"]
+    MODIFICAR["5. Modificar\n(tamaño, tipo, IOPS)"]
+    SNAPSHOT["6. Crear\ninstantánea"]
+    SEPARAR["7. Separar\nde la instancia"]
+    ELIMINAR["8. Eliminar\nvolumen"]
+
+    CREAR --&gt; ASOCIAR --&gt; FORMATEAR --&gt; USAR
+    USAR --&gt; MODIFICAR --&gt; USAR
+    USAR --&gt; SNAPSHOT --&gt; USAR
+    USAR --&gt; SEPARAR --&gt; ASOCIAR
+    SEPARAR --&gt; ELIMINAR</code></pre>
+<h3 id="descripcion-de-las-etapas">Descripción de las etapas<a class="headerlink" href="#descripcion-de-las-etapas" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Crear:</strong> Se puede crear un volumen vacío o a partir de una instantánea (<em>snapshot</em>) existente.</li>
+<li><strong>Asociar:</strong> El volumen debe asociarse a una instancia EC2 que esté en la <strong>misma Zona de Disponibilidad</strong>.</li>
+<li><strong>Formatear y montar:</strong> Desde el sistema operativo de la instancia, se formatea el volumen (<code>mkfs</code>, <code>format</code>) y se monta en un punto de montaje.</li>
+<li><strong>Usar:</strong> Se lee y escribe en el volumen como en cualquier disco local.</li>
+<li><strong>Modificar:</strong> Es posible cambiar el tamaño, el tipo o las IOPS del volumen en cualquier momento <strong>sin tiempo de inactividad</strong>.</li>
+<li><strong>Crear instantánea:</strong> Se generan copias de seguridad incrementales del volumen.</li>
+<li><strong>Separar:</strong> Se puede desasociar el volumen de una instancia y reasociarlo a otra.</li>
+<li><strong>Eliminar:</strong> Si el volumen ya no es necesario, se elimina para dejar de incurrir en costes.</li>
+</ol>
+<h3 id="comandos-cli-para-gestion-de-volumenes">Comandos CLI para gestión de volúmenes<a class="headerlink" href="#comandos-cli-para-gestion-de-volumenes" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Crear un volumen de 80 GiB en la zona us-east-1a de tipo gp3</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>aws<span class="w"> </span>ec2<span class="w"> </span>create-volume<span class="w"> </span>--size<span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>--availability-zone<span class="w"> </span>us-east-1a<span class="w"> </span>--volume-type<span class="w"> </span>gp3
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Consultar información de un volumen</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>aws<span class="w"> </span>ec2<span class="w"> </span>describe-volumes<span class="w"> </span>--volume-ids<span class="w"> </span>vol-0e5e5193f8d093d5f
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Asociar un volumen a una instancia</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>aws<span class="w"> </span>ec2<span class="w"> </span>attach-volume<span class="w"> </span>--volume-id<span class="w"> </span>vol-12345678<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span>--instance-id<span class="w"> </span>i-abc1234<span class="w"> </span>--device<span class="w"> </span>/dev/sdf
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Tareas desde el sistema operativo</p>
+<p>Muchas acciones del ciclo de vida se ejecutan desde la consola de AWS o la CLI, pero otras requieren conectarse a la instancia y ejecutar comandos del sistema operativo: formatear el volumen (<code>mkfs -t ext4 /dev/xvdf</code>), montarlo (<code>mount /dev/xvdf /mnt/datos</code>), administrar particiones (<code>fdisk</code>, <code>parted</code>) y verificar el espacio libre (<code>df -h</code>).</p>
+</div>
+<hr />
+<h2 id="monitorizacion-de-volumenes-ebs">Monitorización de Volúmenes EBS<a class="headerlink" href="#monitorizacion-de-volumenes-ebs" title="Permanent link">&para;</a></h2>
+<p>Amazon CloudWatch proporciona métricas de EBS por defecto, recopiladas a intervalos de <strong>1 minuto</strong>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Métrica</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>VolumeReadOps</code> / <code>VolumeWriteOps</code></td>
+<td style="text-align: left;">Número de operaciones de lectura/escritura completadas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>VolumeReadBytes</code> / <code>VolumeWriteBytes</code></td>
+<td style="text-align: left;">Bytes transferidos en operaciones de lectura/escritura</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>VolumeQueueLength</code></td>
+<td style="text-align: left;">Número de operaciones de E/S en cola pendientes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>VolumeThroughputPercentage</code></td>
+<td style="text-align: left;">Porcentaje del rendimiento de E/S utilizado (solo volúmenes io)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>VolumeConsumedReadWriteOps</code></td>
+<td style="text-align: left;">Operaciones consumidas (solo volúmenes io)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="instantaneas-de-amazon-ebs-snapshots">Instantáneas de Amazon EBS (<em>Snapshots</em>)<a class="headerlink" href="#instantaneas-de-amazon-ebs-snapshots" title="Permanent link">&para;</a></h2>
+<h3 id="que-son">¿Qué son?<a class="headerlink" href="#que-son" title="Permanent link">&para;</a></h3>
+<p>Las instantáneas son <strong>copias de seguridad incrementales a nivel de bloque</strong> de los volúmenes EBS. Los datos se copian a la infraestructura de Amazon S3, donde se almacenan de forma redundante en múltiples instalaciones.</p>
+<ul>
+<li><strong>Fiabilidad de volúmenes:</strong> Los volúmenes EBS tienen una tasa de errores anual (AFR) de entre <strong>0,1% y 0,2%</strong> (el tipo <code>io2</code> tiene un AFR del 0,001%). Aun siendo baja, es importante crear copias de seguridad de forma regular.</li>
+<li><strong>Incrementalidad:</strong> Si se tiene un volumen de 5 GiB con 1 GiB de datos utilizados, la primera instantánea tendrá un tamaño aproximado de 1 GiB. Las instantáneas posteriores solo conservan los <strong>bloques que han cambiado</strong>, reduciendo el tamaño y el coste.</li>
+<li><strong>Facturación:</strong> Las instantáneas se cobran por la cantidad de gigabytes almacenados.</li>
+</ul>
+<h3 id="creacion-de-instantaneas">Creación de instantáneas<a class="headerlink" href="#creacion-de-instantaneas" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Crear una instantánea de un volumen</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>aws<span class="w"> </span>ec2<span class="w"> </span>create-snapshot<span class="w"> </span>--volume-id<span class="w"> </span>vol-1234567890abcdef0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>--description<span class="w"> </span><span class="s2">"This is my root volume snapshot"</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Buenas prácticas al crear instantáneas</p>
+<p>Es recomendable <strong>detener la instancia</strong> o <strong>desmontar el volumen</strong> antes de crear la instantánea para garantizar la consistencia de los datos. Sin embargo, es posible crear una instantánea de un volumen en uso, lo cual está especialmente indicado para volúmenes raíz y configuraciones de servidores de bases de datos o RAID.</p>
+</div>
+<h3 id="copia-de-instantaneas-entre-regiones">Copia de instantáneas entre regiones<a class="headerlink" href="#copia-de-instantaneas-entre-regiones" title="Permanent link">&para;</a></h3>
+<p>Los <strong>volúmenes</strong> no se pueden copiar directamente entre regiones, pero las <strong>instantáneas sí</strong>. Esto permite implementar estrategias de recuperación ante desastres (<em>DR</em>) multirregión:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Copiar una instantánea de us-west-2 a us-east-1</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>aws<span class="w"> </span>ec2<span class="w"> </span>copy-snapshot<span class="w"> </span>--region<span class="w"> </span>us-east-1<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--source-region<span class="w"> </span>us-west-2<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--source-snapshot-id<span class="w"> </span>snap-1234567890abcdef0<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>--description<span class="w"> </span><span class="s2">"This is my copied snapshot"</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Comprobar el estado de la copia</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>aws<span class="w"> </span>ec2<span class="w"> </span>describe-snapshots<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span>--snapshot-ids<span class="w"> </span>snap-0b3c2a7c2a7e4eec6<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span>--region<span class="w"> </span>us-east-1
+</span></code></pre></div>
+<h3 id="restauracion-de-una-instantanea">Restauración de una instantánea<a class="headerlink" href="#restauracion-de-una-instantanea" title="Permanent link">&para;</a></h3>
+<p>Las instantáneas se almacenan en Amazon S3, pero <strong>no se puede acceder a ellas directamente</strong> mediante las utilidades de S3. Es necesario utilizar las herramientas de Amazon EBS para restaurarlas:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Restaurar una instantánea creando un nuevo volumen</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>aws<span class="w"> </span>ec2<span class="w"> </span>create-volume<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--size<span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--availability-zone<span class="w"> </span>us-east-1a<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--volume-type<span class="w"> </span>gp2<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>--snapshot-id<span class="w"> </span>snap-1234567890abcdef0
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Comprobar el estado del volumen restaurado</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>aws<span class="w"> </span>ec2<span class="w"> </span>describe-volume-status<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span>--volume-ids<span class="w"> </span>vol-0c108c43c627cb26d
+</span></code></pre></div>
+<hr />
+<h2 id="administracion-del-ciclo-de-vida-de-las-instantaneas">Administración del Ciclo de Vida de las Instantáneas<a class="headerlink" href="#administracion-del-ciclo-de-vida-de-las-instantaneas" title="Permanent link">&para;</a></h2>
+<p><strong>Amazon Data Lifecycle Manager (Amazon DLM)</strong> permite <strong>automatizar</strong> la creación, retención y eliminación de instantáneas de EBS.</p>
+<h3 id="componentes-de-una-politica-dlm">Componentes de una política DLM<a class="headerlink" href="#componentes-de-una-politica-dlm" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Componente</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Tipo de recurso</strong></td>
+<td style="text-align: left;">Identifica si la política se aplica a volúmenes EBS individuales o a instancias EC2 completas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Etiqueta de objetivo</strong></td>
+<td style="text-align: left;">Amazon DLM usa etiquetas (<em>tags</em>) para identificar los volúmenes a los que realizará copias de seguridad</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Programación</strong></td>
+<td style="text-align: left;">Define la frecuencia de creación (ej. cada 12 horas) y el número máximo de instantáneas a retener</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="coste-de-uso-de-amazon-ebs">Coste de Uso de Amazon EBS<a class="headerlink" href="#coste-de-uso-de-amazon-ebs" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concepto</th>
+<th style="text-align: left;">Cómo se cobra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Tamaño del volumen</strong></td>
+<td style="text-align: left;">Se factura por el tamaño <strong>aprovisionado</strong>, sin importar cuántos datos se almacenen realmente</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Operaciones de E/S</strong></td>
+<td style="text-align: left;">Solo aplica a volúmenes <strong>Magnetic HDD</strong> (estándar) — se cobra por cada operación de E/S</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IOPS provisionadas</strong></td>
+<td style="text-align: left;">Los volúmenes <code>io1</code>/<code>io2</code> se cobran adicionalmente en función de las IOPS aprovisionadas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Instantáneas</strong></td>
+<td style="text-align: left;">Se facturan por los GiB almacenados en S3</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Consejos para optimizar costes</p>
+<ul>
+<li>Usa <strong>gp3</strong> como opción predeterminada. Solo pasa a <code>io2</code> si la carga lo requiere.</li>
+<li>Es posible adjuntar <strong>múltiples volúmenes EBS</strong> a una sola instancia para aumentar capacidad o rendimiento.</li>
+<li>Utiliza la <strong>calculadora de precios de AWS</strong> para estimar el coste mensual de tu configuración.</li>
+<li>Elimina los volúmenes que ya no necesites para dejar de acumular cargos.</li>
+</ul>
+</div>
+<hr />
+<h2 id="otros-aspectos-de-amazon-ebs">Otros Aspectos de Amazon EBS<a class="headerlink" href="#otros-aspectos-de-amazon-ebs" title="Permanent link">&para;</a></h2>
+<h3 id="cifrado">Cifrado<a class="headerlink" href="#cifrado" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Se utiliza el servicio <strong>AWS KMS</strong> (<em>Key Management Service</em>) para cifrar volúmenes EBS.</li>
+<li>Soportado para <strong>todos los tipos de volúmenes</strong> y tipos de instancias EC2.</li>
+<li>El cifrado se aplica a los datos en reposo, a los datos en tránsito entre la instancia y el volumen, y a todas las instantáneas creadas a partir del volumen.</li>
+</ul>
+<h3 id="rendimiento">Rendimiento<a class="headerlink" href="#rendimiento" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Existe una relación entre el rendimiento máximo, el tamaño del volumen, el número de operaciones de E/S y la latencia.</li>
+<li>Cada factor afecta a los demás y distintas aplicaciones son más sensibles a uno u otro.</li>
+<li>Consulta la documentación de <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSPerformance.html">rendimiento de EBS</a> para más detalles.</li>
+</ul>
+<h3 id="papelera-de-reciclaje-recycle-bin">Papelera de Reciclaje (<em>Recycle Bin</em>)<a class="headerlink" href="#papelera-de-reciclaje-recycle-bin" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Función de recuperación que permite <strong>restaurar instantáneas de EBS y AMIs eliminadas accidentalmente</strong>.</li>
+<li>Se definen reglas de retención que mantienen los recursos eliminados durante un período configurable antes de su eliminación definitiva.</li>
+</ul>
+<h3 id="seguridad">Seguridad<a class="headerlink" href="#seguridad" title="Permanent link">&para;</a></h3>
+<ul>
+<li>EBS se integra con <strong>AWS IAM</strong>, permitiendo establecer políticas de acceso basadas en identidades para controlar quién puede crear, modificar, asociar o eliminar volúmenes e instantáneas.</li>
+</ul>
+<h3 id="monitorizacion-avanzada">Monitorización avanzada<a class="headerlink" href="#monitorizacion-avanzada" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Además de CloudWatch, se pueden usar <strong>CloudTrail</strong> (auditoría de llamadas API), <strong>EventBridge</strong> (eventos y automatización) y <strong>GuardDuty</strong> (detección de amenazas) para monitorizar los volúmenes EBS.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["header.autohide", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>
