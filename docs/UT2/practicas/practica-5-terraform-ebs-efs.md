@@ -472,50 +472,55 @@ output "instance_public_ip2" {
 
 El `user_data` del Ordenador1 utiliza **cloud-init** para automatizar la instalación de paquetes, el montaje del EFS y el formateo/montaje del volumen EBS. Copia el siguiente bloque **exactamente** dentro del recurso `aws_instance.ordenador1`:
 
-```hcl
-  user_data = <<-EOF
-              #cloud-config
-              packages:
-                - amazon-efs-utils
+```bash
+  #!/bin/bash
+  dnf install -y amazon-efs-utils
+  mkdir -p /mnt/efs
 
-              mounts:
-                - [ "${aws_efs_file_system.efs_file_system_terraform.id}:/", "/mnt/efs", "efs", "_netdev,tls", "0", "0" ]
 
-              runcmd:
-                - |
-                  DEVICE=""
-                  for i in $(seq 1 30); do
-                    if [ -b /dev/sdh ]; then DEVICE="/dev/sdh"; break
-                    elif [ -b /dev/xvdh ]; then DEVICE="/dev/xvdh"; break
-                    else
-                      CANDIDATE=$(lsblk -d -n -o NAME,TYPE | awk '$2=="disk" && $1!~"nvme0n1" {print "/dev/"$1; exit}')
-                      if [ -n "$CANDIDATE" ] && [ -b "$CANDIDATE" ]; then DEVICE="$CANDIDATE"; break; fi
-                    fi
-                    sleep 2
-                  done
-                  if [ -n "$DEVICE" ]; then
-                    blkid "$DEVICE" || mkfs -t xfs "$DEVICE"
-                    mkdir -p /mnt/ebs
-                    mount "$DEVICE" /mnt/ebs
-                    UUID=$(blkid -s UUID -o value "$DEVICE")
-                    [ -n "$UUID" ] && echo "UUID=$UUID /mnt/ebs xfs defaults,nofail 0 2" >> /etc/fstab
-                  fi
-              EOF
+  for i in $(seq 1 30); do
+  if mount -t efs -o tls,mounttargetip=${efs_mount_ip} ${efs_id}:/ /mnt/efs; then 
+      echo "${efs_id}:/ /mnt/efs efs defaults,_netdev,tls 0 0" >> /etc/fstab
+      break; 
+  fi
+  sleep 5
+  done
+
+  DEVICE=""
+  for i in $(seq 1 30); do
+  if [ -b /dev/sdh ]; then DEVICE="/dev/sdh"; break
+  elif [ -b /dev/xvdh ]; then DEVICE="/dev/xvdh"; break
+  else
+      CANDIDATE=$(lsblk -d -n -o NAME,TYPE | awk '$2=="disk" && $1!~"nvme0n1" {print "/dev/"$1; exit}')
+      if [ -n "$CANDIDATE" ] && [ -b "$CANDIDATE" ]; then DEVICE="$CANDIDATE"; break; fi
+  fi
+  sleep 2
+  done
+  if [ -n "$DEVICE" ]; then
+  blkid "$DEVICE" || mkfs -t xfs "$DEVICE"
+  mkdir -p /mnt/ebs
+  mount "$DEVICE" /mnt/ebs
+  UUID=$(blkid -s UUID -o value "$DEVICE")
+  [ -n "$UUID" ] && echo "UUID=$UUID /mnt/ebs xfs defaults,nofail 0 2" >> /etc/fstab
 ```
 
 ### Bloque `user_data` para Ordenador2
 
 El Ordenador2 solo necesita montar el EFS (no tiene volumen EBS adicional). Copia el siguiente bloque dentro del recurso `aws_instance.ordenador2`:
 
-```hcl
-  user_data = <<-EOF
-              #cloud-config
-              packages:
-                - amazon-efs-utils
+```bash
+  #!/bin/bash
+  dnf install -y amazon-efs-utils
+  mkdir -p /mnt/efs
 
-              mounts:
-                - [ "${aws_efs_file_system.efs_file_system_terraform.id}:/", "/mnt/efs", "efs", "_netdev,tls", "0", "0" ]
-              EOF
+
+  for i in $(seq 1 30); do
+  if mount -t efs -o tls,mounttargetip=${efs_mount_ip} ${efs_id}:/ /mnt/efs; then 
+      echo "${efs_id}:/ /mnt/efs efs defaults,_netdev,tls 0 0" >> /etc/fstab
+      break; 
+  fi
+  sleep 5
+  done
 ```
 
 ### Explicación del `user_data`
