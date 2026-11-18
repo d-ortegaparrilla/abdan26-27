@@ -497,11 +497,12 @@ El `user_data` del Ordenador1 utiliza **cloud-init** para automatizar la instala
   sleep 2
   done
   if [ -n "$DEVICE" ]; then
-  blkid "$DEVICE" || mkfs -t xfs "$DEVICE"
-  mkdir -p /mnt/ebs
-  mount "$DEVICE" /mnt/ebs
-  UUID=$(blkid -s UUID -o value "$DEVICE")
-  [ -n "$UUID" ] && echo "UUID=$UUID /mnt/ebs xfs defaults,nofail 0 2" >> /etc/fstab
+    blkid "$DEVICE" || mkfs -t xfs "$DEVICE"
+    mkdir -p /mnt/ebs
+    mount "$DEVICE" /mnt/ebs
+    UUID=$(blkid -s UUID -o value "$DEVICE")
+    [ -n "$UUID" ] && echo "UUID=$UUID /mnt/ebs xfs defaults,nofail 0 2" >> /etc/fstab
+  fi
 ```
 
 ### Bloque `user_data` para Ordenador2
