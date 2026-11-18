@@ -1,0 +1,2843 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Apuntes del módulo de Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN) - CE Recursos y Servicios en la Nube">
+      
+      
+        <meta name="author" content="David Ortega Parrilla">
+      
+      
+        <link rel="canonical" href="https://d-ortegaparrilla.github.io/abdan26-27/UT2/practicas/practica-5-terraform-ebs-efs.html">
+      
+      
+        <link rel="prev" href="practica-4-amazon-efs.html">
+      
+      
+        <link rel="next" href="practica-6-aws-backup.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Práctica 2.5: Despliegue de infraestructura de almacenamiento con Terraform (EBS + EFS) - Administración de Bases de Datos y Almacenamiento en la Nube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#practica-5-despliegue-de-infraestructura-de-almacenamiento-con-terraform-ebs-efs" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-header__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Administración de Bases de Datos y Almacenamiento en la Nube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Práctica 2.5: Despliegue de infraestructura de almacenamiento con Terraform (EBS + EFS)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../planificacion.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Planificación del Módulo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../UT1/01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-nav__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../../favicon.png" alt="logo">
+
+    </a>
+    Administración de Bases de Datos y Almacenamiento en la Nube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../planificacion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planificación del Módulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/02-arquitectura-s3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Arquitectura y Componentes de Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/03-clases-almacenamiento.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Clases de Almacenamiento y S3 Glacier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/04-ciclo-de-vida-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ciclo de Vida, Versionado e Inmutabilidad
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/05-seguridad-control-acceso.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Seguridad, Control de Acceso y Cifrado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/06-sitios-web-estaticos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Alojamiento de Sitios Web Estáticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/07-interaccion-sdk.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Interacción con SDK de Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-1-operaciones-basicas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-2-sitio-web-estatico.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.2: Alojamiento de un Sitio Web Estático en S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-3-politicas-acceso-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-4-replicacion-multiregion-crr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.4: Replicación Multirregión en Amazon S3 (CRR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../UT1/practicas/practica-5-acceso-sdk-boto3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.5: Acceso programático a S3 con Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción a los Servicios de Almacenamiento en Bloque y Sistemas de Ficheros en Red
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Amazon EBS: Elastic Block Store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-1-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.1: Creación y Gestión de Volúmenes EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-2-modificar-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.2: Modificación de un Volumen EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-3-ebs-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.3: Amazon EBS. Benchmarking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-4-amazon-efs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.4: Amazon EFS. Creación de un Sistema de Ficheros NFS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.5: Despliegue de infraestructura de almacenamiento con Terraform (EBS + EFS)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="practica-5-terraform-ebs-efs.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.5: Despliegue de infraestructura de almacenamiento con Terraform (EBS + EFS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introducción
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introducción">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objetivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-propuesta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitectura propuesta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requerimientos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requerimientos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-preparacion-del-entorno-de-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1: Preparación del entorno de desarrollo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 1: Preparación del entorno de desarrollo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instalacion-de-la-extension-de-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instalación de la extensión de Terraform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-github-copilot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuración de GitHub Copilot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creacion-del-directorio-de-trabajo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación del directorio de trabajo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-configuracion-del-proveedor-terraformtf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2: Configuración del proveedor — terraform.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-infraestructura-de-red-networkingtf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3: Infraestructura de red — networking.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-grupos-de-seguridad-securitytf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4: Grupos de seguridad — security.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-almacenamiento-storagetf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5: Almacenamiento — storage.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-6-computo-computetf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 6: Cómputo — compute.tf
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 6: Cómputo — compute.tf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generacion-del-par-de-claves-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generación del par de claves SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fichero-de-computo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fichero de cómputo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bloque-user_data-para-ordenador1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bloque user_data para Ordenador1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bloque-user_data-para-ordenador2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bloque user_data para Ordenador2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicacion-del-user_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicación del user_data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-7-validacion-y-despliegue-de-la-infraestructura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 7: Validación y despliegue de la infraestructura
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 7: Validación y despliegue de la infraestructura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validacion-de-la-configuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validación de la configuración
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planificacion-del-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planificación del despliegue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacion-del-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicación del despliegue
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-8-verificacion-del-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 8: Verificación del despliegue
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 8: Verificación del despliegue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-desde-la-consola-de-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificación desde la consola de AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-por-ssh-ordenador1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificación por SSH — Ordenador1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-por-ssh-ordenador2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificación por SSH — Ordenador2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-9-consulta-del-estado-de-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 9: Consulta del estado de Terraform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-10-destruccion-de-la-infraestructura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 10: Destrucción de la infraestructura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entregables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entregables
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practica-6-aws-backup.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.6: Centralización de copias de seguridad con AWS Backup (EBS y EFS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introducción
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Introducción">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objetivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arquitectura-propuesta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitectura propuesta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#requerimientos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requerimientos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-1-preparacion-del-entorno-de-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1: Preparación del entorno de desarrollo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 1: Preparación del entorno de desarrollo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#instalacion-de-la-extension-de-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instalación de la extensión de Terraform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-github-copilot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuración de GitHub Copilot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creacion-del-directorio-de-trabajo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación del directorio de trabajo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-2-configuracion-del-proveedor-terraformtf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2: Configuración del proveedor — terraform.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-3-infraestructura-de-red-networkingtf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3: Infraestructura de red — networking.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-4-grupos-de-seguridad-securitytf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4: Grupos de seguridad — security.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-5-almacenamiento-storagetf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5: Almacenamiento — storage.tf
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-6-computo-computetf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 6: Cómputo — compute.tf
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 6: Cómputo — compute.tf">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generacion-del-par-de-claves-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generación del par de claves SSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fichero-de-computo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fichero de cómputo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bloque-user_data-para-ordenador1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bloque user_data para Ordenador1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bloque-user_data-para-ordenador2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bloque user_data para Ordenador2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicacion-del-user_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicación del user_data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-7-validacion-y-despliegue-de-la-infraestructura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 7: Validación y despliegue de la infraestructura
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 7: Validación y despliegue de la infraestructura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validacion-de-la-configuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validación de la configuración
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planificacion-del-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planificación del despliegue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacion-del-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicación del despliegue
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-8-verificacion-del-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 8: Verificación del despliegue
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fase 8: Verificación del despliegue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-desde-la-consola-de-aws" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificación desde la consola de AWS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-por-ssh-ordenador1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificación por SSH — Ordenador1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verificacion-por-ssh-ordenador2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificación por SSH — Ordenador2
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-9-consulta-del-estado-de-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 9: Consulta del estado de Terraform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fase-10-destruccion-de-la-infraestructura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 10: Destrucción de la infraestructura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entregables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entregables
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="practica-5-despliegue-de-infraestructura-de-almacenamiento-con-terraform-ebs-efs">Práctica 5: Despliegue de infraestructura de almacenamiento con Terraform (EBS + EFS)<a class="headerlink" href="#practica-5-despliegue-de-infraestructura-de-almacenamiento-con-terraform-ebs-efs" title="Permanent link">&para;</a></h1>
+<ul>
+<li><strong>Módulo:</strong> Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN)</li>
+<li><strong>Unidad de Trabajo:</strong> UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red</li>
+</ul>
+<hr />
+<h2 id="introduccion">Introducción<a class="headerlink" href="#introduccion" title="Permanent link">&para;</a></h2>
+<p>En las prácticas anteriores hemos trabajado con volúmenes EBS y sistemas de ficheros EFS de forma manual, creando y configurando cada recurso desde la consola web de AWS o mediante CloudFormation. En esta práctica daremos un paso adelante y <strong>automatizaremos el despliegue completo de una infraestructura que combina ambos servicios de almacenamiento</strong> utilizando <strong>Terraform</strong>, una herramienta de Infraestructura como Código (<em>Infrastructure as Code</em>, IaC) que permite definir, aprovisionar y gestionar recursos en la nube de forma declarativa y reproducible.</p>
+<p>Para completar los bloques de configuración, utilizaremos <strong>GitHub Copilot</strong> como asistente de código y la <strong>documentación oficial de Terraform</strong> como referencia para validar y corregir las sugerencias.</p>
+<h3 id="objetivos">Objetivos<a class="headerlink" href="#objetivos" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Configurar un entorno de desarrollo con Visual Studio Code, la extensión de Terraform y GitHub Copilot.</li>
+<li>Comprender la estructura de un proyecto Terraform y la función de cada fichero de configuración.</li>
+<li>Completar bloques de recursos Terraform a partir de las especificaciones de la arquitectura, utilizando las sugerencias de GitHub Copilot y la documentación oficial del proveedor AWS.</li>
+<li>Desplegar una infraestructura completa de red (VPC, subredes, Internet Gateway, tablas de rutas), grupos de seguridad, almacenamiento (EBS + EFS) e instancias EC2 mediante código.</li>
+<li>Gestionar el ciclo de vida completo de la infraestructura: despliegue, verificación y destrucción.</li>
+</ul>
+<h3 id="arquitectura-propuesta">Arquitectura propuesta<a class="headerlink" href="#arquitectura-propuesta" title="Permanent link">&para;</a></h3>
+<p>El despliegue creará la siguiente arquitectura:</p>
+<pre class="mermaid"><code>flowchart TD
+    subgraph VPC["TerraformVPC (10.0.0.0/16)"]
+        subgraph AZ1["us-east-1a"]
+            subgraph PubSub1["Public-Subnet1\n10.0.1.0/24"]
+                EC2A["Ordenador1\nt3.micro\nEBS 8 GiB gp3"]
+            end
+            subgraph PrivSub1["Private-Subnet1\n10.0.3.0/24"]
+                MT1["EFS Mount Target 1"]
+            end
+        end
+        subgraph AZ2["us-east-1b"]
+            subgraph PubSub2["Public-Subnet2\n10.0.2.0/24"]
+                EC2B["Ordenador2\nt3.micro"]
+            end
+            subgraph PrivSub2["Private-Subnet2\n10.0.4.0/24"]
+                MT2["EFS Mount Target 2"]
+            end
+        end
+        EFS["Amazon EFS\nEFS_Terraform"]
+        IGW["Internet Gateway\nTerraformIGW"]
+    end
+
+    IGW --- PubSub1
+    IGW --- PubSub2
+    MT1 --- EFS
+    MT2 --- EFS
+    EC2A -. "NFS (2049)" .-&gt; MT1
+    EC2B -. "NFS (2049)" .-&gt; MT2
+    EC2A -.- |"EBS /dev/sdh"| EBS["EBS 8 GiB gp3\nVolumenEBSTerraform"]</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Recurso</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>VPC</strong> <code>TerraformVPC</code></td>
+<td style="text-align: left;">Bloque CIDR <code>10.0.0.0/16</code>, DNS habilitado</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred pública 1</strong> <code>Public-Subnet1</code></td>
+<td style="text-align: left;">CIDR <code>10.0.1.0/24</code>, zona <code>us-east-1a</code>, IP pública automática</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred pública 2</strong> <code>Public-Subnet2</code></td>
+<td style="text-align: left;">CIDR <code>10.0.2.0/24</code>, zona <code>us-east-1b</code>, IP pública automática</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred privada 1</strong> <code>Private-Subnet1</code></td>
+<td style="text-align: left;">CIDR <code>10.0.3.0/24</code>, zona <code>us-east-1a</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Subred privada 2</strong> <code>Private-Subnet2</code></td>
+<td style="text-align: left;">CIDR <code>10.0.4.0/24</code>, zona <code>us-east-1b</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Internet Gateway</strong> <code>TerraformIGW</code></td>
+<td style="text-align: left;">Conecta la VPC a Internet</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Tabla de rutas</strong></td>
+<td style="text-align: left;">Ruta por defecto <code>0.0.0.0/0</code> → IGW, asociada a ambas subredes públicas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ordenador1</strong></td>
+<td style="text-align: left;"><code>t3.micro</code> en <code>Public-Subnet1</code>, con volumen EBS adicional de 8 GiB y EFS montado</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ordenador2</strong></td>
+<td style="text-align: left;"><code>t3.micro</code> en <code>Public-Subnet2</code>, con EFS montado</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Volumen EBS</strong> <code>VolumenEBSTerraform</code></td>
+<td style="text-align: left;">8 GiB, tipo <code>gp3</code>, zona <code>us-east-1a</code>, asociado a Ordenador1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>EFS</strong> <code>EFS_Terraform</code></td>
+<td style="text-align: left;">Sistema de ficheros elástico con mount targets en las subredes privadas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Grupos de seguridad</strong></td>
+<td style="text-align: left;">SSH (22), tráfico de salida, NFS (2049) referenciado por grupo de seguridad</td>
+</tr>
+</tbody>
+</table>
+<h3 id="requerimientos">Requerimientos<a class="headerlink" href="#requerimientos" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Disponer de acceso a los recursos de AWS a través de un sandbox de <strong>AWS Academy Learner Lab</strong>.</li>
+<li>Disponer de una máquina con la <strong>AWS CLI</strong> configurada con las credenciales de AWS Academy Learner Lab.</li>
+<li>Tener instalado <a href="https://developer.hashicorp.com/terraform/install"><strong>Terraform</strong></a> (versión ≥ 1.5.0).</li>
+<li>Tener instalado <a href="https://code.visualstudio.com/"><strong>Visual Studio Code</strong></a>.</li>
+<li>Disponer de una cuenta de <strong>GitHub</strong> (registrada con el correo <code>@alu.edu.gva.es</code>).</li>
+</ul>
+<hr />
+<h2 id="fase-1-preparacion-del-entorno-de-desarrollo">Fase 1: Preparación del entorno de desarrollo<a class="headerlink" href="#fase-1-preparacion-del-entorno-de-desarrollo" title="Permanent link">&para;</a></h2>
+<p>Antes de comenzar a escribir código Terraform, vamos a configurar Visual Studio Code con las extensiones necesarias para contar con autocompletado inteligente, resaltado de sintaxis y sugerencias de código asistidas por IA.</p>
+<h3 id="instalacion-de-la-extension-de-terraform">Instalación de la extensión de Terraform<a class="headerlink" href="#instalacion-de-la-extension-de-terraform" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Abre <strong>Visual Studio Code</strong>.</p>
+</li>
+<li>
+<p>Accede al panel de extensiones (<code>Ctrl+Shift+X</code>) y busca <strong>HashiCorp Terraform</strong>.</p>
+</li>
+<li>
+<p>Instala la extensión oficial <strong>HashiCorp Terraform</strong> (publicada por HashiCorp). Esta extensión proporciona:</p>
+<ul>
+<li>Resaltado de sintaxis para archivos <code>.tf</code>.</li>
+<li>Autocompletado de recursos, atributos y funciones del proveedor AWS.</li>
+<li>Validación de errores en tiempo real.</li>
+<li>Formateo automático del código (<code>terraform fmt</code>).</li>
+</ul>
+</li>
+</ol>
+<h3 id="configuracion-de-github-copilot">Configuración de GitHub Copilot<a class="headerlink" href="#configuracion-de-github-copilot" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>En el panel de extensiones, busca e instala <strong>GitHub Copilot</strong>.</p>
+</li>
+<li>
+<p>Una vez instalada, VS Code te solicitará iniciar sesión con tu cuenta de GitHub. <strong>Utiliza tu cuenta de GitHub registrada con el correo <code>@alu.edu.gva.es</code></strong> para autenticarte, ya que el plan GitHub Education incluye acceso gratuito a Copilot.</p>
+</li>
+<li>
+<p>Tras autenticarte, verifica que Copilot está activo: debería aparecer el icono de Copilot en la barra de estado inferior de VS Code.</p>
+</li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Flujo de trabajo con Copilot y documentación oficial</p>
+<p>A lo largo de esta práctica, los bloques de recursos Terraform se proporcionan <strong>vacíos</strong> (solo con el tipo y el nombre del recurso). Tu tarea consiste en:</p>
+<ol>
+<li><strong>Escribir los argumentos</strong> necesarios dentro de cada bloque, apoyándote en las <strong>sugerencias de GitHub Copilot</strong> (que aparecerán automáticamente al escribir dentro de un bloque).</li>
+<li><strong>Validar y corregir</strong> las sugerencias consultando la <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs"><strong>documentación oficial del proveedor AWS de Terraform</strong></a>.</li>
+<li>Utilizar <code>terraform validate</code> y <code>terraform plan</code> para comprobar que la configuración es correcta antes de aplicarla.</li>
+</ol>
+<p>Copilot es una herramienta de asistencia que <strong>no siempre genera código correcto</strong>. La documentación oficial es la referencia definitiva para conocer los argumentos obligatorios, opcionales y sus valores válidos.</p>
+</div>
+<h3 id="creacion-del-directorio-de-trabajo">Creación del directorio de trabajo<a class="headerlink" href="#creacion-del-directorio-de-trabajo" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Crea un directorio de trabajo para el proyecto y ábrelo en VS Code:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>terraform-ebs-efs
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>terraform-ebs-efs
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>code<span class="w"> </span>.
+</span></code></pre></div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Convención de ficheros en Terraform</p>
+<p>Aunque podríamos escribir toda la configuración en un único fichero, la comunidad Terraform recomienda separar los recursos por responsabilidad: <code>terraform.tf</code> (proveedor), <code>networking.tf</code> (red), <code>security.tf</code> (seguridad), <code>compute.tf</code> (cómputo), <code>storage.tf</code> (almacenamiento), etc. Terraform procesa todos los archivos <code>.tf</code> de un directorio como una única configuración.</p>
+</div>
+<hr />
+<h2 id="fase-2-configuracion-del-proveedor-terraformtf">Fase 2: Configuración del proveedor — <code>terraform.tf</code><a class="headerlink" href="#fase-2-configuracion-del-proveedor-terraformtf" title="Permanent link">&para;</a></h2>
+<p>El primer fichero define el proveedor de AWS y la versión de Terraform requerida. Crea el fichero <code>terraform.tf</code> con el siguiente contenido:</p>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">terraform</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nb">required_providers</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nb">aws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="na">source</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"hashicorp/aws"</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"~&gt; 6.70"</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="na">required_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"&gt;= 1.5.0"</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">}</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="kr">provider</span><span class="w"> </span><span class="nv">"aws"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span><span class="na">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"us-east-1"</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Restricción de versiones</p>
+<ul>
+<li><code>required_version = "&gt;= 1.5.0"</code> garantiza que se utilice una versión de Terraform igual o superior a la 1.5.0.</li>
+<li><code>version = "~&gt; 6.70"</code> permite cualquier versión del proveedor AWS compatible con la 6.70.x (operador <em>pessimistic constraint</em>).</li>
+</ul>
+</div>
+<p>Tras crear este fichero, ejecuta <code>terraform init</code> desde el terminal integrado de VS Code para descargar el proveedor de AWS. Esto también activará el autocompletado de la extensión de Terraform para los recursos del proveedor AWS.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>terraform<span class="w"> </span>init
+</span></code></pre></div>
+<hr />
+<h2 id="fase-3-infraestructura-de-red-networkingtf">Fase 3: Infraestructura de red — <code>networking.tf</code><a class="headerlink" href="#fase-3-infraestructura-de-red-networkingtf" title="Permanent link">&para;</a></h2>
+<p>En este fichero definimos todos los recursos de red necesarios: VPC, subredes, Internet Gateway, tabla de rutas y asociaciones.</p>
+<p>Crea el fichero <code>networking.tf</code> y define los siguientes bloques de recursos. <strong>Completa cada bloque con los argumentos necesarios</strong> según la tabla de la arquitectura propuesta, apoyándote en las sugerencias de Copilot y en la documentación oficial:</p>
+<ul>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc"><code>aws_vpc</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet"><code>aws_subnet</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway"><code>aws_internet_gateway</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table"><code>aws_route_table</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association"><code>aws_route_table_association</code></a></li>
+</ul>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_vpc"</span><span class="w"> </span><span class="nv">"vpc_terraform"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">  # CIDR: 10.0.0.0/16</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">  # Habilitar soporte DNS y hostnames DNS</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1">  # Tag Name: "TerraformVPC"</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_subnet"</span><span class="w"> </span><span class="nv">"public_subnet1"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1">  # CIDR: 10.0.1.0/24</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1">  # Zona de disponibilidad: us-east-1a</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1">  # Asignar IP pública automáticamente</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1">  # Tag Name: "Public-Subnet1"</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">}</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_subnet"</span><span class="w"> </span><span class="nv">"public_subnet2"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="c1">  # CIDR: 10.0.2.0/24</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="c1">  # Zona de disponibilidad: us-east-1b</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1">  # Asignar IP pública automáticamente</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="c1">  # Tag Name: "Public-Subnet2"</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="p">}</span>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_internet_gateway"</span><span class="w"> </span><span class="nv">"igw"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="c1">  # Tag Name: "TerraformIGW"</span>
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="p">}</span>
+</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a>
+</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_route_table"</span><span class="w"> </span><span class="nv">"public_route_table"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="c1">  # Ruta: 0.0.0.0/0 → Internet Gateway (igw)</span>
+</span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a><span class="p">}</span>
+</span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a>
+</span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_route_table_association"</span><span class="w"> </span><span class="nv">"public_subnet1_association"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34" href="#__codelineno-3-34"></a><span class="c1">  # Subred: public_subnet1</span>
+</span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35" href="#__codelineno-3-35"></a><span class="c1">  # Tabla de rutas: public_route_table</span>
+</span><span id="__span-3-36"><a id="__codelineno-3-36" name="__codelineno-3-36" href="#__codelineno-3-36"></a><span class="p">}</span>
+</span><span id="__span-3-37"><a id="__codelineno-3-37" name="__codelineno-3-37" href="#__codelineno-3-37"></a>
+</span><span id="__span-3-38"><a id="__codelineno-3-38" name="__codelineno-3-38" href="#__codelineno-3-38"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_route_table_association"</span><span class="w"> </span><span class="nv">"public_subnet2_association"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-39"><a id="__codelineno-3-39" name="__codelineno-3-39" href="#__codelineno-3-39"></a><span class="c1">  # Subred: public_subnet2</span>
+</span><span id="__span-3-40"><a id="__codelineno-3-40" name="__codelineno-3-40" href="#__codelineno-3-40"></a><span class="c1">  # Tabla de rutas: public_route_table</span>
+</span><span id="__span-3-41"><a id="__codelineno-3-41" name="__codelineno-3-41" href="#__codelineno-3-41"></a><span class="p">}</span>
+</span><span id="__span-3-42"><a id="__codelineno-3-42" name="__codelineno-3-42" href="#__codelineno-3-42"></a>
+</span><span id="__span-3-43"><a id="__codelineno-3-43" name="__codelineno-3-43" href="#__codelineno-3-43"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_subnet"</span><span class="w"> </span><span class="nv">"private_subnet1"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-44"><a id="__codelineno-3-44" name="__codelineno-3-44" href="#__codelineno-3-44"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-3-45"><a id="__codelineno-3-45" name="__codelineno-3-45" href="#__codelineno-3-45"></a><span class="c1">  # CIDR: 10.0.3.0/24</span>
+</span><span id="__span-3-46"><a id="__codelineno-3-46" name="__codelineno-3-46" href="#__codelineno-3-46"></a><span class="c1">  # Zona de disponibilidad: us-east-1a</span>
+</span><span id="__span-3-47"><a id="__codelineno-3-47" name="__codelineno-3-47" href="#__codelineno-3-47"></a><span class="c1">  # Tag Name: "Private-Subnet1"</span>
+</span><span id="__span-3-48"><a id="__codelineno-3-48" name="__codelineno-3-48" href="#__codelineno-3-48"></a><span class="p">}</span>
+</span><span id="__span-3-49"><a id="__codelineno-3-49" name="__codelineno-3-49" href="#__codelineno-3-49"></a>
+</span><span id="__span-3-50"><a id="__codelineno-3-50" name="__codelineno-3-50" href="#__codelineno-3-50"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_subnet"</span><span class="w"> </span><span class="nv">"private_subnet2"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-51"><a id="__codelineno-3-51" name="__codelineno-3-51" href="#__codelineno-3-51"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-3-52"><a id="__codelineno-3-52" name="__codelineno-3-52" href="#__codelineno-3-52"></a><span class="c1">  # CIDR: 10.0.4.0/24</span>
+</span><span id="__span-3-53"><a id="__codelineno-3-53" name="__codelineno-3-53" href="#__codelineno-3-53"></a><span class="c1">  # Zona de disponibilidad: us-east-1b</span>
+</span><span id="__span-3-54"><a id="__codelineno-3-54" name="__codelineno-3-54" href="#__codelineno-3-54"></a><span class="c1">  # Tag Name: "Private-Subnet2"</span>
+</span><span id="__span-3-55"><a id="__codelineno-3-55" name="__codelineno-3-55" href="#__codelineno-3-55"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Cómo aprovechar Copilot</p>
+<p>Sitúa el cursor dentro de un bloque vacío y comienza a escribir el nombre de un argumento (por ejemplo, <code>cidr</code>). Copilot sugerirá automáticamente el argumento completo con un valor. Puedes aceptar la sugerencia con <code>Tab</code> o rechazarla con <code>Esc</code>. <strong>Revisa siempre que los valores coincidan con los de la tabla de la arquitectura propuesta.</strong></p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Subredes públicas vs. privadas</p>
+<ul>
+<li>Las <strong>subredes públicas</strong> tienen <code>map_public_ip_on_launch = true</code> y están asociadas a una tabla de rutas con ruta hacia el Internet Gateway. Las instancias en estas subredes reciben una IP pública y pueden comunicarse con Internet.</li>
+<li>Las <strong>subredes privadas</strong> no tienen salida a Internet. Se utilizarán para los mount targets de EFS, de modo que el tráfico NFS circule exclusivamente por la red interna de la VPC.</li>
+</ul>
+</div>
+<hr />
+<h2 id="fase-4-grupos-de-seguridad-securitytf">Fase 4: Grupos de seguridad — <code>security.tf</code><a class="headerlink" href="#fase-4-grupos-de-seguridad-securitytf" title="Permanent link">&para;</a></h2>
+<p>Los grupos de seguridad actúan como firewalls virtuales para controlar el tráfico de entrada y salida de las instancias y los servicios.</p>
+<p>Crea el fichero <code>security.tf</code> y completa los siguientes bloques. Consulta la documentación de los recursos:</p>
+<ul>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group"><code>aws_security_group</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule"><code>aws_vpc_security_group_ingress_rule</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule"><code>aws_vpc_security_group_egress_rule</code></a></li>
+</ul>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># --- Grupo de seguridad: SSH ---</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_security_group"</span><span class="w"> </span><span class="nv">"allow_ssh"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">  # Nombre: "SSH_Terraform"</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1">  # Descripción: "Allow SSH inbound traffic"</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">}</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_vpc_security_group_ingress_rule"</span><span class="w"> </span><span class="nv">"allow_ssh_rule"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1">  # Grupo de seguridad: allow_ssh</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1">  # Puerto: 22</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1">  # Protocolo: tcp</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="c1">  # Origen: 0.0.0.0/0 (cualquier IP)</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">}</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="c1"># --- Grupo de seguridad: Tráfico de salida ---</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_security_group"</span><span class="w"> </span><span class="nv">"allow_outbound"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="c1">  # Nombre: "Outbound_Terraform"</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="c1">  # Descripción: "Allow all outbound traffic"</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="p">}</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_vpc_security_group_egress_rule"</span><span class="w"> </span><span class="nv">"allow_outbound_rule"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="c1">  # Grupo de seguridad: allow_outbound</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="c1">  # Protocolo: -1 (todos)</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="c1">  # Destino: 0.0.0.0/0 (cualquier IP)</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="p">}</span>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="c1"># --- Grupo de seguridad: Bastion ---</span>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_security_group"</span><span class="w"> </span><span class="nv">"bastion_sg"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="c1">  # Nombre: "Bastion_SG"</span>
+</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="c1">  # Descripción: "Security group for Bastion host"</span>
+</span><span id="__span-4-32"><a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-4-33"><a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a><span class="p">}</span>
+</span><span id="__span-4-34"><a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a>
+</span><span id="__span-4-35"><a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_vpc_security_group_egress_rule"</span><span class="w"> </span><span class="nv">"bastion_sg"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-36"><a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a><span class="c1">  # Grupo de seguridad: bastion_sg</span>
+</span><span id="__span-4-37"><a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a><span class="c1">  # Puertos: 0-0</span>
+</span><span id="__span-4-38"><a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a><span class="c1">  # Protocolo: -1 (todos)</span>
+</span><span id="__span-4-39"><a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a><span class="c1">  # Destino: 0.0.0.0/0</span>
+</span><span id="__span-4-40"><a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a><span class="p">}</span>
+</span><span id="__span-4-41"><a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a>
+</span><span id="__span-4-42"><a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a><span class="c1"># --- Grupo de seguridad: EFS ---</span>
+</span><span id="__span-4-43"><a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_security_group"</span><span class="w"> </span><span class="nv">"efs_sg"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-44"><a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a><span class="c1">  # Nombre: "EFS_SG"</span>
+</span><span id="__span-4-45"><a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a><span class="c1">  # Descripción: "Security group for EFS"</span>
+</span><span id="__span-4-46"><a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a><span class="c1">  # VPC: vpc_terraform</span>
+</span><span id="__span-4-47"><a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a><span class="p">}</span>
+</span><span id="__span-4-48"><a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a>
+</span><span id="__span-4-49"><a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_vpc_security_group_ingress_rule"</span><span class="w"> </span><span class="nv">"efs_ingress_rule"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-50"><a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a><span class="c1">  # Grupo de seguridad: efs_sg</span>
+</span><span id="__span-4-51"><a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a><span class="c1">  # Puerto: 2049 (NFS)</span>
+</span><span id="__span-4-52"><a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a><span class="c1">  # Protocolo: tcp</span>
+</span><span id="__span-4-53"><a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a><span class="c1">  # Origen: grupo de seguridad bastion_sg (usar referenced_security_group_id)</span>
+</span><span id="__span-4-54"><a id="__codelineno-4-54" name="__codelineno-4-54" href="#__codelineno-4-54"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Se definen <strong>cuatro grupos de seguridad</strong>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Grupo de seguridad</th>
+<th style="text-align: left;">Propósito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>SSH_Terraform</code></td>
+<td style="text-align: left;">Permite tráfico de entrada SSH (puerto 22) desde cualquier IP</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Outbound_Terraform</code></td>
+<td style="text-align: left;">Permite todo el tráfico de salida (necesario para descargar paquetes, etc.)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Bastion_SG</code></td>
+<td style="text-align: left;">Grupo asignado a las instancias que actúan como origen del tráfico NFS</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>EFS_SG</code></td>
+<td style="text-align: left;">Permite tráfico NFS (puerto 2049) únicamente desde instancias con el grupo <code>Bastion_SG</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Seguridad basada en grupos de seguridad</p>
+<p>La regla de entrada del grupo <code>EFS_SG</code> utiliza <code>referenced_security_group_id</code> en lugar de un bloque CIDR. Esto significa que <strong>solo las instancias que tengan asignado el grupo <code>Bastion_SG</code></strong> podrán acceder al sistema de ficheros EFS por el puerto 2049. Es una práctica recomendada que aplica el principio de mínimo privilegio.</p>
+</div>
+<hr />
+<h2 id="fase-5-almacenamiento-storagetf">Fase 5: Almacenamiento — <code>storage.tf</code><a class="headerlink" href="#fase-5-almacenamiento-storagetf" title="Permanent link">&para;</a></h2>
+<p>En este fichero definimos los recursos de almacenamiento: un volumen EBS independiente y un sistema de ficheros EFS con sus mount targets.</p>
+<p>Crea el fichero <code>storage.tf</code> y completa los bloques. Consulta la documentación de:</p>
+<ul>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_volume"><code>aws_ebs_volume</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/volume_attachment"><code>aws_volume_attachment</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_file_system"><code>aws_efs_file_system</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_mount_target"><code>aws_efs_mount_target</code></a></li>
+</ul>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># --- Volumen EBS ---</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_ebs_volume"</span><span class="w"> </span><span class="nv">"ebs_volume_terraform"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">  # Zona de disponibilidad: us-east-1a</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1">  # Tamaño: 8 GiB</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1">  # Tipo: gp3</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1">  # Tag Name: "VolumenEBSTerraform"</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_volume_attachment"</span><span class="w"> </span><span class="nv">"ebs_volume_attachment_terraform"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1">  # Dispositivo: /dev/sdh</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1">  # Volumen: ebs_volume_terraform</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="c1">  # Instancia: ordenador1</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="p">}</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="c1"># --- Sistema de ficheros EFS ---</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_efs_file_system"</span><span class="w"> </span><span class="nv">"efs_file_system_terraform"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="c1">  # Token de creación: "EFS_Terraform"</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="c1">  # Modo de rendimiento: generalPurpose</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="c1">  # Tag Name: "EFS_Terraform"</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="p">}</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_efs_mount_target"</span><span class="w"> </span><span class="nv">"efs_mount_target1_terraform"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="c1">  # Sistema de ficheros: efs_file_system_terraform</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="c1">  # Subred: private_subnet1</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="c1">  # Grupos de seguridad: [efs_sg]</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="p">}</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_efs_mount_target"</span><span class="w"> </span><span class="nv">"efs_mount_target2_terraform"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="c1">  # Sistema de ficheros: efs_file_system_terraform</span>
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="c1">  # Subred: private_subnet2</span>
+</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="c1">  # Grupos de seguridad: [efs_sg]</span>
+</span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="p">}</span>
+</span><span id="__span-5-33"><a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a>
+</span><span id="__span-5-34"><a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="kr">output</span><span class="w"> </span><span class="nv">"efs_file_system_id"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-35"><a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">  </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_efs_file_system.efs_file_system_terraform.id</span>
+</span><span id="__span-5-36"><a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="p">}</span>
+</span><span id="__span-5-37"><a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a>
+</span><span id="__span-5-38"><a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a><span class="kr">output</span><span class="w"> </span><span class="nv">"efs_dns_name"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-39"><a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a><span class="w">  </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_efs_file_system.efs_file_system_terraform.dns_name</span>
+</span><span id="__span-5-40"><a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Aspectos clave del fichero:</p>
+<ul>
+<li>El <strong>volumen EBS</strong> de 8 GiB (tipo <code>gp3</code>) se crea en <code>us-east-1a</code> y se asocia (<code>aws_volume_attachment</code>) automáticamente al <code>Ordenador1</code> como dispositivo <code>/dev/sdh</code>.</li>
+<li>El <strong>sistema de ficheros EFS</strong> se crea con modo de rendimiento <code>generalPurpose</code> y un token de creación que lo identifica de forma única.</li>
+<li>Se crean <strong>dos mount targets</strong>, uno en cada subred privada, para que las instancias de ambas zonas de disponibilidad puedan acceder al EFS a través de la red interna.</li>
+<li>Los <strong>outputs</strong> (ya completados) permiten consultar el ID y el nombre DNS del sistema de ficheros EFS tras el despliegue.</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Mount targets en subredes privadas</p>
+<p>Los mount targets se despliegan en las subredes privadas por seguridad. El tráfico NFS entre las instancias (subredes públicas) y los mount targets (subredes privadas) circula por la red interna de la VPC, sin exponerse a Internet.</p>
+</div>
+<hr />
+<h2 id="fase-6-computo-computetf">Fase 6: Cómputo — <code>compute.tf</code><a class="headerlink" href="#fase-6-computo-computetf" title="Permanent link">&para;</a></h2>
+<p>Este fichero define las instancias EC2, la clave SSH y los outputs con las IPs públicas. Incluye además la automatización del montaje de EFS y EBS mediante <code>cloud-init</code> en el <code>user_data</code>.</p>
+<h3 id="generacion-del-par-de-claves-ssh">Generación del par de claves SSH<a class="headerlink" href="#generacion-del-par-de-claves-ssh" title="Permanent link">&para;</a></h3>
+<p>Antes de crear el fichero de cómputo, genera un par de claves SSH que Terraform subirá a AWS:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-f<span class="w"> </span>clave<span class="w"> </span>-N<span class="w"> </span><span class="s2">""</span>
+</span></code></pre></div>
+<p>Esto creará dos archivos: <code>clave</code> (clave privada) y <code>clave.pub</code> (clave pública).</p>
+<h3 id="fichero-de-computo">Fichero de cómputo<a class="headerlink" href="#fichero-de-computo" title="Permanent link">&para;</a></h3>
+<p>Crea el fichero <code>compute.tf</code> y completa los bloques. Consulta la documentación de:</p>
+<ul>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami"><code>aws_ami</code> (data source)</a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance"><code>aws_instance</code></a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair"><code>aws_key_pair</code></a></li>
+</ul>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kr">data</span><span class="w"> </span><span class="nc">"aws_ami"</span><span class="w"> </span><span class="nv">"al_2023"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1">  # Seleccionar la AMI más reciente</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1">  # Propietario: 137112412989 (Amazon)</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1">  # Filtro por nombre: al2023-ami-2023.*-kernel-*-x86_64</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1">  # Filtro por tipo de virtualización: hvm</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="p">}</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_instance"</span><span class="w"> </span><span class="nv">"ordenador1"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1">  # AMI: data.aws_ami.al_2023</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1">  # Tipo de instancia: t3.micro</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="c1">  # Subred: public_subnet1</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="c1">  # Grupos de seguridad: [allow_ssh, allow_outbound, bastion_sg]</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="c1">  # Par de claves: my_key_pair</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="c1">  #</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="c1">  # Disco raíz (root_block_device):</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="c1">  #   - Tamaño: 10 GiB</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="c1">  #   - Tipo: gp3</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="c1">  #</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="c1">  # user_data: (se proporciona completo más abajo)</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="c1">  #</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="c1">  # depends_on: ambos mount targets de EFS</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="c1">  #</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="c1">  # Tag Name: "Ordenador1"</span>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="p">}</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_instance"</span><span class="w"> </span><span class="nv">"ordenador2"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="c1">  # AMI: data.aws_ami.al_2023</span>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="c1">  # Tipo de instancia: t3.micro</span>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="c1">  # Subred: public_subnet2</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a><span class="c1">  # Grupos de seguridad: [allow_ssh, allow_outbound, bastion_sg]</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a><span class="c1">  # Par de claves: my_key_pair</span>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="c1">  #</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a><span class="c1">  # Disco raíz (root_block_device):</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a><span class="c1">  #   - Tamaño: 10 GiB</span>
+</span><span id="__span-7-35"><a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a><span class="c1">  #   - Tipo: gp3</span>
+</span><span id="__span-7-36"><a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a><span class="c1">  #</span>
+</span><span id="__span-7-37"><a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a><span class="c1">  # user_data: (se proporciona completo más abajo)</span>
+</span><span id="__span-7-38"><a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a><span class="c1">  #</span>
+</span><span id="__span-7-39"><a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a><span class="c1">  # depends_on: ambos mount targets de EFS</span>
+</span><span id="__span-7-40"><a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a><span class="c1">  #</span>
+</span><span id="__span-7-41"><a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a><span class="c1">  # Tag Name: "Ordenador2"</span>
+</span><span id="__span-7-42"><a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a><span class="p">}</span>
+</span><span id="__span-7-43"><a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a>
+</span><span id="__span-7-44"><a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a><span class="kr">resource</span><span class="w"> </span><span class="nc">"aws_key_pair"</span><span class="w"> </span><span class="nv">"my_key_pair"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-45"><a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a><span class="c1">  # Nombre de la clave: "my-key-pair"</span>
+</span><span id="__span-7-46"><a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a><span class="c1">  # Clave pública: leer del fichero "clave.pub" con la función file()</span>
+</span><span id="__span-7-47"><a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a><span class="p">}</span>
+</span><span id="__span-7-48"><a id="__codelineno-7-48" name="__codelineno-7-48" href="#__codelineno-7-48"></a>
+</span><span id="__span-7-49"><a id="__codelineno-7-49" name="__codelineno-7-49" href="#__codelineno-7-49"></a><span class="kr">output</span><span class="w"> </span><span class="nv">"instance_public_ip"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-50"><a id="__codelineno-7-50" name="__codelineno-7-50" href="#__codelineno-7-50"></a><span class="w">  </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_instance.ordenador1.public_ip</span>
+</span><span id="__span-7-51"><a id="__codelineno-7-51" name="__codelineno-7-51" href="#__codelineno-7-51"></a><span class="p">}</span>
+</span><span id="__span-7-52"><a id="__codelineno-7-52" name="__codelineno-7-52" href="#__codelineno-7-52"></a>
+</span><span id="__span-7-53"><a id="__codelineno-7-53" name="__codelineno-7-53" href="#__codelineno-7-53"></a><span class="kr">output</span><span class="w"> </span><span class="nv">"instance_public_ip2"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-54"><a id="__codelineno-7-54" name="__codelineno-7-54" href="#__codelineno-7-54"></a><span class="w">  </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">aws_instance.ordenador2.public_ip</span>
+</span><span id="__span-7-55"><a id="__codelineno-7-55" name="__codelineno-7-55" href="#__codelineno-7-55"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="bloque-user_data-para-ordenador1">Bloque <code>user_data</code> para Ordenador1<a class="headerlink" href="#bloque-user_data-para-ordenador1" title="Permanent link">&para;</a></h3>
+<p>El <code>user_data</code> del Ordenador1 utiliza <strong>cloud-init</strong> para automatizar la instalación de paquetes, el montaje del EFS y el formateo/montaje del volumen EBS. Copia el siguiente bloque <strong>exactamente</strong> dentro del recurso <code>aws_instance.ordenador1</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="w">  </span><span class="c1">#!/bin/bash</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>amazon-efs-utils
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/mnt/efs
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">30</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls,mounttargetip<span class="o">=</span><span class="si">${</span><span class="nv">efs_mount_ip</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">efs_id</span><span class="si">}</span>:/<span class="w"> </span>/mnt/efs<span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">efs_id</span><span class="si">}</span><span class="s2">:/ /mnt/efs efs defaults,_netdev,tls 0 0"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/fstab
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">      </span><span class="k">break</span><span class="p">;</span><span class="w"> </span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="k">fi</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span>sleep<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="k">done</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">  </span><span class="nv">DEVICE</span><span class="o">=</span><span class="s2">""</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">30</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span>/dev/sdh<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nv">DEVICE</span><span class="o">=</span><span class="s2">"/dev/sdh"</span><span class="p">;</span><span class="w"> </span><span class="k">break</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">  </span><span class="k">elif</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span>/dev/xvdh<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nv">DEVICE</span><span class="o">=</span><span class="s2">"/dev/xvdh"</span><span class="p">;</span><span class="w"> </span><span class="k">break</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">  </span><span class="k">else</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="w">      </span><span class="nv">CANDIDATE</span><span class="o">=</span><span class="k">$(</span>lsblk<span class="w"> </span>-d<span class="w"> </span>-n<span class="w"> </span>-o<span class="w"> </span>NAME,TYPE<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'$2=="disk" &amp;&amp; $1!~"nvme0n1" {print "/dev/"$1; exit}'</span><span class="k">)</span>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$CANDIDATE</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span><span class="s2">"</span><span class="nv">$CANDIDATE</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nv">DEVICE</span><span class="o">=</span><span class="s2">"</span><span class="nv">$CANDIDATE</span><span class="s2">"</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">  </span><span class="k">fi</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="w">  </span>sleep<span class="w"> </span><span class="m">2</span>
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="w">  </span><span class="k">done</span>
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$DEVICE</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="w">    </span>blkid<span class="w"> </span><span class="s2">"</span><span class="nv">$DEVICE</span><span class="s2">"</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>mkfs<span class="w"> </span>-t<span class="w"> </span>xfs<span class="w"> </span><span class="s2">"</span><span class="nv">$DEVICE</span><span class="s2">"</span>
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="w">    </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/mnt/ebs
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="w">    </span>mount<span class="w"> </span><span class="s2">"</span><span class="nv">$DEVICE</span><span class="s2">"</span><span class="w"> </span>/mnt/ebs
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="w">    </span><span class="nv">UUID</span><span class="o">=</span><span class="k">$(</span>blkid<span class="w"> </span>-s<span class="w"> </span>UUID<span class="w"> </span>-o<span class="w"> </span>value<span class="w"> </span><span class="s2">"</span><span class="nv">$DEVICE</span><span class="s2">"</span><span class="k">)</span>
+</span><span id="__span-8-29"><a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a><span class="w">    </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$UUID</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"UUID=</span><span class="nv">$UUID</span><span class="s2"> /mnt/ebs xfs defaults,nofail 0 2"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/fstab
+</span><span id="__span-8-30"><a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="w">  </span><span class="k">fi</span>
+</span></code></pre></div>
+<h3 id="bloque-user_data-para-ordenador2">Bloque <code>user_data</code> para Ordenador2<a class="headerlink" href="#bloque-user_data-para-ordenador2" title="Permanent link">&para;</a></h3>
+<p>El Ordenador2 solo necesita montar el EFS (no tiene volumen EBS adicional). Copia el siguiente bloque dentro del recurso <code>aws_instance.ordenador2</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="w">  </span><span class="c1">#!/bin/bash</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span>dnf<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>amazon-efs-utils
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/mnt/efs
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">30</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls,mounttargetip<span class="o">=</span><span class="si">${</span><span class="nv">efs_mount_ip</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">efs_id</span><span class="si">}</span>:/<span class="w"> </span>/mnt/efs<span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">      </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">efs_id</span><span class="si">}</span><span class="s2">:/ /mnt/efs efs defaults,_netdev,tls 0 0"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/fstab
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">      </span><span class="k">break</span><span class="p">;</span><span class="w"> </span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span><span class="k">fi</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span>sleep<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="k">done</span>
+</span></code></pre></div>
+<h3 id="explicacion-del-user_data">Explicación del <code>user_data</code><a class="headerlink" href="#explicacion-del-user_data" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Ordenador1 (EBS + EFS)</label><label for="__tabbed_1_2">Ordenador2 (solo EFS)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<ol>
+<li><strong><code>packages</code></strong>: Instala <code>amazon-efs-utils</code>, el paquete que proporciona el helper de montaje para EFS con soporte TLS.</li>
+<li><strong><code>mounts</code></strong>: Configura el montaje automático del sistema de ficheros EFS en <code>/mnt/efs</code> con cifrado en tránsito (<code>tls</code>) y la opción <code>_netdev</code> (esperar a que la red esté disponible antes de montar).</li>
+<li><strong><code>runcmd</code></strong>: Ejecuta un script que:<ul>
+<li>Espera hasta 60 segundos (30 iteraciones × 2 s) a que el dispositivo EBS esté disponible.</li>
+<li>Busca el dispositivo como <code>/dev/sdh</code>, <code>/dev/xvdh</code> o el primer disco adicional detectado por <code>lsblk</code>.</li>
+<li>Si el disco no tiene sistema de ficheros, lo formatea con <strong>XFS</strong> (<code>mkfs -t xfs</code>).</li>
+<li>Monta el volumen en <code>/mnt/ebs</code> y añade la entrada correspondiente en <code>/etc/fstab</code> para persistencia.</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<ol>
+<li><strong><code>packages</code></strong>: Instala <code>amazon-efs-utils</code>.</li>
+<li><strong><code>mounts</code></strong>: Configura el montaje automático del EFS en <code>/mnt/efs</code>.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Interpolación de Terraform en user_data</p>
+<p>La expresión <code>${aws_efs_file_system.efs_file_system_terraform.id}</code> se resuelve durante el <code>terraform apply</code>, insertando el ID real del sistema de ficheros EFS (por ejemplo, <code>fs-0abc123def456</code>) directamente en el script de cloud-init. Esto permite que las instancias monten automáticamente el EFS correcto sin intervención manual.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">depends_on</p>
+<p>Las instancias dependen explícitamente de los mount targets de EFS (<code>depends_on</code>). Esto garantiza que Terraform cree los mount targets antes de lanzar las instancias, evitando que el montaje del EFS falle durante el arranque.</p>
+</div>
+<hr />
+<h2 id="fase-7-validacion-y-despliegue-de-la-infraestructura">Fase 7: Validación y despliegue de la infraestructura<a class="headerlink" href="#fase-7-validacion-y-despliegue-de-la-infraestructura" title="Permanent link">&para;</a></h2>
+<p>Con todos los ficheros completados, el directorio del proyecto debería tener la siguiente estructura:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>terraform-ebs-efs/
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>├── clave
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>├── clave.pub
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>├── compute.tf
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>├── networking.tf
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>├── security.tf
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>├── storage.tf
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>└── terraform.tf
+</span></code></pre></div>
+<h3 id="validacion-de-la-configuracion">Validación de la configuración<a class="headerlink" href="#validacion-de-la-configuracion" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Antes de desplegar, valida que la sintaxis y las referencias entre recursos son correctas:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>terraform<span class="w"> </span>validate
+</span></code></pre></div>
+<p>Si hay errores, Terraform indicará el fichero y la línea del problema. Corrígelos consultando la documentación oficial del recurso correspondiente.</p>
+<div class="admonition warning">
+<p class="admonition-title">Errores comunes</p>
+<ul>
+<li><strong>Argumentos desconocidos:</strong> Copilot puede sugerir argumentos que no existen o que han sido renombrados en versiones recientes del proveedor. Consulta siempre la documentación oficial.</li>
+<li><strong>Referencias a recursos inexistentes:</strong> Asegúrate de que los nombres de los recursos referenciados (por ejemplo, <code>aws_vpc.vpc_terraform.id</code>) coincidan exactamente con los nombres definidos en los bloques <code>resource</code>.</li>
+<li><strong>Argumentos obligatorios ausentes:</strong> Cada recurso tiene argumentos obligatorios (<em>required</em>) que deben estar presentes. La documentación los marca claramente.</li>
+</ul>
+</div>
+</li>
+</ol>
+<h3 id="planificacion-del-despliegue">Planificación del despliegue<a class="headerlink" href="#planificacion-del-despliegue" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Genera un plan de ejecución para visualizar los recursos que se crearán:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>terraform<span class="w"> </span>plan
+</span></code></pre></div>
+<p>Revisa la salida con atención. Terraform mostrará un resumen con todos los recursos que va a crear. Deberías ver un mensaje similar a:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Plan: 21 to add, 0 to change, 0 to destroy.
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Buenas prácticas con <code>terraform plan</code></p>
+<p>Siempre ejecuta <code>terraform plan</code> antes de <code>terraform apply</code> para revisar los cambios que se van a realizar. Esto es especialmente importante en entornos de producción para evitar modificaciones no deseadas.</p>
+</div>
+</li>
+</ol>
+<h3 id="aplicacion-del-despliegue">Aplicación del despliegue<a class="headerlink" href="#aplicacion-del-despliegue" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Aplica la configuración para crear los recursos en AWS:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>terraform<span class="w"> </span>apply
+</span></code></pre></div>
+<p>Terraform solicitará confirmación. Escribe <code>yes</code> y pulsa Intro. El despliegue tardará varios minutos.</p>
+<p>Al finalizar, Terraform mostrará los <strong>outputs</strong> definidos en los ficheros de configuración:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Apply complete! Resources: 21 added, 0 changed, 0 destroyed.
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Outputs:
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>efs_dns_name = "fs-0abc123def456.efs.us-east-1.amazonaws.com"
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>efs_file_system_id = "fs-0abc123def456"
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>instance_public_ip = "X.X.X.X"
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>instance_public_ip2 = "Y.Y.Y.Y"
+</span></code></pre></div>
+</li>
+</ol>
+<hr />
+<h2 id="fase-8-verificacion-del-despliegue">Fase 8: Verificación del despliegue<a class="headerlink" href="#fase-8-verificacion-del-despliegue" title="Permanent link">&para;</a></h2>
+<h3 id="verificacion-desde-la-consola-de-aws">Verificación desde la consola de AWS<a class="headerlink" href="#verificacion-desde-la-consola-de-aws" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Accede a la consola de <strong>Amazon EC2</strong> y comprueba que las dos instancias (<code>Ordenador1</code> y <code>Ordenador2</code>) están en estado <em>Running</em>.</p>
+</li>
+<li>
+<p>En <strong>Elastic Block Store &gt; Volumes</strong>, verifica que existe el volumen <code>VolumenEBSTerraform</code> de 8 GiB asociado a <code>Ordenador1</code>.</p>
+</li>
+<li>
+<p>Accede a la consola de <strong>Amazon EFS</strong> y comprueba que el sistema de ficheros <code>EFS_Terraform</code> está creado, con dos mount targets en las subredes privadas.</p>
+</li>
+<li>
+<p>En <strong>EC2 &gt; Security Groups</strong>, verifica que se han creado los cuatro grupos de seguridad: <code>SSH_Terraform</code>, <code>Outbound_Terraform</code>, <code>Bastion_SG</code> y <code>EFS_SG</code>.</p>
+</li>
+</ol>
+<h3 id="verificacion-por-ssh-ordenador1">Verificación por SSH — Ordenador1<a class="headerlink" href="#verificacion-por-ssh-ordenador1" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Conéctate por SSH al Ordenador1 utilizando la clave privada generada:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>ssh<span class="w"> </span>-i<span class="w"> </span>clave<span class="w"> </span>ec2-user@&lt;IP_PUBLICA_ORDENADOR1&gt;
+</span></code></pre></div>
+</li>
+<li>
+<p>Verifica que el volumen EBS se ha montado correctamente en <code>/mnt/ebs</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>df<span class="w"> </span>-hT<span class="w"> </span>/mnt/ebs
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>lsblk
+</span></code></pre></div>
+<p>Deberías ver el volumen de 8 GiB montado con formato XFS.</p>
+</li>
+<li>
+<p>Verifica que el sistema de ficheros EFS se ha montado en <code>/mnt/efs</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>df<span class="w"> </span>-hT<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+</li>
+<li>
+<p>Crea un fichero de prueba en el EFS para verificar el almacenamiento compartido:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>sudo<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">"echo 'Hola desde Ordenador1' &gt; /mnt/efs/prueba.txt"</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>cat<span class="w"> </span>/mnt/efs/prueba.txt
+</span></code></pre></div>
+</li>
+</ol>
+<h3 id="verificacion-por-ssh-ordenador2">Verificación por SSH — Ordenador2<a class="headerlink" href="#verificacion-por-ssh-ordenador2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>En otra terminal, conéctate por SSH al Ordenador2:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ssh<span class="w"> </span>-i<span class="w"> </span>clave<span class="w"> </span>ec2-user@&lt;IP_PUBLICA_ORDENADOR2&gt;
+</span></code></pre></div>
+</li>
+<li>
+<p>Verifica que el EFS está montado y que el fichero creado desde el Ordenador1 es visible:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>df<span class="w"> </span>-hT<span class="w"> </span>/mnt/efs
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>cat<span class="w"> </span>/mnt/efs/prueba.txt
+</span></code></pre></div>
+<p>Deberías ver el mensaje <code>Hola desde Ordenador1</code>, confirmando que ambas instancias comparten el mismo sistema de ficheros.</p>
+</li>
+<li>
+<p>Añade una segunda línea desde el Ordenador2:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sudo<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">"echo 'Hola desde Ordenador2' &gt;&gt; /mnt/efs/prueba.txt"</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>Vuelve al Ordenador1 y comprueba que la línea añadida desde el Ordenador2 es visible:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>cat<span class="w"> </span>/mnt/efs/prueba.txt
+</span></code></pre></div>
+</li>
+</ol>
+<hr />
+<h2 id="fase-9-consulta-del-estado-de-terraform">Fase 9: Consulta del estado de Terraform<a class="headerlink" href="#fase-9-consulta-del-estado-de-terraform" title="Permanent link">&para;</a></h2>
+<p>Terraform mantiene un fichero de estado (<code>terraform.tfstate</code>) que registra todos los recursos gestionados y sus atributos actuales.</p>
+<ol>
+<li>
+<p>Lista los recursos gestionados por Terraform:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>terraform<span class="w"> </span>state<span class="w"> </span>list
+</span></code></pre></div>
+</li>
+<li>
+<p>Consulta los outputs del despliegue en cualquier momento:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>terraform<span class="w"> </span>output
+</span></code></pre></div>
+</li>
+<li>
+<p>Puedes consultar los detalles de un recurso concreto:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>terraform<span class="w"> </span>state<span class="w"> </span>show<span class="w"> </span>aws_efs_file_system.efs_file_system_terraform
+</span></code></pre></div>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">No modifiques <code>terraform.tfstate</code> manualmente</p>
+<p>El fichero de estado es crítico para que Terraform sepa qué recursos gestiona. Modificarlo manualmente puede causar inconsistencias o pérdida de control sobre la infraestructura. En entornos colaborativos se utiliza un backend remoto (como S3) para compartir el estado de forma segura.</p>
+</div>
+<hr />
+<h2 id="fase-10-destruccion-de-la-infraestructura">Fase 10: Destrucción de la infraestructura<a class="headerlink" href="#fase-10-destruccion-de-la-infraestructura" title="Permanent link">&para;</a></h2>
+<p>Para liberar todos los recursos creados y evitar el consumo innecesario de créditos de AWS Academy Learner Labs:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>terraform<span class="w"> </span>destroy
+</span></code></pre></div>
+<p>Terraform mostrará todos los recursos que va a eliminar y solicitará confirmación. Escribe <code>yes</code> para proceder.</p>
+<div class="admonition tip">
+<p class="admonition-title">Ventaja de Terraform frente a la limpieza manual</p>
+<p>A diferencia de la limpieza manual (donde debemos eliminar cada recurso en el orden correcto para respetar las dependencias), <code>terraform destroy</code> se encarga automáticamente del <strong>orden de destrucción</strong>: primero elimina las instancias y volúmenes, luego los grupos de seguridad, las subredes y finalmente la VPC.</p>
+</div>
+<hr />
+<h2 id="entregables">Entregables<a class="headerlink" href="#entregables" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Captura 1 — <code>terraform plan</code>:</strong> Captura de la salida del comando <code>terraform plan</code> mostrando el resumen de los recursos que se van a crear (la línea <code>Plan: X to add, 0 to change, 0 to destroy</code>).</p>
+</li>
+<li>
+<p><strong>Captura 2 — <code>terraform apply</code> completado:</strong> Captura de la salida final del comando <code>terraform apply</code>, mostrando el mensaje <code>Apply complete!</code> y los valores de los outputs (IPs públicas, ID y DNS del EFS).</p>
+</li>
+<li>
+<p><strong>Captura 3 — Instancias en la consola de AWS:</strong> Captura de la consola de Amazon EC2 mostrando las dos instancias (<code>Ordenador1</code> y <code>Ordenador2</code>) en estado <em>Running</em>.</p>
+</li>
+<li>
+<p><strong>Captura 4 — Montaje del EBS en Ordenador1:</strong> Salida de <code>df -hT /mnt/ebs</code> y <code>lsblk</code> en el Ordenador1, mostrando el volumen EBS de 8 GiB montado con formato XFS.</p>
+</li>
+<li>
+<p><strong>Captura 5 — EFS compartido entre ambas instancias:</strong> Salida de <code>cat /mnt/efs/prueba.txt</code> en el Ordenador1 mostrando las dos líneas escritas desde ambas instancias, demostrando el almacenamiento compartido.</p>
+</li>
+<li>
+<p><strong>Captura 6 — <code>terraform destroy</code>:</strong> Captura de la salida final del comando <code>terraform destroy</code> mostrando la confirmación de que todos los recursos han sido destruidos.</p>
+</li>
+<li>
+<p><strong>Entrega del código Terraform:</strong> Comprime el directorio del proyecto (excluyendo los ficheros <code>terraform.tfstate</code>, <code>terraform.tfstate.backup</code>, el directorio <code>.terraform/</code> y la clave privada <code>clave</code>) y adjúntalo como parte de la entrega.</p>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["header.autohide", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
