@@ -102,6 +102,7 @@ nav:
   - UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red:
     - "1. Introducción a los Servicios de Almacenamiento en Bloque y Sistemas de Ficheros en Red": "UT2/01-introduccion.md"
     - "2. Amazon EBS: Elastic Block Store": "UT2/02-ebs.md"
+    - "3. Amazon EFS: Elastic File System": "UT2/03-efs.md"
     - Prácticas de Laboratorio:
       - "Práctica 2.1: Creación y Gestión de Volúmenes EBS": "UT2/practicas/practica-1-ebs.md"
       - "Práctica 2.2: Modificación de un Volumen EBS": "UT2/practicas/practica-2-modificar-ebs.md"
@@ -111,6 +112,12 @@ nav:
       - "Práctica 2.6: Centralización de copias de seguridad con AWS Backup (EBS y EFS)": "UT2/practicas/practica-6-aws-backup.md"
       #- "Práctica 2.3: Implementación de Amazon FSx para Windows File Server": "UT2/practicas/practica-3-amazon-fsx-windows.md"
       #- "Práctica 2.5: Implementación de Amazon FSx para Lustre": "UT2/practicas/practica-5-amazon-fsx-lustre.md"
+  - UT3. Servicios administrados de bases de datos relacionales:
+    - "1. Introducción a las Bases de Datos Relacionales en la Nube": "UT3/01-introduccion.md"
+    - Prácticas de Laboratorio:
+      - "Práctica 3.1: Instalación de MySQL en EC2 con Terraform": "UT3/practicas/practica-1-mysql-ec2-terraform.md"
+      - "Práctica 3.2: PostgreSQL 18 en EC2 con Docker y Docker Compose": "UT3/practicas/practica-2-postgresql-docker.md"
+      #- "Práctica 3.3: Instalación automática de MySQL y PostgreSQL con user_data": "UT3/practicas/practica-3-user-data-mysql-postgresql.md"
 
 #   
 #   - "7. Replicación y Transferencia en S3": "UT1/07-replicacion-movimiento-datos.md"

@@ -63,8 +63,8 @@ Cada práctica y cuestionario está asociado de forma unívoca a uno o varios Cr
 El temario del módulo está estructurado en 9 Unidades de Trabajo:
 
 1. :material-cube-outline: **[UT1. Servicios de almacenamiento de objetos en la nube (Amazon S3)](UT1/01-introduccion.md)**
-2. :material-harddisk: **UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red (Amazon EBS, EFS, FSx)**
-3. :material-database: **UT3. Servicios administrados de bases de datos relacionales (Amazon RDS, Amazon Aurora)**
+2. :material-harddisk: **[UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red (Amazon EBS, EFS, FSx)](UT2/01-introduccion.md)**
+3. :material-database: **[UT3. Servicios administrados de bases de datos relacionales (Amazon RDS, Amazon Aurora)](UT3/01-introduccion.md)**
 4. :material-key-variant: **UT4. Bases de datos clave-valor (Amazon DynamoDB)**
 5. :material-file-document-outline: **UT5. Bases de datos basadas en documentos (Amazon DocumentDB / MongoDB Atlas)**
 6. :material-memory: **UT6. Sistemas de memoria caché en bases de datos (Amazon ElastiCache / Redis)**
