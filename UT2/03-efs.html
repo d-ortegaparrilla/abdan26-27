@@ -1,0 +1,3143 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Apuntes del módulo de Administración de Bases de Datos y Almacenamiento en la Nube (ABDAN) - CE Recursos y Servicios en la Nube">
+      
+      
+        <meta name="author" content="David Ortega Parrilla">
+      
+      
+        <link rel="canonical" href="https://d-ortegaparrilla.github.io/abdan26-27/UT2/03-efs.html">
+      
+      
+        <link rel="prev" href="02-ebs.html">
+      
+      
+        <link rel="next" href="practicas/practica-1-ebs.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>3. Amazon EFS: Elastic File System - Administración de Bases de Datos y Almacenamiento en la Nube</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#3-amazon-efs-elastic-file-system" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-header__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Administración de Bases de Datos y Almacenamiento en la Nube
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3. Amazon EFS: Elastic File System
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-orange" data-md-color-accent="red"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../planificacion.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Planificación del Módulo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../UT1/01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../UT3/01-introduccion.html" class="md-tabs__link">
+          
+  
+  
+  UT3. Servicios administrados de bases de datos relacionales
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Administración de Bases de Datos y Almacenamiento en la Nube" class="md-nav__button md-logo" aria-label="Administración de Bases de Datos y Almacenamiento en la Nube" data-md-component="logo">
+      
+  <img src="../favicon.png" alt="logo">
+
+    </a>
+    Administración de Bases de Datos y Almacenamiento en la Nube
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/d-ortegaparrilla/abdan26-27" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    d-ortegaparrilla/abdan26-27
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../planificacion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Planificación del Módulo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT1. Almacenamiento de Objetos en la Nube (Amazon S3)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción al Almacenamiento en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/02-arquitectura-s3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Arquitectura y Componentes de Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/03-clases-almacenamiento.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Clases de Almacenamiento y S3 Glacier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/04-ciclo-de-vida-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Ciclo de Vida, Versionado e Inmutabilidad
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/05-seguridad-control-acceso.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Seguridad, Control de Acceso y Cifrado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/06-sitios-web-estaticos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Alojamiento de Sitios Web Estáticos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/07-interaccion-sdk.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Interacción con SDK de Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-1-operaciones-basicas.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.1: Operaciones básicas con Amazon S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-2-sitio-web-estatico.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.2: Alojamiento de un Sitio Web Estático en S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-3-politicas-acceso-versionado.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.3: Políticas de Acceso, Versionado y Ciclo de Vida
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-4-replicacion-multiregion-crr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.4: Replicación Multirregión en Amazon S3 (CRR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT1/practicas/practica-5-acceso-sdk-boto3.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 1.5: Acceso programático a S3 con Python (Boto3)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT2. Servicios de almacenamiento en bloque y sistemas de ficheros en red
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción a los Servicios de Almacenamiento en Bloque y Sistemas de Ficheros en Red
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Amazon EBS: Elastic Block Store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Amazon EFS: Elastic File System
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="03-efs.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Amazon EFS: Elastic File System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sistemas-de-ficheros-compartidos-para-instancias-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sistemas de Ficheros Compartidos para Instancias EC2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Características Principales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Características Principales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de uso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentes-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes de Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Componentes de Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#propiedades-de-cada-recurso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propiedades de cada recurso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nombre-dns-del-sistema-de-ficheros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nombre DNS del sistema de ficheros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#destinos-de-montaje-y-zonas-de-disponibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Destinos de Montaje y Zonas de Disponibilidad
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#montaje-del-sistema-de-ficheros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Montaje del Sistema de Ficheros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Montaje del Sistema de Ficheros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#montaje-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Montaje automático
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disponibilidad-y-durabilidad-regional-vs-one-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disponibilidad y Durabilidad: Regional vs. One Zone
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clases-de-almacenamiento-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clases de Almacenamiento EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Clases de Almacenamiento EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consejos-para-elegir-la-clase-de-almacenamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consejos para elegir la clase de almacenamiento
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#administracion-del-ciclo-de-vida-de-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administración del Ciclo de Vida de EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opciones-de-rendimiento-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opciones de Rendimiento de Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Opciones de Rendimiento de Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modos-de-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modos de Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modos-de-throughput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modos de Throughput
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#precios-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precios de Amazon EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seguridad-en-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seguridad en Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Seguridad en Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cifrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cifrado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-de-acceso-a-la-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control de acceso a la red
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-identidades-y-acceso-iam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gestión de identidades y acceso (IAM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replicacion-de-sistemas-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replicación de Sistemas EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#copias-de-seguridad-con-aws-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copias de Seguridad con AWS Backup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otros-aspectos-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otros Aspectos de Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otros Aspectos de Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transferencia-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transferencia de datos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitorizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitorización
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creacion-de-un-sistema-efs-desde-la-consola" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación de un Sistema EFS desde la Consola
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#amazon-fsx-for-windows-file-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon FSx for Windows File Server
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon FSx for Windows File Server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparativa-efs-vs-fsx-for-windows-file-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparativa EFS vs. FSx for Windows File Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-1-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.1: Creación y Gestión de Volúmenes EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-2-modificar-ebs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.2: Modificación de un Volumen EBS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-3-ebs-performance.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.3: Amazon EBS. Benchmarking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-4-amazon-efs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.4: Amazon EFS. Creación de un Sistema de Ficheros NFS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-5-terraform-ebs-efs.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.5: Despliegue de infraestructura de almacenamiento con Terraform (EBS + EFS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="practicas/practica-6-aws-backup.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 2.6: Centralización de copias de seguridad con AWS Backup (EBS y EFS)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UT3. Servicios administrados de bases de datos relacionales
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    UT3. Servicios administrados de bases de datos relacionales
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT3/01-introduccion.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Introducción a las Bases de Datos Relacionales en la Nube
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prácticas de Laboratorio
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prácticas de Laboratorio
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT3/practicas/practica-1-mysql-ec2-terraform.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 3.1: Instalación de MySQL en EC2 con Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UT3/practicas/practica-2-postgresql-docker.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Práctica 3.2: PostgreSQL 18 en EC2 con Docker y Docker Compose
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sistemas-de-ficheros-compartidos-para-instancias-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sistemas de Ficheros Compartidos para Instancias EC2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caracteristicas-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Características Principales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Características Principales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#casos-de-uso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos de uso
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentes-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes de Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Componentes de Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#propiedades-de-cada-recurso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propiedades de cada recurso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nombre-dns-del-sistema-de-ficheros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nombre DNS del sistema de ficheros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#destinos-de-montaje-y-zonas-de-disponibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Destinos de Montaje y Zonas de Disponibilidad
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#montaje-del-sistema-de-ficheros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Montaje del Sistema de Ficheros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Montaje del Sistema de Ficheros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#montaje-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Montaje automático
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disponibilidad-y-durabilidad-regional-vs-one-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disponibilidad y Durabilidad: Regional vs. One Zone
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clases-de-almacenamiento-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clases de Almacenamiento EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Clases de Almacenamiento EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consejos-para-elegir-la-clase-de-almacenamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consejos para elegir la clase de almacenamiento
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#administracion-del-ciclo-de-vida-de-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administración del Ciclo de Vida de EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opciones-de-rendimiento-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opciones de Rendimiento de Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Opciones de Rendimiento de Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modos-de-performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modos de Performance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modos-de-throughput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modos de Throughput
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#precios-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precios de Amazon EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#seguridad-en-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Seguridad en Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Seguridad en Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cifrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cifrado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-de-acceso-a-la-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control de acceso a la red
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-de-identidades-y-acceso-iam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gestión de identidades y acceso (IAM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replicacion-de-sistemas-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replicación de Sistemas EFS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#copias-de-seguridad-con-aws-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Copias de Seguridad con AWS Backup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#otros-aspectos-de-amazon-efs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Otros Aspectos de Amazon EFS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Otros Aspectos de Amazon EFS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transferencia-de-datos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transferencia de datos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitorizacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitorización
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creacion-de-un-sistema-efs-desde-la-consola" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creación de un Sistema EFS desde la Consola
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#amazon-fsx-for-windows-file-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon FSx for Windows File Server
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon FSx for Windows File Server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparativa-efs-vs-fsx-for-windows-file-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparativa EFS vs. FSx for Windows File Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="3-amazon-efs-elastic-file-system">3. Amazon EFS: Elastic File System<a class="headerlink" href="#3-amazon-efs-elastic-file-system" title="Permanent link">&para;</a></h1>
+<p>Amazon Elastic File System (Amazon EFS) es el servicio de <strong>sistema de ficheros compartido</strong> de AWS para cargas de trabajo basadas en Linux. A diferencia de EBS, un mismo sistema de ficheros EFS puede montarse <strong>simultáneamente desde múltiples instancias EC2</strong>, incluso ubicadas en distintas Zonas de Disponibilidad.</p>
+<hr />
+<h2 id="sistemas-de-ficheros-compartidos-para-instancias-ec2">Sistemas de Ficheros Compartidos para Instancias EC2<a class="headerlink" href="#sistemas-de-ficheros-compartidos-para-instancias-ec2" title="Permanent link">&para;</a></h2>
+<p>¿Qué sucede si existen <strong>varias instancias</strong> que necesitan usar el <strong>mismo almacenamiento</strong>? Repasemos las opciones disponibles:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Servicio</th>
+<th style="text-align: center;">¿Sirve como almacenamiento compartido?</th>
+<th style="text-align: left;">Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Amazon EBS</strong></td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: left;">Se asocia a una única instancia (salvo Multi-Attach, con limitaciones)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Amazon S3</strong></td>
+<td style="text-align: center;">⚠️</td>
+<td style="text-align: left;">Es una opción, pero no es ideal: es almacenamiento de objetos, no un sistema de ficheros POSIX</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Amazon EFS</strong></td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: left;">Sistema de ficheros compartido para instancias <strong>Linux</strong> (NFS)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Amazon FSx for Windows File Server</strong></td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: left;">Sistema de ficheros compartido para instancias <strong>Windows</strong> (SMB)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="caracteristicas-principales">Características Principales<a class="headerlink" href="#caracteristicas-principales" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Sistema de ficheros compartido:</strong> Soporta lecturas y escrituras en paralelo desde varias instancias EC2 alojadas en diferentes centros de datos.</li>
+<li><strong>Integración con servicios de cómputo:</strong> Se puede utilizar con <strong>EC2</strong>, <strong>ECS</strong> y <strong>Lambda</strong>, así como desde recursos en las instalaciones locales (<em>on-premise</em>).</li>
+<li><strong>Completamente administrado y autoescalable:</strong> Aumenta o reduce su tamaño automáticamente a medida que se agregan y eliminan ficheros. No es necesario aprovisionar capacidad.</li>
+<li><strong>Capacidad de petabytes.</strong></li>
+<li><strong>Protocolo NFS:</strong> Compatible con las versiones <strong>4.0 y 4.1 (NFSv4)</strong> de <em>Network File System</em>.</li>
+<li><strong>Compatibilidad con todas las AMI basadas en Linux</strong> para Amazon EC2.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">EBS vs. EFS: diferencia clave en la facturación</p>
+<p>En <strong>EBS</strong> se paga por el tamaño <strong>aprovisionado</strong> del volumen, se use o no. En <strong>EFS</strong> no se aprovisiona capacidad: se paga únicamente por los <strong>datos realmente almacenados</strong> en cada clase de almacenamiento.</p>
+</div>
+<h3 id="casos-de-uso">Casos de uso<a class="headerlink" href="#casos-de-uso" title="Permanent link">&para;</a></h3>
+<p>Amazon EFS está diseñado para proporcionar rendimiento a una amplia gama de cargas de trabajo y aplicaciones:</p>
+<ul>
+<li>Directorios principales (<em>home</em>) de usuarios.</li>
+<li>Sistema de ficheros para aplicaciones empresariales.</li>
+<li>Pruebas y desarrollo de aplicaciones (repositorios de código).</li>
+<li>Copias de seguridad de bases de datos.</li>
+<li>Administración de contenido y servicios web (por ejemplo, varios servidores web sirviendo el mismo contenido).</li>
+<li>Flujos de trabajo multimedia.</li>
+<li>Análisis de Big Data.</li>
+</ul>
+<hr />
+<h2 id="componentes-de-amazon-efs">Componentes de Amazon EFS<a class="headerlink" href="#componentes-de-amazon-efs" title="Permanent link">&para;</a></h2>
+<p>EFS tiene <strong>dos componentes</strong> fundamentales:</p>
+<ul>
+<li><strong>Sistema de ficheros (<em>file system</em>):</strong> Es el recurso que <strong>almacena los datos</strong> en una región de AWS. No se puede acceder a él directamente.</li>
+<li><strong>Destino de montaje (<em>mount target</em>):</strong> Es el recurso que <strong>hace los datos accesibles</strong>. Se crea en una subred y proporciona un punto final de red (una interfaz de red con IP privada) que se utiliza para montar el sistema de ficheros en una instancia EC2 a través de <strong>NFSv4.1</strong>.</li>
+</ul>
+<pre class="mermaid"><code>flowchart TD
+    subgraph REGION["Región"]
+        subgraph VPC["VPC"]
+            subgraph AZ["Zona de Disponibilidad"]
+                subgraph SUBNET["Subred"]
+                    EC2["Instancia EC2\n(interfaz de red)"]
+                    MT["Destino de montaje\n(interfaz de red)"]
+                end
+            end
+        end
+        EFS["Amazon Elastic\nFile System"]
+    end
+    EC2 -- "NFSv4.1 (puerto 2049)" --&gt; MT
+    MT --- EFS</code></pre>
+<h3 id="propiedades-de-cada-recurso">Propiedades de cada recurso<a class="headerlink" href="#propiedades-de-cada-recurso" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Recurso</th>
+<th style="text-align: left;">Propiedades</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Sistema de ficheros</strong></td>
+<td style="text-align: left;">Identificador, token de creación, hora de creación, tamaño en bytes, número de destinos de montaje creados y políticas de ciclo de vida</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Destino de montaje</strong></td>
+<td style="text-align: left;">ID del destino de montaje, ID de la subred en la que se creó, ID del sistema de ficheros al que pertenece, dirección IP de montaje, grupos de seguridad y estado</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nombre-dns-del-sistema-de-ficheros">Nombre DNS del sistema de ficheros<a class="headerlink" href="#nombre-dns-del-sistema-de-ficheros" title="Permanent link">&para;</a></h3>
+<p>Cada sistema de ficheros tiene un <strong>nombre DNS</strong> con el siguiente formato:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>file-system-id.efs.aws-region.amazonaws.com
+</span></code></pre></div>
+<p>Este nombre se puede utilizar directamente en un comando <code>mount</code> con el cliente NFS estándar de Linux:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>nfs<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>-o<span class="w"> </span><span class="nv">nfsvers</span><span class="o">=</span><span class="m">4</span>.1,rsize<span class="o">=</span><span class="m">1048576</span>,wsize<span class="o">=</span><span class="m">1048576</span>,hard,timeo<span class="o">=</span><span class="m">600</span>,retrans<span class="o">=</span><span class="m">2</span>,noresvport<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>file-system-DNS-name:/<span class="w"> </span>~/efs-mount-point
+</span></code></pre></div>
+<hr />
+<h2 id="destinos-de-montaje-y-zonas-de-disponibilidad">Destinos de Montaje y Zonas de Disponibilidad<a class="headerlink" href="#destinos-de-montaje-y-zonas-de-disponibilidad" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Un destino de montaje por Zona de Disponibilidad</p>
+<p>Solo se puede crear <strong>un destino de montaje por Zona de Disponibilidad</strong>. Si una AZ tiene varias subredes, el destino de montaje se crea en <strong>una sola de ellas</strong>. Mientras exista un destino de montaje en una AZ, las instancias EC2 lanzadas en <strong>cualquiera de sus subredes</strong> pueden compartirlo.</p>
+</div>
+<p>AWS recomienda crear un destino de montaje <strong>en cada Zona de Disponibilidad</strong> donde haya instancias que vayan a usar el sistema de ficheros. Así se evita tráfico entre zonas (con su coste y latencia asociados) y se mantiene el acceso aunque caiga una AZ.</p>
+<hr />
+<h2 id="montaje-del-sistema-de-ficheros">Montaje del Sistema de Ficheros<a class="headerlink" href="#montaje-del-sistema-de-ficheros" title="Permanent link">&para;</a></h2>
+<p>Una vez creados el sistema de ficheros y sus destinos de montaje, hay que montarlo en el sistema operativo de la instancia. Existen dos alternativas:</p>
+<ul>
+<li><strong>EFS mount helper (<code>amazon-efs-utils</code>):</strong> Utilidad <strong>recomendada por Amazon</strong> para montar sistemas EFS en instancias EC2 Linux. Simplifica el montaje y permite activar el cifrado en tránsito (TLS) y la autorización IAM.</li>
+<li><strong>Cliente NFS estándar de Linux:</strong> Montaje manual con <code>mount -t nfs</code> (ver ejemplo anterior).</li>
+</ul>
+<p>Con el <em>mount helper</em> se puede identificar el sistema de ficheros mediante cualquiera de estas propiedades:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Nombre DNS</label><label for="__tabbed_1_2">ID del sistema de ficheros</label><label for="__tabbed_1_3">Dirección IP del destino de montaje</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls<span class="w"> </span>fs-abcd123456789ef0.efs.us-east-2.amazonaws.com<span class="w"> </span>efs/
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls<span class="w"> </span>fs-abcd123456789ef0:/<span class="w"> </span>efs/
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls,mounttargetip<span class="o">=</span><span class="m">192</span>.0.2.0<span class="w"> </span>fs-abcd123456789ef0<span class="w"> </span>efs/
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="montaje-automatico">Montaje automático<a class="headerlink" href="#montaje-automatico" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Instancias EC2 nuevas:</strong> Desde la consola, al lanzar la instancia, se puede indicar que monte un sistema EFS existente. Al arrancar, el sistema de ficheros ya estará montado.</li>
+<li><strong>Instancias EC2 existentes:</strong> Es necesario añadir una entrada al fichero <code>/etc/fstab</code>:</li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>file-system-id:/ efs-mount-point efs _netdev,noresvport,tls,iam 0 0
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Opción</th>
+<th style="text-align: left;">Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>efs</code></td>
+<td style="text-align: left;">Tipo de sistema de ficheros (requiere el <em>mount helper</em>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_netdev</code></td>
+<td style="text-align: left;">Identifica el sistema de ficheros como <strong>de red</strong>: no se monta hasta que la red esté disponible</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>noresvport</code></td>
+<td style="text-align: left;">Ayuda a que la conexión con EFS no se pierda tras un evento de reconexión de red</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tls</code></td>
+<td style="text-align: left;">Activa el <strong>cifrado en tránsito</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>iam</code></td>
+<td style="text-align: left;">Activa la <strong>autorización mediante IAM</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Puntos de acceso (<em>access points</em>)</p>
+<p>Como vimos en la <a href="practicas/practica-4-amazon-efs.html">Práctica 2.4</a>, un <strong>punto de acceso</strong> permite exponer únicamente un directorio concreto del sistema de ficheros y, opcionalmente, forzar una identidad POSIX (UID/GID) para los clientes que se conecten a través de él. Se monta añadiendo la opción <code>accesspoint=fsap-xxxxxxxx</code> al <em>mount helper</em>.</p>
+</div>
+<hr />
+<h2 id="disponibilidad-y-durabilidad-regional-vs-one-zone">Disponibilidad y Durabilidad: Regional vs. One Zone<a class="headerlink" href="#disponibilidad-y-durabilidad-regional-vs-one-zone" title="Permanent link">&para;</a></h2>
+<p>Amazon EFS ofrece <strong>dos tipos de sistemas de ficheros</strong>, en función de las necesidades de durabilidad y disponibilidad:</p>
+<ul>
+<li><strong>EFS Regional:</strong> Ofrece los niveles más altos de durabilidad y disponibilidad, almacenando los datos de forma redundante en <strong>varias Zonas de Disponibilidad</strong>.</li>
+<li><strong>EFS One Zone:</strong> Almacena los datos de forma redundante dentro de <strong>una única Zona de Disponibilidad</strong>. Si esa zona sufre un desastre o fallo, los datos no estarán disponibles y <strong>podrían perderse</strong>.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Diseñado para</th>
+<th style="text-align: left;">Durabilidad</th>
+<th style="text-align: left;">Disponibilidad</th>
+<th style="text-align: center;">Zonas de disponibilidad</th>
+<th style="text-align: left;">Otras consideraciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Regional</strong></td>
+<td style="text-align: left;">Datos que requieren la máxima durabilidad y disponibilidad</td>
+<td style="text-align: left;">99,999999999 % (11 nueves)</td>
+<td style="text-align: left;">99,99 %</td>
+<td style="text-align: center;">≥ 3</td>
+<td style="text-align: left;">Ninguna</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>One Zone</strong></td>
+<td style="text-align: left;">Datos que no requieren la máxima durabilidad y disponibilidad</td>
+<td style="text-align: left;">99,999999999 % (11 nueves)</td>
+<td style="text-align: left;">99,9 %</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">No resiste la pérdida de la Zona de Disponibilidad</td>
+</tr>
+</tbody>
+</table>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Arquitectura Regional</label><label for="__tabbed_2_2">Arquitectura One Zone</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<pre class="mermaid"><code>flowchart TB
+    subgraph VPC["Amazon VPC"]
+        subgraph AZA["AZ A — Subred 10.0.1.0/24"]
+            I1["EC2\n10.0.1.30"]
+            I2["EC2\n10.0.1.31"]
+            MTA["Mount target\n10.0.1.32"]
+        end
+        subgraph AZB["AZ B — Subred 10.0.2.0/24"]
+            MTB["Mount target\n10.0.2.45"]
+        end
+        subgraph AZC["AZ C"]
+            I3["EC2\n10.0.4.1\n(subred 10.0.4.0/24)"]
+            MTC["Mount target\n10.0.3.15\n(subred 10.0.3.0/24)"]
+        end
+        EFS["Amazon EFS\n(Regional)"]
+    end
+    I1 --&gt; MTA
+    I2 --&gt; MTA
+    I3 --&gt; MTC
+    MTA --- EFS
+    MTB --- EFS
+    MTC --- EFS</code></pre>
+<p>Hay un destino de montaje en cada AZ. Observa que en la AZ C la instancia y el destino de montaje están en <strong>subredes distintas</strong> de la misma AZ: la instancia usa igualmente ese destino de montaje.</p>
+</div>
+<div class="tabbed-block">
+<pre class="mermaid"><code>flowchart TB
+    subgraph VPC["Amazon VPC"]
+        subgraph AZA["AZ A — Subred 10.0.1.0/24"]
+            I1["EC2\n10.0.1.31"]
+            MTA["Mount target\n10.0.1.32"]
+            EFS["Amazon EFS\n(One Zone)"]
+        end
+        subgraph AZB["AZ B — Subred 10.0.2.0/24"]
+            I2["EC2\n10.0.2.31"]
+        end
+    end
+    I1 --&gt; MTA
+    I2 -- "tráfico entre AZ" --&gt; MTA
+    MTA --- EFS</code></pre>
+<p>Solo existe un destino de montaje, en la AZ donde residen los datos. Las instancias de otras AZ pueden acceder, pero generando <strong>tráfico entre zonas</strong> y dependiendo de la disponibilidad de la AZ A.</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="clases-de-almacenamiento-efs">Clases de Almacenamiento EFS<a class="headerlink" href="#clases-de-almacenamiento-efs" title="Permanent link">&para;</a></h2>
+<p>Al igual que en Amazon S3, EFS ofrece diferentes <strong>clases de almacenamiento</strong> para optimizar el coste según el patrón de acceso a los datos:</p>
+<ul>
+<li><strong>EFS Standard:</strong> Almacenamiento en <strong>SSD</strong> que ofrece la latencia más baja para ficheros a los que se accede con frecuencia.</li>
+<li><strong>EFS Infrequent Access (IA):</strong> Optimizada para datos a los que se accede solo <strong>unas cuantas veces cada trimestre</strong>.</li>
+<li><strong>EFS Archive:</strong> Rentable para datos a los que se accede <strong>unas pocas veces al año o menos</strong>.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Clase</th>
+<th style="text-align: left;">Diseñada para</th>
+<th style="text-align: left;">Latencia primer byte</th>
+<th style="text-align: left;">Durabilidad</th>
+<th style="text-align: left;">SLA de disponibilidad</th>
+<th style="text-align: left;">Zonas de disponibilidad</th>
+<th style="text-align: left;">Cargo mínimo por fichero</th>
+<th style="text-align: left;">Duración mínima</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Standard</strong></td>
+<td style="text-align: left;">Datos activos que requieren latencia inferior al milisegundo</td>
+<td style="text-align: left;">Sub-milisegundo</td>
+<td style="text-align: left;">11 nueves</td>
+<td style="text-align: left;">99,99 % (Regional) / 99,9 % (One Zone)</td>
+<td style="text-align: left;">≥ 3 (Regional) / 1 (One Zone)</td>
+<td style="text-align: left;">No aplica</td>
+<td style="text-align: left;">No aplica</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Infrequent Access</strong></td>
+<td style="text-align: left;">Datos inactivos accedidos unas pocas veces por trimestre</td>
+<td style="text-align: left;">Decenas de ms</td>
+<td style="text-align: left;">11 nueves</td>
+<td style="text-align: left;">99,99 % (Regional) / 99,9 % (One Zone)</td>
+<td style="text-align: left;">≥ 3 (Regional) / 1 (One Zone)</td>
+<td style="text-align: left;">128 KiB</td>
+<td style="text-align: left;">No aplica</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Archive</strong></td>
+<td style="text-align: left;">Datos inactivos accedidos unas pocas veces al año o menos</td>
+<td style="text-align: left;">Decenas de ms</td>
+<td style="text-align: left;">11 nueves</td>
+<td style="text-align: left;">99,9 % (Regional)</td>
+<td style="text-align: left;">≥ 3 (Regional)</td>
+<td style="text-align: left;">128 KiB</td>
+<td style="text-align: left;">90 días</td>
+</tr>
+</tbody>
+</table>
+<h3 id="consejos-para-elegir-la-clase-de-almacenamiento">Consejos para elegir la clase de almacenamiento<a class="headerlink" href="#consejos-para-elegir-la-clase-de-almacenamiento" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Acceso frecuente</strong> → <strong>Standard</strong> o <strong>One Zone</strong>, que ofrecen la menor latencia.</li>
+<li><strong>Acceso menos frecuente que a diario</strong> → <strong>Standard–IA</strong> o <strong>One Zone–IA</strong> para reducir costes de almacenamiento. Ten en cuenta que <strong>aumenta la latencia del primer byte</strong> y conlleva un <strong>coste adicional por acceso a los datos</strong>.</li>
+<li><strong>No se necesita alta disponibilidad</strong> → <strong>One Zone</strong> o <strong>One Zone–IA</strong>. No replican los datos entre varios centros de datos, por lo que la disponibilidad prometida baja al 99,9 %.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Durabilidad ≠ protección frente a desastres</p>
+<p>Todas las clases están diseñadas para una durabilidad del <strong>99,999999999 %</strong>. Sin embargo, en las clases <strong>One Zone</strong> es imprescindible hacer <strong>copias de seguridad</strong> para poder recuperar los datos en caso de destrucción del centro de datos.</p>
+</div>
+<hr />
+<h2 id="administracion-del-ciclo-de-vida-de-efs">Administración del Ciclo de Vida de EFS<a class="headerlink" href="#administracion-del-ciclo-de-vida-de-efs" title="Permanent link">&para;</a></h2>
+<p>Mediante <strong>políticas de ciclo de vida</strong>, EFS puede mover automáticamente los ficheros entre clases de almacenamiento en función del tiempo transcurrido desde su último acceso:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Política</th>
+<th style="text-align: left;">Qué hace</th>
+<th style="text-align: left;">Valor por defecto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Transición a IA</strong></td>
+<td style="text-align: left;">Mueve a <em>Infrequent Access</em> los ficheros no accedidos en Standard durante N días</td>
+<td style="text-align: left;"><strong>30 días</strong> sin acceso</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Transición a Archive</strong></td>
+<td style="text-align: left;">Mueve a <em>Archive</em> los ficheros no accedidos en Standard durante N días</td>
+<td style="text-align: left;"><strong>90 días</strong> sin acceso</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Transición a Standard</strong></td>
+<td style="text-align: left;">Devuelve los ficheros de IA o Archive a Standard</td>
+<td style="text-align: left;"><strong>Desactivada</strong> (los ficheros permanecen en IA/Archive)</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    STD["EFS Standard"]
+    IA["EFS Infrequent\nAccess"]
+    ARC["EFS Archive"]
+
+    STD -- "30 días sin acceso" --&gt; IA
+    STD -- "90 días sin acceso" --&gt; ARC
+    IA -. "primer acceso\n(opcional)" .-&gt; STD
+    ARC -. "primer acceso\n(opcional)" .-&gt; STD</code></pre>
+<div class="admonition tip">
+<p class="admonition-title">Transición a Standard en el primer acceso</p>
+<p>Para casos de uso sensibles al rendimiento que exigen la latencia más baja (por ejemplo, aplicaciones que trabajan con un gran volumen de ficheros pequeños), es recomendable activar la transición <strong>a Standard en el primer acceso</strong> (<em>On first access</em>).</p>
+</div>
+<hr />
+<h2 id="opciones-de-rendimiento-de-amazon-efs">Opciones de Rendimiento de Amazon EFS<a class="headerlink" href="#opciones-de-rendimiento-de-amazon-efs" title="Permanent link">&para;</a></h2>
+<p>La latencia, el rendimiento (<em>throughput</em>) y las operaciones de E/S por segundo de un sistema EFS dependen de tres factores:</p>
+<pre class="mermaid"><code>flowchart TD
+    REND["Rendimiento de\nAmazon EFS"]
+
+    REND --&gt; CLASES["Clases de almacenamiento"]
+    REND --&gt; PERF["Performance mode"]
+    REND --&gt; THR["Throughput mode"]
+
+    CLASES --&gt; C1["Standard"]
+    CLASES --&gt; C2["Infrequent Access"]
+    CLASES --&gt; C3["Archive"]
+
+    PERF --&gt; P1["General Purpose\n(recomendado)"]
+    PERF --&gt; P2["Max I/O"]
+
+    THR --&gt; T1["Elastic\n(recomendado)"]
+    THR --&gt; T2["Provisioned"]
+    THR --&gt; T3["Bursting"]</code></pre>
+<h3 id="modos-de-performance">Modos de <em>Performance</em><a class="headerlink" href="#modos-de-performance" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Modo</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>General Purpose</strong></td>
+<td style="text-align: left;">Latencia por operación más baja. Es el modo <strong>predeterminado</strong> y el recomendado para la mayoría de cargas, incluidas las sensibles a la latencia</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Max I/O</strong></td>
+<td style="text-align: left;">Diseñado para cargas de trabajo <strong>altamente paralelizadas</strong> que pueden tolerar latencias más altas</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modos-de-throughput">Modos de <em>Throughput</em><a class="headerlink" href="#modos-de-throughput" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Modo</th>
+<th style="text-align: left;">Cuándo usarlo</th>
+<th style="text-align: left;">Cómo funciona</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Elastic</strong></td>
+<td style="text-align: left;">Cargas <strong>impredecibles</strong> o con picos, difíciles de pronosticar</td>
+<td style="text-align: left;">Modo <strong>predeterminado</strong>. El rendimiento escala automáticamente con la actividad y se paga por los datos transferidos</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Provisioned</strong></td>
+<td style="text-align: left;">Se conocen los requisitos de rendimiento de la carga</td>
+<td style="text-align: left;">Se fija una <strong>tasa de rendimiento</strong> (MiB/s) que el sistema mantiene <strong>independientemente de su tamaño</strong>. Se paga por el rendimiento aprovisionado</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Bursting</strong> (ráfagas)</td>
+<td style="text-align: left;">Se quiere que el rendimiento <strong>escale con la cantidad de datos almacenados</strong></td>
+<td style="text-align: left;">Usa un <strong>sistema de créditos</strong>: se consumen al superar una tasa base y se recuperan cuando se está por debajo</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Nomenclatura en la consola</p>
+<p>En la consola actual, los modos <strong>Elastic</strong> y <strong>Provisioned</strong> aparecen agrupados bajo la opción <strong>Enhanced</strong>, mientras que <strong>Bursting</strong> aparece como opción independiente.</p>
+</div>
+<hr />
+<h2 id="precios-de-amazon-efs">Precios de Amazon EFS<a class="headerlink" href="#precios-de-amazon-efs" title="Permanent link">&para;</a></h2>
+<p>En EFS se paga por:</p>
+<ul>
+<li>La <strong>cantidad de datos (GB)</strong> almacenados en cada clase de almacenamiento.</li>
+<li>El <strong>acceso a los datos</strong> cuando se leen ficheros de <strong>Infrequent Access</strong> o <strong>Archive</strong>, y por los datos que se mueven entre clases mediante la gestión del ciclo de vida. Recuerda que IA y Archive tienen un <strong>cargo mínimo de facturación de 128 KiB por fichero</strong>.</li>
+<li><strong>Precios adicionales</strong> para sistemas que utilizan rendimiento <strong>aprovisionado</strong> o en <strong>ráfaga</strong>.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concepto</th>
+<th style="text-align: left;">Precio orientativo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Standard</strong> (GB-mes)</td>
+<td style="text-align: left;">0,33 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Infrequent Access</strong> (GB-mes)</td>
+<td style="text-align: left;">0,02 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Archive</strong> (GB-mes)</td>
+<td style="text-align: left;">0,01 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Copia de seguridad</strong> en caliente / en frío (GB-mes)</td>
+<td style="text-align: left;">0,055 USD / 0,011 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;">Todas las clases: <strong>lecturas</strong> (por GB transferido)</td>
+<td style="text-align: left;">0,03 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;">Todas las clases: <strong>escrituras</strong> (por GB transferido)</td>
+<td style="text-align: left;">0,07 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;">Infrequent Access: lecturas (cargo incremental por GB)</td>
+<td style="text-align: left;">0,011 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;">Infrequent Access: transición entre niveles (por GB)</td>
+<td style="text-align: left;">0,011 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;">Archive: lecturas (cargo incremental por GB)</td>
+<td style="text-align: left;">0,033 USD</td>
+</tr>
+<tr>
+<td style="text-align: left;">Archive: transición entre niveles (por GB)</td>
+<td style="text-align: left;">0,033 USD</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition example">
+<p class="admonition-title">Ejemplo: coste de 5 GB en EFS</p>
+<p>Suponiendo que los datos se acceden <strong>varias veces al día</strong> y que se necesita <strong>alta disponibilidad</strong>, se elige la clase <strong>Standard</strong> (Regional).</p>
+<p><strong>Coste de almacenamiento:</strong> 5 GB × 0,33 USD = <strong>1,65 USD al mes</strong></p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Calculadora de precios</p>
+<p>Los precios varían según la región y cambian con el tiempo. Utiliza la <a href="https://calculator.aws/">calculadora de precios de AWS</a> para estimar el coste real de tu configuración.</p>
+</div>
+<hr />
+<h2 id="seguridad-en-amazon-efs">Seguridad en Amazon EFS<a class="headerlink" href="#seguridad-en-amazon-efs" title="Permanent link">&para;</a></h2>
+<h3 id="cifrado">Cifrado<a class="headerlink" href="#cifrado" title="Permanent link">&para;</a></h3>
+<p>Amazon EFS admite dos formas de cifrado complementarias:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tipo</th>
+<th style="text-align: left;">Características</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Cifrado en reposo</strong></td>
+<td style="text-align: left;">Opción <strong>predeterminada</strong> al crear el sistema de ficheros. Datos y metadatos se cifran automáticamente antes de escribirse y se descifran al leerse, de forma transparente para la aplicación. Utiliza <strong>AES-256</strong> con claves de AWS KMS</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Cifrado en tránsito</strong></td>
+<td style="text-align: left;">Utiliza <strong>TLS</strong> al montar el sistema de ficheros con el <em>mount helper</em>, que crea un túnel cifrado (<strong>stunnel</strong>)</td>
+</tr>
+</tbody>
+</table>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Montaje con cifrado en tránsito</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>efs<span class="w"> </span>-o<span class="w"> </span>tls<span class="w"> </span>fs-12345678:/<span class="w"> </span>/mnt/efs
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">El cifrado en reposo no se puede cambiar</p>
+<p>Una vez creado un sistema de ficheros EFS, <strong>no se puede modificar su configuración de cifrado en reposo</strong>. Si se creó sin cifrar, habría que crear un nuevo sistema cifrado y migrar los datos.</p>
+</div>
+<h3 id="control-de-acceso-a-la-red">Control de acceso a la red<a class="headerlink" href="#control-de-acceso-a-la-red" title="Permanent link">&para;</a></h3>
+<p>El acceso de red se controla mediante <strong>grupos de seguridad</strong> asociados tanto a las <strong>instancias EC2</strong> como a los <strong>destinos de montaje</strong>. El tráfico NFS utiliza el <strong>puerto 2049 (TCP)</strong>.</p>
+<p>Para que una instancia EC2 pueda montar un sistema EFS se deben cumplir <strong>dos condiciones</strong>:</p>
+<ol>
+<li><strong>Grupo de seguridad del destino de montaje:</strong> Debe tener una regla que permita conexiones <strong>entrantes</strong> en el puerto NFS (2049) desde la instancia (por dirección IP o, preferiblemente, por grupo de seguridad).</li>
+<li><strong>Grupo de seguridad de la instancia:</strong> Debe permitir conexiones <strong>salientes</strong> al puerto NFS hacia uno de los destinos de montaje (por defecto, los grupos de seguridad permiten todo el tráfico saliente).</li>
+</ol>
+<pre class="mermaid"><code>flowchart LR
+    subgraph SG_EC2["SG de la instancia"]
+        EC2["Instancia EC2"]
+    end
+    subgraph SG_MT["SG del destino de montaje"]
+        MT["Mount target"]
+    end
+    EC2 -- "TCP 2049 (NFS)\nSalida: permitida por defecto\nEntrada: regla en el SG del mount target" --&gt; MT</code></pre>
+<h3 id="gestion-de-identidades-y-acceso-iam">Gestión de identidades y acceso (IAM)<a class="headerlink" href="#gestion-de-identidades-y-acceso-iam" title="Permanent link">&para;</a></h3>
+<p>Amazon EFS se integra con <strong>AWS IAM</strong>, soportando, entre otras, políticas basadas en identidad, <strong>políticas basadas en recursos</strong> (políticas del sistema de ficheros), claves de condición específicas del servicio, credenciales temporales y roles de servicio. <strong>No</strong> soporta ACL y el soporte de ABAC (etiquetas en políticas) es <strong>parcial</strong>.</p>
+<div class="admonition danger">
+<p class="admonition-title">Política por defecto: acceso anónimo completo</p>
+<p>La política predeterminada de un sistema EFS <strong>no utiliza IAM para autenticar</strong> y concede <strong>acceso completo a cualquier cliente anónimo</strong> que pueda conectarse a través de un destino de montaje. La única barrera es, por tanto, la red (grupos de seguridad).</p>
+</div>
+<p>Los clientes NFS pueden identificarse mediante un <strong>rol de IAM</strong> al conectarse (opción <code>iam</code> del <em>mount helper</em>). En ese caso, EFS evalúa la <strong>política de recursos del sistema de ficheros</strong> junto con las <strong>políticas de IAM basadas en identidad</strong> para determinar los permisos. Las acciones disponibles para clientes son:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Acción</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>elasticfilesystem:ClientMount</code></td>
+<td style="text-align: left;">Acceso de <strong>solo lectura</strong> al sistema de ficheros</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>elasticfilesystem:ClientWrite</code></td>
+<td style="text-align: left;">Permisos de <strong>escritura</strong> en el sistema de ficheros</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>elasticfilesystem:ClientRootAccess</code></td>
+<td style="text-align: left;">Permite actuar como usuario <strong>root</strong> al acceder al sistema de ficheros</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ejemplo:</strong> política de sistema de ficheros que otorga lectura y escritura al rol <code>Testing_Role</code>, siempre que el acceso se haga a través de un destino de montaje:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">            </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">            </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">                </span><span class="nt">"AWS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:iam::111122223333:role/Testing_Role"</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">            </span><span class="p">},</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">            </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">                </span><span class="s2">"elasticfilesystem:ClientWrite"</span><span class="p">,</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">                </span><span class="s2">"elasticfilesystem:ClientMount"</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">            </span><span class="p">],</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">            </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:elasticfilesystem:us-east-2:111122223333:file-system/fs-1234abcd"</span><span class="p">,</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">            </span><span class="nt">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">                </span><span class="nt">"Bool"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">                    </span><span class="nt">"elasticfilesystem:AccessedViaMountTarget"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">                </span><span class="p">}</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">    </span><span class="p">]</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="p">}</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Opciones de política habituales en la consola</p>
+<p>Al crear el sistema de ficheros, la consola ofrece casillas que generan la política automáticamente:</p>
+<ul>
+<li><strong>Prevent root access by default:</strong> impide el acceso como root (no concede <code>ClientRootAccess</code>).</li>
+<li><strong>Enforce read-only access by default:</strong> solo concede <code>ClientMount</code>.</li>
+<li><strong>Prevent anonymous access:</strong> exige que el cliente se identifique con IAM.</li>
+<li><strong>Enforce in-transit encryption for all clients:</strong> deniega cualquier acción si <code>aws:SecureTransport</code> es <code>false</code>, obligando a montar con TLS.</li>
+</ul>
+</div>
+<hr />
+<h2 id="replicacion-de-sistemas-efs">Replicación de Sistemas EFS<a class="headerlink" href="#replicacion-de-sistemas-efs" title="Permanent link">&para;</a></h2>
+<p>Para una mayor resiliencia y protección de datos, es posible <strong>replicar un sistema de ficheros EFS en otra región de AWS</strong> (o en la misma).</p>
+<ul>
+<li>Cuando la replicación está habilitada, EFS replica <strong>automáticamente y de forma transparente</strong> los datos y metadatos del sistema de ficheros de <strong>origen</strong> a un sistema de ficheros de <strong>destino</strong> (de solo lectura mientras dure la replicación).</li>
+<li>En caso de desastre o durante simulacros, se puede <strong>conmutar (<em>failover</em>)</strong> al sistema de ficheros réplica. Para reanudar las operaciones normales, basta con volver al sistema de ficheros principal.</li>
+<li>El proceso de creación del destino y su sincronización se gestionan mediante una <strong>configuración de replicación</strong>, accesible desde la consola o la CLI:</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>aws<span class="w"> </span>efs<span class="w"> </span>describe-replication-configurations<span class="w"> </span>--file-system-id<span class="w"> </span>fs-0123456789abcdef1
+</span></code></pre></div>
+<hr />
+<h2 id="copias-de-seguridad-con-aws-backup">Copias de Seguridad con AWS Backup<a class="headerlink" href="#copias-de-seguridad-con-aws-backup" title="Permanent link">&para;</a></h2>
+<p>Aunque AWS garantiza una durabilidad del <strong>99,999999999 %</strong> para los datos de EFS (y la clase Standard los replica entre varios centros de datos), la durabilidad <strong>no protege frente a errores humanos</strong> como el borrado accidental de ficheros. Por ello, es imprescindible hacer copias de seguridad.</p>
+<p><strong>AWS Backup</strong> es un servicio <strong>centralizado</strong> de protección de datos para realizar copias de seguridad y restaurar datos de múltiples servicios: EC2, EBS, S3, RDS, DynamoDB, EFS, y muchos más.</p>
+<p>Para crear copias de seguridad de un sistema EFS se necesitan tres componentes:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Componente</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Vault</strong> (almacén)</td>
+<td style="text-align: left;">Contenedor donde se agrupan y guardan las copias de seguridad</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Plan</strong></td>
+<td style="text-align: left;">Define <strong>cuándo y cómo</strong> se realizan las copias de los recursos (frecuencia, retención, ventana, etc.)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Recovery point</strong> (punto de recuperación)</td>
+<td style="text-align: left;">Contiene toda la información necesaria para restaurar un recurso. También se le llama <em>snapshot</em></td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    PLAN["Plan de backup\n(frecuencia, retención)"]
+    EFS["Sistema EFS"]
+    VAULT["Vault"]
+    RP["Recovery points\n(snapshots)"]
+
+    PLAN -- "selecciona recursos" --&gt; EFS
+    EFS -- "copia programada" --&gt; VAULT
+    VAULT --&gt; RP
+    RP -- "restauración" --&gt; EFS</code></pre>
+<div class="admonition tip">
+<p class="admonition-title">Backups automáticos al crear el sistema EFS</p>
+<p>Al crear un sistema de ficheros desde la consola, la opción <strong>Automatic backups</strong> viene marcada por defecto: crea automáticamente un plan de AWS Backup con la configuración recomendada. Puedes profundizar en este servicio en la <a href="practicas/practica-6-aws-backup.html">Práctica 2.6</a>.</p>
+</div>
+<hr />
+<h2 id="otros-aspectos-de-amazon-efs">Otros Aspectos de Amazon EFS<a class="headerlink" href="#otros-aspectos-de-amazon-efs" title="Permanent link">&para;</a></h2>
+<h3 id="transferencia-de-datos">Transferencia de datos<a class="headerlink" href="#transferencia-de-datos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Servicio</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>AWS DataSync</strong></td>
+<td style="text-align: left;">Servicio de transferencia de datos <em>online</em> para copiar datos entre servidores NFS, SMB, almacenamiento de objetos, buckets de S3 y sistemas EFS y FSx</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AWS Transfer Family</strong></td>
+<td style="text-align: left;">Permite la transferencia de ficheros hacia/desde EFS utilizando los protocolos <strong>SFTP (SSH)</strong>, <strong>FTPS</strong> y <strong>FTP</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="monitorizacion">Monitorización<a class="headerlink" href="#monitorizacion" title="Permanent link">&para;</a></h3>
+<p>Como mínimo, se debería monitorizar:</p>
+<ul>
+<li>El <strong>rendimiento de red</strong> del sistema de ficheros.</li>
+<li>El <strong>número de conexiones</strong> de clientes.</li>
+<li>El <strong>número de bytes</strong> por cada tipo de operación: lectura de datos, escritura de datos y operaciones de metadatos.</li>
+</ul>
+<p>Para ello se utilizan <strong>Amazon CloudWatch</strong> (métricas y alarmas) y <strong>AWS CloudTrail</strong> (auditoría de llamadas a la API). Por ejemplo, se podría definir una alarma que avise si hay algún intento de crear un sistema EFS con el <strong>cifrado en reposo deshabilitado</strong>.</p>
+<hr />
+<h2 id="creacion-de-un-sistema-efs-desde-la-consola">Creación de un Sistema EFS desde la Consola<a class="headerlink" href="#creacion-de-un-sistema-efs-desde-la-consola" title="Permanent link">&para;</a></h2>
+<p>El asistente de creación de la consola recoge, en orden, las siguientes opciones:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Paso</th>
+<th style="text-align: left;">Opciones principales</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1. General</strong></td>
+<td style="text-align: left;">Nombre, tipo de sistema de ficheros (<strong>Regional</strong> / <strong>One Zone</strong>), backups automáticos, políticas de ciclo de vida (IA, Archive, Standard) y cifrado en reposo</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2. Rendimiento</strong></td>
+<td style="text-align: left;"><em>Throughput mode</em> (Enhanced → Elastic / Provisioned, o Bursting) y <em>Performance mode</em> (General Purpose / Max I/O)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3. Red</strong></td>
+<td style="text-align: left;">VPC, y para cada AZ: subred, dirección IP (automática o manual) y grupos de seguridad del destino de montaje</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>4. Política del sistema de ficheros</strong></td>
+<td style="text-align: left;">Opciones de seguridad predefinidas (sin root, solo lectura, sin acceso anónimo, cifrado en tránsito) o política personalizada en JSON</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>5. Revisión y creación</strong></td>
+<td style="text-align: left;">Resumen de la configuración</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Grupo de seguridad de los destinos de montaje</p>
+<p>El grupo de seguridad asociado a los destinos de montaje <strong>debe permitir el tráfico entrante NFS (TCP 2049)</strong> desde las instancias. Si se deja el grupo de seguridad por defecto de la VPC, es habitual que el montaje se quede colgado sin dar error.</p>
+</div>
+<p>Una vez creado el sistema y en estado <strong>Available</strong>, se puede utilizar su <strong>nombre DNS</strong> (por ejemplo, <code>fs-0fbe4e2eb56e1bf12.efs.us-east-1.amazonaws.com</code>) para montarlo desde cualquier instancia lanzada en cualquiera de las Zonas de Disponibilidad asociadas al sistema de ficheros.</p>
+<hr />
+<h2 id="amazon-fsx-for-windows-file-server">Amazon FSx for Windows File Server<a class="headerlink" href="#amazon-fsx-for-windows-file-server" title="Permanent link">&para;</a></h2>
+<p>Mientras que EFS está orientado a Linux (NFS), <strong>Amazon FSx for Windows File Server</strong> proporciona almacenamiento de sistema de ficheros compartido <strong>completamente administrado</strong> para instancias <strong>Microsoft Windows</strong> EC2.</p>
+<ul>
+<li>Compatibilidad nativa con Microsoft Windows.</li>
+<li>Sistema de ficheros <strong>NTFS</strong> (<em>New Technology File System</em>).</li>
+<li>Protocolo <strong>SMB</strong> (<em>Server Message Block</em>) nativo, versiones 2.0 a 3.1.1.</li>
+<li>Espacios de nombres <strong>DFS</strong> (<em>Distributed File System</em>) y <strong>DFS Replication</strong>.</li>
+<li>Integración con <strong>Microsoft Active Directory</strong> y soporte de <strong>listas de control de acceso (ACL)</strong> de Windows.</li>
+<li>Respaldado por almacenamiento <strong>SSD</strong> de alto rendimiento.</li>
+</ul>
+<h3 id="comparativa-efs-vs-fsx-for-windows-file-server">Comparativa EFS vs. FSx for Windows File Server<a class="headerlink" href="#comparativa-efs-vs-fsx-for-windows-file-server" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Característica</th>
+<th style="text-align: left;">Amazon EFS</th>
+<th style="text-align: left;">Amazon FSx for Windows File Server</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Sistema operativo cliente</strong></td>
+<td style="text-align: left;">Linux</td>
+<td style="text-align: left;">Windows</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Protocolo</strong></td>
+<td style="text-align: left;">NFSv4.0 / NFSv4.1</td>
+<td style="text-align: left;">SMB 2.0 – 3.1.1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sistema de ficheros</strong></td>
+<td style="text-align: left;">POSIX</td>
+<td style="text-align: left;">NTFS</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Autenticación / permisos</strong></td>
+<td style="text-align: left;">IAM + permisos POSIX</td>
+<td style="text-align: left;">Active Directory + ACL de Windows</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Capacidad</strong></td>
+<td style="text-align: left;">Elástica (crece y decrece sola)</td>
+<td style="text-align: left;">Aprovisionada</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Caso típico</strong></td>
+<td style="text-align: left;">Contenido web compartido, <em>home</em> de usuarios Linux, contenedores</td>
+<td style="text-align: left;">Recursos compartidos de Windows, aplicaciones .NET, SharePoint, <em>home</em> de usuarios Windows</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["header.autohide", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
